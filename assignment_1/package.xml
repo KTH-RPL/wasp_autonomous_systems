@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>assignment_1</name>
+  <version>1.0.0</version>
+  <description>WASP Autonomous Systems Assignment 1</description>
+  <author email="dduberg@kth.se">Daniel Duberg</author>
+  <maintainer email="dduberg@kth.se">Daniel Duberg</maintainer>
+  <license>TODO: License declaration</license>
+
+  <exec_depend>builtin_interfaces</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>diff_drive_controller</exec_depend>
+  <exec_depend>joint_state_broadcaster</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>ros2launch</exec_depend>
+  <exec_depend>rqt_tf_tree</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+  <exec_depend>teleop_twist_keyboard</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>turtlebot3_description</exec_depend>
+  <exec_depend>wasp_autonomous_systems</exec_depend>
+  <exec_depend>webots_ros2_driver</exec_depend>
+  <exec_depend>webots_ros2_control</exec_depend>
+  <exec_depend>webots_ros2_turtlebot</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
