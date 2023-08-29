@@ -4,14 +4,13 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/Floor.proto"
 EXTERNPROTO "../resource/TurtleBot3Burger.proto"
-EXTERNPROTO "../resource/Kinect.proto"
 
 WorldInfo {
   basicTimeStep 16
 }
 Viewpoint {
-  orientation -0.21211469256135654 0.41245621692927464 0.8859386131758747 1.0518897893566317
-  position -0.27312051471448706 -0.5385301069624193 0.33676567260161533
+  orientation -0.2094 0.659005 0.722402 1.05216
+  position -1.23208 -1.32233 1.45588
 }
 TexturedBackground {
 }
@@ -34,12 +33,6 @@ TurtleBot3Burger {
     }
     InertialUnit {
       name "inertial_unit"
-    }
-    Kinect {
-      name "camera_link"
-      maxRange 10
-      colorNoise 0.0
-      rangeNoise 0.0
     }
   ]
 }

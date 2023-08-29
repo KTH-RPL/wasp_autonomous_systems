@@ -12,7 +12,7 @@ from random import getrandbits
 class AutonomousController(Node):
 
     def __init__(self):
-        super().__init__('minimal_publisher')
+        super().__init__('autonomous_controller')
         self._pub = self.create_publisher(Twist, 'cmd_vel', 10)
         self._sub = self.create_subscription(
             Collision, '/collision_detected', self.collision_callback, 10)
@@ -20,7 +20,9 @@ class AutonomousController(Node):
         self._left = 0
         self._right = 0
         timer_period = 0.01  # seconds
-        self._timer = self.create_timer(timer_period, self.timer_callback)
+        self._timer = self.create_timer(
+            timer_period, self.timer_callback, clock=self.get_clock())
+        # self._timer = self.create_timer(timer_period, self.timer_callback)
 
     def timer_callback(self):
         '''This Function is called at a fixed interval'''

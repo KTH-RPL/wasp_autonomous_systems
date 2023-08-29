@@ -1,6 +1,38 @@
 <?xml version="1.0" ?>
-<robot name="TurtleBot3 Burger Webots">
+<robot name="TurtleBot3 Burger RGB-D Webots">
     <webots>
+        <device reference="kinect_color" type="Camera">
+            <ros>
+                <enabled>true</enabled>
+                <alwaysOn>false</alwaysOn>
+                <updateRate>10</updateRate>
+                <topicName>/camera/color</topicName>
+                <imageSuffix>/image_raw</imageSuffix>
+                <frameName>camera_link</frameName>
+            </ros>
+        </device>
+
+        <device reference="kinect_range" type="RangeFinder">
+            <ros>
+                <enabled>true</enabled>
+                <alwaysOn>false</alwaysOn>
+                <updateRate>10</updateRate>
+                <topicName>/camera/depth</topicName>
+                <imageSuffix>/image_raw</imageSuffix>
+                <pointCloudSuffix>/points</pointCloudSuffix>
+                <frameName>camera_link</frameName>
+            </ros>
+        </device>
+
+        <plugin type="webots_ros2_driver::Ros2RGBD">
+            <camera>kinect_color</camera>
+            <alwaysOn>false</alwaysOn>
+            <updateRate>10</updateRate>
+            <rangeFinder>kinect_range</rangeFinder>
+            <topicName>/camera/color/points</topicName>
+            <frameName>camera_link</frameName>
+        </plugin>
+
         <plugin type="webots_ros2_driver::Ros2IMU">
             <enabled>true</enabled>
             <updateRate>100</updateRate>

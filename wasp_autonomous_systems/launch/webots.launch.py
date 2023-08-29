@@ -27,6 +27,7 @@ from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_driver.webots_controller import WebotsController
 from webots_ros2_driver.wait_for_controller_connection import WaitForControllerConnection
+from launch.conditions import IfCondition, UnlessCondition
 
 
 def generate_launch_description():
@@ -35,6 +36,7 @@ def generate_launch_description():
     mode = LaunchConfiguration('mode')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
     gui = LaunchConfiguration('gui', default='true')
+    rgbd = LaunchConfiguration('rgbd', default='true')
 
     webots = WebotsLauncher(
         world=PathJoinSubstitution([pkg_dir, 'worlds', world]),
@@ -75,21 +77,32 @@ def generate_launch_description():
         executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
-        arguments=['joint_state_broadcaster'] + controller_manager_timeout,
+        arguments=['joint_state_broadcaster'] + controller_manager_timeout
     )
     ros_control_spawners = [
         diffdrive_controller_spawner, joint_state_broadcaster_spawner]
 
-    robot_description_path = os.path.join(
-        pkg_dir, 'urdf', 'turtlebot_webots.urdf')
     ros2_control_params = os.path.join(
         pkg_dir, 'resource', 'ros2control.yaml')
     mappings = [('/diffdrive_controller/cmd_vel_unstamped',
                  '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
     turtlebot_driver = WebotsController(
+        condition=IfCondition(rgbd),
         robot_name='TurtleBot3Burger',
         parameters=[
-            {'robot_description': robot_description_path,
+            {'robot_description': os.path.join(pkg_dir, 'urdf', 'turtlebot_webots_rgbd.urdf'),
+             'use_sim_time': use_sim_time,
+             'set_robot_state_publisher': True},
+            ros2_control_params
+        ],
+        remappings=mappings,
+        respawn=True
+    )
+    turtlebot_driver = WebotsController(
+        condition=UnlessCondition(rgbd),
+        robot_name='TurtleBot3Burger',
+        parameters=[
+            {'robot_description': os.path.join(pkg_dir, 'urdf', 'turtlebot_webots.urdf'),
              'use_sim_time': use_sim_time,
              'set_robot_state_publisher': True},
             ros2_control_params
@@ -122,6 +135,11 @@ def generate_launch_description():
             'gui',
             default_value='true',
             description='Enable or disable Webots GUI (if you have a slow computer it can be useful to turn this off)'
+        ),
+        DeclareLaunchArgument(
+            'rgbd',
+            default_value='true',
+            description='Enable or disable RGB-D sensor on Turtlebot'
         ),
         webots,
         webots._supervisor,

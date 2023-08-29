@@ -31,6 +31,7 @@ setup(
         'console_scripts': [
             'autonomous_controller = wasp_autonomous_systems.autonomous_controller:main',
             'encoders = wasp_autonomous_systems.encoders:main',
+            'path = wasp_autonomous_systems.path:main',
         ],
     },
 )

@@ -10,7 +10,6 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/RoughPolymer.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/MattePaint.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/BrushedAluminium.proto"
-EXTERNPROTO "./Kinect.proto"
 
 PROTO TurtleBot3Burger [
   field SFVec3f    translation     0 0 0                 # Is `Pose.translation`.
@@ -21,7 +20,7 @@ PROTO TurtleBot3Burger [
   field SFString   customData      ""                    # Is `Robot.customData`.
   field SFBool     supervisor      FALSE                 # Is `Robot.supervisor`.
   field SFBool     synchronization TRUE                  # Is `Robot.synchronization`.
-  field MFNode     extensionSlot   [ Kinect { } ]  # Extends the robot with new nodes in the extension slot.
+  field MFNode     extensionSlot   [ ]  # Extends the robot with new nodes in the extension slot.
 ]
 {
   Robot {
