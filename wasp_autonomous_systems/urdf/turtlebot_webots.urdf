@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <robot name="TurtleBot3 Burger Webots">
     <webots>
-        <device reference="kinect color" type="Camera">
+        <device reference="kinect_color" type="Camera">
             <ros>
                 <enabled>true</enabled>
                 <alwaysOn>false</alwaysOn>
@@ -12,7 +12,7 @@
             </ros>
         </device>
 
-        <device reference="kinect range" type="RangeFinder">
+        <device reference="kinect_range" type="RangeFinder">
             <ros>
                 <enabled>true</enabled>
                 <alwaysOn>false</alwaysOn>
@@ -25,10 +25,10 @@
         </device>
 
         <plugin type="webots_ros2_driver::Ros2RGBD">
-            <camera>kinect color</camera>
+            <camera>kinect_color</camera>
             <alwaysOn>false</alwaysOn>
             <updateRate>10</updateRate>
-            <rangeFinder>kinect range</rangeFinder>
+            <rangeFinder>kinect_range</rangeFinder>
             <topicName>/camera/color/points</topicName>
             <frameName>camera_link</frameName>
         </plugin>
@@ -42,25 +42,24 @@
             <inertialUnitName>inertial_unit</inertialUnitName>
             <gyroName>gyro</gyroName>
             <accelerometerName>accelerometer</accelerometerName>
+            <accelerometerBiasMin>0.1</accelerometerBiasMin>
+            <accelerometerBiasMax>0.3</accelerometerBiasMax>
+            <accelerometerNoiseMean>0.0</accelerometerNoiseMean>
+            <accelerometerNoiseStddev>0.1</accelerometerNoiseStddev>
         </plugin>
 
         <plugin type="webots_ros2_control::Ros2Control" />
-
-        <!-- type="package_name.file_name.class_name" -->
-        <plugin type="webots_ros2_turtlebot.plugin_example.PluginExample">
-            <parameterExample>someValue</parameterExample>
-        </plugin>
     </webots>
 
     <ros2_control name="WebotsControl" type="system">
         <hardware>
             <plugin>webots_ros2_control::Ros2ControlSystem</plugin>
         </hardware>
-        <joint name="right wheel motor">
+        <joint name="wheel_right_motor">
             <state_interface name="position"/>
             <command_interface name="velocity"/>
         </joint>
-        <joint name="left wheel motor">
+        <joint name="wheel_left_motor">
             <state_interface name="position"/>
             <command_interface name="velocity"/>
         </joint>

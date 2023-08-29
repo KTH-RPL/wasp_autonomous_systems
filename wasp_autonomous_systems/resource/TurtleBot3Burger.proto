@@ -5,11 +5,12 @@
 # keywords: robot/wheeled
 # Burger model of the third version of the TurtleBot robot.
 
-EXTERNPROTO "webots://projects/appearances/protos/TireRubber.proto"
-EXTERNPROTO "webots://projects/appearances/protos/Pcb.proto"
-EXTERNPROTO "webots://projects/appearances/protos/RoughPolymer.proto"
-EXTERNPROTO "webots://projects/appearances/protos/MattePaint.proto"
-EXTERNPROTO "webots://projects/appearances/protos/BrushedAluminium.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/TireRubber.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/Pcb.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/RoughPolymer.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/MattePaint.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/BrushedAluminium.proto"
+EXTERNPROTO "./Kinect.proto"
 
 PROTO TurtleBot3Burger [
   field SFVec3f    translation     0 0 0                 # Is `Pose.translation`.
@@ -20,7 +21,7 @@ PROTO TurtleBot3Burger [
   field SFString   customData      ""                    # Is `Robot.customData`.
   field SFBool     supervisor      FALSE                 # Is `Robot.supervisor`.
   field SFBool     synchronization TRUE                  # Is `Robot.synchronization`.
-  field MFNode     extensionSlot   [  ]  # Extends the robot with new nodes in the extension slot.
+  field MFNode     extensionSlot   [ Kinect { } ]  # Extends the robot with new nodes in the extension slot.
 ]
 {
   Robot {
@@ -44,12 +45,12 @@ PROTO TurtleBot3Burger [
         }
         device [
           RotationalMotor {
-            name "right wheel motor"
+            name "wheel_right_motor"
             consumptionFactor -0.001
             maxVelocity 6.67
           }
           PositionSensor {
-            name "right wheel sensor"
+            name "wheel_right_sensor"
             resolution 0.00628
           }
         ]
@@ -69,7 +70,7 @@ PROTO TurtleBot3Burger [
                         metalness 0
                       }
                       geometry Mesh {
-                        url "meshes/wheel_shape.obj"
+                        url "../meshes/wheel_shape.obj"
                       }
                     }
                     Shape {
@@ -79,7 +80,7 @@ PROTO TurtleBot3Burger [
                         metalness 0
                       }
                       geometry Mesh {
-                        url "meshes/inner_wheel.obj"
+                        url "../meshes/inner_wheel.obj"
                       }
                     }
                     Shape {
@@ -91,14 +92,14 @@ PROTO TurtleBot3Burger [
                         type "bike"
                       }
                       geometry Mesh {
-                        url "meshes/tire.obj"
+                        url "../meshes/tire.obj"
                       }
                     }
                     Shape {
                       appearance PBRAppearance {
                       }
                       geometry Mesh {
-                        url "meshes/wheel_support.obj"
+                        url "../meshes/wheel_support.obj"
                       }
                     }
                   ]
@@ -106,7 +107,7 @@ PROTO TurtleBot3Burger [
               ]
             }
           ]
-          name "right wheel"
+          name "wheel_right_link"
           boundingObject Pose {
             rotation 1 0 0 -1.570796
             children [
@@ -132,12 +133,12 @@ PROTO TurtleBot3Burger [
         }
         device [
           RotationalMotor {
-            name "left wheel motor"
+            name "wheel_left_motor"
             consumptionFactor -0.001
             maxVelocity 6.67
           }
           PositionSensor {
-            name "left wheel sensor"
+            name "wheel_left_sensor"
             resolution 0.00628
           }
         ]
@@ -152,7 +153,7 @@ PROTO TurtleBot3Burger [
               ]
             }
           ]
-          name "left wheel"
+          name "wheel_left_link"
           boundingObject Pose {
             rotation 1 0 0 -1.570796
             children [
@@ -202,14 +203,14 @@ PROTO TurtleBot3Burger [
               metalness 0
             }
             geometry Mesh {
-              url "meshes/motors.obj"
+              url "../meshes/motors.obj"
             }
           }
           DEF CARDS Shape {
             appearance Pcb {
             }
             geometry Mesh {
-              url "meshes/cards.obj"
+              url "../meshes/cards.obj"
             }
           }
           DEF HOLDERS Shape {
@@ -220,13 +221,13 @@ PROTO TurtleBot3Burger [
               }
             }
             geometry Mesh {
-              url "meshes/holders.obj"
+              url "../meshes/holders.obj"
             }
           }
           DEF BODY_FLOOR_0 Shape {
             appearance USE MAIN_APP
             geometry Mesh {
-              url "meshes/body_floor.obj"
+              url "../meshes/body_floor.obj"
             }
           }
           DEF BODY_FLOOR_1 Pose {
@@ -252,14 +253,14 @@ PROTO TurtleBot3Burger [
               baseColor 0.054902 0.121569 0.356863
             }
             geometry Mesh {
-              url "meshes/battery.obj"
+              url "../meshes/battery.obj"
             }
           }
           DEF SCREWS Shape {
             appearance PBRAppearance {
             }
             geometry Mesh {
-              url "meshes/screws.obj"
+              url "../meshes/screws.obj"
             }
           }
           DEF BARS Shape {
@@ -269,7 +270,7 @@ PROTO TurtleBot3Burger [
               }
             }
             geometry Mesh {
-              url "meshes/bars.obj"
+              url "../meshes/bars.obj"
             }
           }
         ]

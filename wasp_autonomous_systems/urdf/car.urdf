@@ -4,7 +4,7 @@
     <visual name="base_visual">
       <origin xyz="0 0 0.0" rpy="1.57 0 3.14" />
       <geometry>
-        <mesh filename="package://wasp_autonomous_systems/mesh/car.dae" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://wasp_autonomous_systems/meshes/car.dae" scale="1.0 1.0 1.0"/>
       </geometry>
     </visual>
   </link>

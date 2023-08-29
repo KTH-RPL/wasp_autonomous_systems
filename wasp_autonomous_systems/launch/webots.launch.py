@@ -23,24 +23,21 @@ from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch import LaunchDescription
 from launch_ros.actions import Node
 import launch
-from ament_index_python.packages import get_package_share_directory, get_packages_with_prefixes
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.actions import IncludeLaunchDescription
+from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_driver.webots_controller import WebotsController
 from webots_ros2_driver.wait_for_controller_connection import WaitForControllerConnection
 
 
 def generate_launch_description():
-    pkg_dir = get_package_share_directory('assignment_1')
-    resource_dir = get_package_share_directory('wasp_autonomous_systems')
+    pkg_dir = get_package_share_directory('wasp_autonomous_systems')
     world = LaunchConfiguration('world', default='turtlebot_apartment.wbt')
     mode = LaunchConfiguration('mode')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
     gui = LaunchConfiguration('gui', default='true')
 
     webots = WebotsLauncher(
-        world=PathJoinSubstitution([resource_dir, 'worlds', world]),
+        world=PathJoinSubstitution([pkg_dir, 'worlds', world]),
         mode=mode,
         ros2_supervisor=True,
         gui=gui
@@ -84,9 +81,9 @@ def generate_launch_description():
         diffdrive_controller_spawner, joint_state_broadcaster_spawner]
 
     robot_description_path = os.path.join(
-        resource_dir, 'urdf', 'turtlebot_webots.urdf')
+        pkg_dir, 'urdf', 'turtlebot_webots.urdf')
     ros2_control_params = os.path.join(
-        resource_dir, 'resource', 'ros2control.yaml')
+        pkg_dir, 'resource', 'ros2control.yaml')
     mappings = [('/diffdrive_controller/cmd_vel_unstamped',
                  '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
     turtlebot_driver = WebotsController(
@@ -101,15 +98,8 @@ def generate_launch_description():
         respawn=True
     )
 
-    rviz = Node(
-        package='rviz2',
-        namespace='',
-        executable='rviz2',
-        name='rviz2',
-        parameters=[{'use_sim_time': use_sim_time}],
-        arguments=[
-            '-d', [os.path.join(pkg_dir, 'rviz', 'turtlebot_simulation.rviz')]]
-    )
+    encoder = Node(package='wasp_autonomous_systems',
+                   executable='encoders', output='screen')
 
     # Wait for the simulation to be ready to start navigation nodes
     waiting_nodes = WaitForControllerConnection(
@@ -139,10 +129,10 @@ def generate_launch_description():
         robot_state_publisher,
         footprint_publisher,
 
-        rviz,
-
         turtlebot_driver,
         waiting_nodes,
+
+        encoder,
 
         # This action will kill all nodes once the Webots simulation has exited
         launch.actions.RegisterEventHandler(

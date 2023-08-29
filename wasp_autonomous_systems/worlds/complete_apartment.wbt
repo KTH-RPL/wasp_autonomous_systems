@@ -82,8 +82,6 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/bathroom/protos/Toilet.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/lights/protos/CeilingSpotLight.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/trees/protos/Cypress.proto"
-EXTERNPROTO "../resource/TurtleBot3Burger.proto"
-EXTERNPROTO "../resource/Kinect.proto"
 
 WorldInfo {
   info [
@@ -103,29 +101,6 @@ TexturedBackground {
   skybox FALSE
   skyColor [
     0.2 0.2 0.2
-  ]
-}
-TurtleBot3Burger {
-  translation -5 -5 0
-  controller "<extern>"
-  controllerArgs [
-    ""
-  ]
-  extensionSlot [
-    Solid {
-      name "imu_link"
-    }
-    GPS {
-    }
-    InertialUnit {
-      name "inertial_unit"
-    }
-    Kinect {
-      name "camera_link"
-      maxRange 10
-      colorNoise 0.0
-      rangeNoise 0.0
-    }
   ]
 }
 DEF ROOF Group {

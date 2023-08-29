@@ -11,7 +11,8 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
-"msg/DutyCycles.msg"
+  "msg/Collision.msg"
+  "msg/DutyCycles.msg"
   "msg/Encoders.msg"
   DEPENDENCIES std_msgs
 )
