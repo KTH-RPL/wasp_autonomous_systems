@@ -25,7 +25,9 @@ setup(
     entry_points={
         'console_scripts': [
             'odometry = assignment_2.odometry:main',
-            'collision_detection = assignment_2.collision_detection:main'
+            'odometry_solution = assignment_2.odometry_solution:main',
+            'collision_detection = assignment_2.collision_detection:main',
+            'collision_detection_solution = assignment_2.collision_detection_solution:main'
         ],
     },
 )

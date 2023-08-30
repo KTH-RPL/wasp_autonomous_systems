@@ -37,12 +37,11 @@ def generate_launch_description():
     gui = LaunchConfiguration('gui', default='true')
 
     sim = IncludeLaunchDescription(PythonLaunchDescriptionSource([PathJoinSubstitution([
-        FindPackageShare('wasp_autonomous_systems'), 'launch', 'webots.launch.py'])]),
+        FindPackageShare('wasp_autonomous_systems'), 'launch', 'webots_turtlebot.launch.py'])]),
         launch_arguments={
             'world': world,
             'mode': mode,
-            'gui': gui,
-            'rgbd': 'false'
+            'gui': gui
     }.items())
 
     path = Node(package='wasp_autonomous_systems',

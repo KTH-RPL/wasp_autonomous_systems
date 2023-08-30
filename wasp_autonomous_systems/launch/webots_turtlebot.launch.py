@@ -32,11 +32,10 @@ from launch.conditions import IfCondition, UnlessCondition
 
 def generate_launch_description():
     pkg_dir = get_package_share_directory('wasp_autonomous_systems')
-    world = LaunchConfiguration('world', default='turtlebot_apartment.wbt')
+    world = LaunchConfiguration('world', default='turtlebot_collision_detection.wbt')
     mode = LaunchConfiguration('mode')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
     gui = LaunchConfiguration('gui', default='true')
-    rgbd = LaunchConfiguration('rgbd', default='true')
 
     webots = WebotsLauncher(
         world=PathJoinSubstitution([pkg_dir, 'worlds', world]),
@@ -87,19 +86,6 @@ def generate_launch_description():
     mappings = [('/diffdrive_controller/cmd_vel_unstamped',
                  '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
     turtlebot_driver = WebotsController(
-        condition=IfCondition(rgbd),
-        robot_name='TurtleBot3Burger',
-        parameters=[
-            {'robot_description': os.path.join(pkg_dir, 'urdf', 'turtlebot_webots_rgbd.urdf'),
-             'use_sim_time': use_sim_time,
-             'set_robot_state_publisher': True},
-            ros2_control_params
-        ],
-        remappings=mappings,
-        respawn=True
-    )
-    turtlebot_driver = WebotsController(
-        condition=UnlessCondition(rgbd),
         robot_name='TurtleBot3Burger',
         parameters=[
             {'robot_description': os.path.join(pkg_dir, 'urdf', 'turtlebot_webots.urdf'),
@@ -123,7 +109,7 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument(
             'world',
-            default_value='turtlebot_apartment.wbt',
+            default_value='turtlebot_collision_detection.wbt',
             description='Choose one of the world files from `src/wasp_autonomous_systems/wasp_autonomous_systems/world` directory'
         ),
         DeclareLaunchArgument(
@@ -135,11 +121,6 @@ def generate_launch_description():
             'gui',
             default_value='true',
             description='Enable or disable Webots GUI (if you have a slow computer it can be useful to turn this off)'
-        ),
-        DeclareLaunchArgument(
-            'rgbd',
-            default_value='true',
-            description='Enable or disable RGB-D sensor on Turtlebot'
         ),
         webots,
         webots._supervisor,

@@ -36,7 +36,7 @@ def generate_launch_description():
     gui = LaunchConfiguration('gui', default='true')
 
     sim = IncludeLaunchDescription(PythonLaunchDescriptionSource([PathJoinSubstitution([
-        FindPackageShare('wasp_autonomous_systems'), 'launch', 'webots.launch.py'])]),
+        FindPackageShare('wasp_autonomous_systems'), 'launch', 'webots_turtlebot_rgbd.launch.py'])]),
         launch_arguments={
             'world': world,
             'mode': mode,
@@ -70,6 +70,5 @@ def generate_launch_description():
             description='Enable or disable Webots GUI (if you have a slow computer it can be useful to turn this off)'
         ),
         sim,
-
         rviz
     ])

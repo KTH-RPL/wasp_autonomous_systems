@@ -12,6 +12,7 @@ data_files.append(('share/' + package_name + '/resource', ['resource/TurtleBot3B
 data_files.append(('share/' + package_name + '/resource', ['resource/Kinect.proto']))
 data_files.append((os.path.join('share', package_name, 'meshes'), glob(os.path.join('meshes', '**/*'))))
 data_files.append(('share/' + package_name + '/urdf', ['urdf/turtlebot_webots.urdf']))
+data_files.append(('share/' + package_name + '/urdf', ['urdf/turtlebot_webots_rgbd.urdf']))
 data_files.append(('share/' + package_name + '/urdf', ['urdf/car.urdf']))
 data_files.append(('share/' + package_name, ['package.xml']))
 

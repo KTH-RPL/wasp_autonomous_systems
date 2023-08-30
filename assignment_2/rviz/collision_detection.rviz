@@ -4,6 +4,7 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /Walls1
         - /Walls1/Line Style1
       Splitter Ratio: 0.5
     Tree Height: 1079

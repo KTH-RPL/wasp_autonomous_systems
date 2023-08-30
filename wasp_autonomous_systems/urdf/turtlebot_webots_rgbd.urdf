@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<robot name="TurtleBot3 Burger RGB-D Webots">
+<robot name="TurtleBot3 Burger Webots">
     <webots>
         <device reference="kinect_color" type="Camera">
             <ros>
