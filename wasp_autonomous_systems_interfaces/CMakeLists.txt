@@ -14,6 +14,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Collision.msg"
   "msg/DutyCycles.msg"
   "msg/Encoders.msg"
+  "msg/Thrust.msg"
   DEPENDENCIES std_msgs
 )
 
