@@ -8,9 +8,11 @@
   <maintainer email="dduberg@kth.se">Daniel Duberg</maintainer>
   <license>TODO: License declaration</license>
 
+  <exec_depend>cv_bridge</exec_depend>
   <exec_depend>python-transforms3d-pip</exec_depend>
   <exec_depend>rqt_plot</exec_depend>
   <exec_depend>tf_transformations</exec_depend>
+  <exec_depend>python3-ultralytics-pip</exec_depend>
   <exec_depend>wasp_autonomous_systems_interfaces</exec_depend>
 
   <export>
