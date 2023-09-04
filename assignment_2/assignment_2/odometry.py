@@ -58,10 +58,7 @@ class Odometry(Node):
         # Ticks since last message
         delta_ticks_left = msg.delta_encoder_left
         delta_ticks_right = msg.delta_encoder_right
-        # Accumulated ticks since start
-        ticks_left = msg.encoder_left
-        ticks_right = msg.encoder_right
-
+     
         # TODO: Fill in
 
         self._x = self._x  # TODO: Fill in
