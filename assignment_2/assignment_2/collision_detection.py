@@ -29,6 +29,11 @@ class CollisionDetector(Node):
         collision_detection_msg = Collision()
         collision_detection_msg.header.stamp = msg.header.stamp
 
+        # Get the IMU linear acceleration from the message
+        linear_acc_x = msg.linear_acceleration.x
+        linear_acc_y = msg.linear_acceleration.y
+        linear_acc_z = msg.linear_acceleration.z
+
         # TODO: Fill in
 
         collision_detection_msg.collision = False  # TODO: Fill in

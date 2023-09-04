@@ -33,6 +33,11 @@ class Odometry(Node):
         self._encoder_sub = self.create_subscription(
             Encoders, '/motor/encoders', self.encoder_callback, 10)
 
+        # 2D pose
+        self._x = 0.0
+        self._y = 0.0
+        self._yaw = 0.0
+
     def encoder_callback(self, msg: Encoders):
         """Takes encoder readings and updates the odometry.
 
@@ -50,14 +55,21 @@ class Odometry(Node):
         wheel_radius = 0.0  # TODO: Fill in
         base = 0.0  # TODO: Fill in
 
+        # Ticks since last message
+        delta_ticks_left = msg.delta_encoder_left
+        delta_ticks_right = msg.delta_encoder_right
+        # Accumulated ticks since start
+        ticks_left = msg.encoder_left
+        ticks_right = msg.encoder_right
+
         # TODO: Fill in
 
-        x = 0.0  # TODO: Fill in
-        y = 0.0  # TODO: Fill in
-        yaw = 0.0  # TODO: Fill in
+        self._x = self._x  # TODO: Fill in
+        self._y = self._y  # TODO: Fill in
+        self._yaw = self._yaw  # TODO: Fill in
 
-        self.broadcast_transform(msg.header.stamp, x, y, yaw)
-        self.publish_path(msg.header.stamp, x, y, yaw)
+        self.broadcast_transform(msg.header.stamp, self._x, self._y, self._yaw)
+        self.publish_path(msg.header.stamp, self._x, self._y, self._yaw)
 
     def broadcast_transform(self, stamp, x, y, yaw):
         """Takes a 2D pose and broadcasts it as a ROS transform.
@@ -113,7 +125,7 @@ class Odometry(Node):
 
         pose.pose.position.x = x
         pose.pose.position.y = y
-        pose.pose.position.z = 0.01  # 1 cm up so it will be above "ground truth"
+        pose.pose.position.z = 0.01  # 1 cm up so it will be above ground level
 
         q = quaternion_from_euler(0.0, 0.0, yaw)
         pose.pose.orientation.x = q[0]
