@@ -30,7 +30,7 @@ class Odometry(Node):
         self._path = Path()
 
         # Subscribe to encoder topic and call callback function on each recieved message
-        self._encoder_sub = self.create_subscription(
+        self.create_subscription(
             Encoders, '/motor/encoders', self.encoder_callback, 10)
 
         # 2D pose
@@ -58,7 +58,7 @@ class Odometry(Node):
         # Ticks since last message
         delta_ticks_left = msg.delta_encoder_left
         delta_ticks_right = msg.delta_encoder_right
-     
+
         # TODO: Fill in
 
         self._x = self._x  # TODO: Fill in

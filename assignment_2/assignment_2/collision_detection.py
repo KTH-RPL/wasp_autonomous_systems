@@ -12,15 +12,14 @@ class CollisionDetector(Node):
     def __init__(self):
         super().__init__('collision_detector')
         self._pub = self.create_publisher(Collision, 'collision_detected', 10)
-        self._sub = self.create_subscription(
-            Imu, '/imu', self.imu_callback, 10)
+        self.create_subscription(Imu, '/imu', self.imu_callback, 10)
 
     def imu_callback(self, msg: Imu):
         """Uses IMU to determine if a collision occured.
 
         This function is called every time the imu is updated (i.e., when a message is published on the '/imu' topic).
 
-        Your task is to determine from the IMU 'msg' if a collision occured.
+        Your task is to determine from the IMU 'msg' if a collision occured. You are allowed to add/change things outside this function.
 
         Keyword arguments:
         msg -- A IMU ROS message. To see more information about it run 'ros2 interface show sensor_msgs/msg/Imu' in a terminal.
