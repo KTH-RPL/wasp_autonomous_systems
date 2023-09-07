@@ -64,7 +64,7 @@ def launch_setup(context, *args, **kwargs):
             name='rviz2',
             parameters=[{'use_sim_time': loop}],
             arguments=[
-                '-d', [os.path.join(pkg_dir, 'rviz', 'turtlebot_real.rviz')]]
+                '-d', [os.path.join(pkg_dir, 'rviz', 'real_robot.rviz')]]
         )
     ]
 

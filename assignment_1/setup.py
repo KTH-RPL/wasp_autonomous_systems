@@ -8,7 +8,7 @@ data_files.append(('share/ament_index/resource_index/packages', ['resource/' + p
 data_files.append((os.path.join('share', package_name, 'launch'), glob(os.path.join('launch', '*launch.[pxy][yma]*'))))
 data_files.append(('share/' + package_name + '/rviz', ['rviz/kitti.rviz']))
 data_files.append(('share/' + package_name + '/rviz', ['rviz/turtlebot_simulation.rviz']))
-data_files.append(('share/' + package_name + '/rviz', ['rviz/turtlebot_real.rviz']))
+data_files.append(('share/' + package_name + '/rviz', ['rviz/real_robot.rviz']))
 data_files.append(('share/' + package_name, ['package.xml']))
 
 setup(
