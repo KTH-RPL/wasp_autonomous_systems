@@ -12,6 +12,7 @@ def launch_setup(context, *args, **kwargs):
     loop = LaunchConfiguration('loop', default='false')
     bag_dir = LaunchConfiguration('bag_dir')
     rate = LaunchConfiguration('rate', default='1')
+    queue_size = LaunchConfiguration('queue_size', default='100')
     
     pkg_dir = get_package_share_directory('assignment_1')
     resources_dir = get_package_share_directory('wasp_autonomous_systems')
@@ -36,6 +37,8 @@ def launch_setup(context, *args, **kwargs):
                     "ros2",
                     "bag",
                     "play",
+                    "--read-ahead-queue-size",
+                    queue_size,
                     "--loop",
                     "--clock",
                     "100",
@@ -54,6 +57,8 @@ def launch_setup(context, *args, **kwargs):
                     "ros2",
                     "bag",
                     "play",
+                    "--read-ahead-queue-size",
+                    queue_size,
                     "-r",
                     rate,
                     bag_dir,
@@ -83,6 +88,7 @@ def generate_launch_description():
             description='Loop the ROS bag'),
         DeclareLaunchArgument('bag_dir', description='Directory to ROS bag to play'),
         DeclareLaunchArgument('rate', default_value='1', description='Rate at which to play back messages. Valid range > 0.0.'),
+        DeclareLaunchArgument('queue_size', default_value='100', description='How many messages to read from the bag ahead of time. Bigger value uses more RAM but makes execution faster.'),
         
         OpaqueFunction(function=launch_setup),
     ])
