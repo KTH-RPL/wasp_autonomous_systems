@@ -15,7 +15,7 @@ class EncoderPublisher(Node):
     def __init__(self):
         super().__init__('encoders')
         self._pub = self.create_publisher(Encoders, '/motor/encoders', 10)
-        self._sub = self.create_subscription(
+        self.create_subscription(
             DynamicJointState, '/dynamic_joint_states', self.odom_callback, 10)
 
         self._enc = Encoders()

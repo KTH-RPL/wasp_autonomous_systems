@@ -14,7 +14,7 @@ class AutonomousController(Node):
     def __init__(self):
         super().__init__('autonomous_controller')
         self._pub = self.create_publisher(Twist, 'cmd_vel', 10)
-        self._sub = self.create_subscription(
+        self.create_subscription(
             Collision, '/collision_detected', self.collision_callback, 10)
         self._back = 0
         self._left = 0

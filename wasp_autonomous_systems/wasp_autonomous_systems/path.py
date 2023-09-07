@@ -15,7 +15,7 @@ class PathPublisher(Node):
     def __init__(self):
         super().__init__('path')
         self._pub = self.create_publisher(Path, '/path', 10)
-        self._sub = self.create_subscription(
+        self.create_subscription(
             PointStamped, '/TurtleBot3Burger/gps', self.gps_callback, 10)
 
         self._path = Path()
