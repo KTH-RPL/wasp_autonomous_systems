@@ -21,7 +21,7 @@ class AltitudeHold(Node):
 
         # Subscribe to GPS topic (to get position) and call callback function on each recieved message
         self.create_subscription(
-            PointStamped, '/Mavic_2_PRO/gps', self.gps_callback, 10)
+            PointStamped, '/mavic_2_pro/gps', self.gps_callback, 10)
 
         # Store the time last message was recieved
         self._previous_time = None
@@ -29,7 +29,7 @@ class AltitudeHold(Node):
     def gps_callback(self, msg: PointStamped):
         """Takes GPS position and adjusts thrust.
 
-        This function is called every time the GPS position is updated (i.e., when a message is published on the '/Mavic_2_PRO/gps' topic).
+        This function is called every time the GPS position is updated (i.e., when a message is published on the '/mavic_2_pro/gps' topic).
 
         Your task is to update the thrust based on the GPS position in 'msg' and the target height that you can read from the ROS parameter server. 
 

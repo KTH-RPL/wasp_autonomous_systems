@@ -22,7 +22,7 @@ class AltitudeManual(Node):
         self._thrust_pub = self.create_publisher(Thrust, 'thrust', 10)
 
         self.create_subscription(
-            PointStamped, '/Mavic_2_PRO/gps', self.gps_callback, 10)
+            PointStamped, '/mavic_2_pro/gps', self.gps_callback, 10)
 
     def gps_callback(self, msg: PointStamped):
         # The control signal message
