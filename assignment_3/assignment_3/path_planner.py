@@ -41,7 +41,7 @@ class PathPlanner(Node):
 
         self.add_on_set_parameters_callback(self.config_callback)
 
-        self._robot_radius = None
+        self._robot_radius = 0.6
 
         self._planner_algorithm = None
         self._planner_eight_connectivity = None
@@ -61,8 +61,8 @@ class PathPlanner(Node):
 
         self._grid_map = None
 
-        self.declare_parameter('robot_radius', 0.25, ParameterDescriptor(
-            description='Robot radius in meter'))
+        # self.declare_parameter('robot_radius', 0.25, ParameterDescriptor(
+        #     description='Robot radius in meter'))
 
         self.declare_parameters(
             namespace='planner',
@@ -82,9 +82,9 @@ class PathPlanner(Node):
         self.declare_parameters(
             namespace='map',
             parameters=[
-                ('resolution', 0.1, ParameterDescriptor(
+                ('resolution', 1.0, ParameterDescriptor(
                     description='Cell size of the grid map in meters')),
-                ('width', 20.0, ParameterDescriptor(
+                ('width', 40.0, ParameterDescriptor(
                     description='Width of the grid map in meters')),
                 ('height', 20.0, ParameterDescriptor(
                     description='Height of the grid map in meters')),
@@ -107,11 +107,11 @@ class PathPlanner(Node):
         update_plan = False
 
         for p in config:
-            if 'robot_radius' == p.name:
-                self._robot_radius = p.get_parameter_value().double_value
-                update_map = True
-                self.publish_start_and_goal()
-            elif 'map.resolution' == p.name:
+            # if 'robot_radius' == p.name:
+            #     self._robot_radius = p.get_parameter_value().double_value
+            #     update_map = True
+            #     self.publish_start_and_goal()
+            if 'map.resolution' == p.name:
                 self._map_resolution = p.get_parameter_value().double_value
             elif 'map.width' == p.name:
                 self._map_width = p.get_parameter_value().double_value

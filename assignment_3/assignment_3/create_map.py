@@ -25,9 +25,9 @@ def create_map(resolution: float, width: float, height: float, map_num: int, num
                     [((minimum[0] + size[0] / 2 - resolution / 2, minimum[1]),
                       (minimum[0] + size[0] / 2 - resolution / 2, minimum[1] + size[1] / 2))],
                     [((minimum[0] + size[0] / 2 - resolution / 2, minimum[1]),
-                      (minimum[0] + size[0] / 2 - resolution / 2, minimum[1] + size[1] / 2 - robot_radius + resolution / 2)), 
+                      (minimum[0] + size[0] / 2 - resolution / 2, minimum[1] + size[1] / 2 - (robot_radius + resolution / 2))), 
                      ((minimum[0] + size[0] / 2 - resolution / 2, maximum[1]), 
-                      (minimum[0] + size[0] / 2 - resolution / 2, maximum[1] - size[1] / 2 + robot_radius + resolution / 2))],
+                      (minimum[0] + size[0] / 2 - resolution / 2, maximum[1] - size[1] / 2 + (robot_radius + resolution / 2)))],
                     [((minimum[0] + size[0] / 2 - resolution / 2, minimum[1]),
                       (minimum[0] + size[0] / 2 - resolution / 2, minimum[1] + size[1] / 2 - robot_size)), 
                      ((minimum[0] + size[0] / 2 - resolution / 2, maximum[1]),
@@ -44,6 +44,7 @@ def create_map(resolution: float, width: float, height: float, map_num: int, num
     else:
         print(
             f'Creating random map with {num_walls} walls and resolution {resolution}')
+        random.seed(map_num)
         for _ in range(num_walls):
             x1 = random.uniform(minimum[0], maximum[0])
             y1 = random.uniform(minimum[1], maximum[1])
