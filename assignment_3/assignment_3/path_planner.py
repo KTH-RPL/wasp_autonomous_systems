@@ -77,7 +77,7 @@ class PathPlanner(Node):
                     description='Max edge length, in meter, for sampling based planning (i.e., rrt, rrtstar)')),
                 ('sampling_stop_when_goal_found', False, ParameterDescriptor(
                     description='Stop sampling when goal has been found, for sampling based planning (i.e., rrt, rrtstar)')),
-                ('Resample', False, ParameterDescriptor(
+                ('resample', False, ParameterDescriptor(
                     description='Toggle to resample (resamples every time this changes), for sampling based planning (i.e., rrt, rrtstar)'))
             ])
 
