@@ -26,7 +26,7 @@ setup(
         'console_scripts': [
             'odometry = assignment_2.odometry:main',
             'collision_detection = assignment_2.collision_detection:main',
-            'yolo = assignment_2.yolo:main'
+            'camera_segmentation = assignment_2.camera_segmentation:main'
         ],
     },
 )
