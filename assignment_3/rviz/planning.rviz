@@ -8,7 +8,7 @@ Panels:
         - /Path1/Topic1
         - /Start1/Topic1
       Splitter Ratio: 0.5
-    Tree Height: 363
+    Tree Height: 1079
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -165,6 +165,19 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /search
       Value: true
+    - Class: rviz_default_plugins/Marker
+      Enabled: true
+      Name: New Wall P0
+      Namespaces:
+        new_wall: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /new_wall_p0
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 255; 255; 255
@@ -220,7 +233,7 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Scale: 11.226564407348633
+      Scale: 19.500137329101562
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz_default_plugins)
       X: 0

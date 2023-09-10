@@ -38,6 +38,7 @@ class PathPlanner(Node):
         self._start_pub = self.create_publisher(Marker, 'start', qos)
         self._goal_pub = self.create_publisher(Marker, 'goal', qos)
         self._search_pub = self.create_publisher(Marker, 'search', qos)
+        self._new_wall_pub = self.create_publisher(Marker, 'new_wall_p0', qos)
 
         self.add_on_set_parameters_callback(self.config_callback)
 
@@ -60,6 +61,9 @@ class PathPlanner(Node):
         self._goal_position = None
 
         self._grid_map = None
+
+        self._added_walls = []
+        self._new_wall_start = None
 
         # self.declare_parameter('robot_radius', 0.25, ParameterDescriptor(
         #     description='Robot radius in meter'))
@@ -103,6 +107,8 @@ class PathPlanner(Node):
             PoseWithCovarianceStamped, '/initialpose', self.robot_callback, 10)
         self.create_subscription(
             PoseStamped, '/goal_pose', self.goal_callback, 10)
+        self.create_subscription(
+            PointStamped, '/clicked_point', self.add_wall_callback, 10)
 
     def config_callback(self, config: list[Parameter]):
         update_map = False
@@ -163,6 +169,29 @@ class PathPlanner(Node):
         self._goal_position = (msg.pose.position.x, msg.pose.position.y)
 
         self.plan(msg.header)
+
+    def add_wall_callback(self, msg: PointStamped):
+        m = Marker()
+        m.header.frame_id = 'map'
+        m.ns = 'new_wall'
+        m.id = 0
+        m.type = Marker.SPHERE
+        m.scale.x = m.scale.y = m.scale.z = 2 * self._robot_radius
+        m.color.a = 1.0
+        m.color.r = 1.0
+
+        if self._new_wall_start:
+            self._added_walls.append(
+                (self._new_wall_start, (msg.point.x, msg.point.y)))
+            self.update_map(self._added_walls)
+            self._new_wall_start = None
+            m.action = Marker.DELETEALL
+        else:
+            self._new_wall_start = (msg.point.x, msg.point.y)
+            m.pose.position.x = self._new_wall_start[0]
+            m.pose.position.y = self._new_wall_start[1]
+
+        self._new_wall_pub.publish(m)
 
     def plan(self, header=None):
         self.publish_start_and_goal()
@@ -225,9 +254,12 @@ class PathPlanner(Node):
         else:
             self.publish_search_cells(search)
 
-    def update_map(self):
+    def update_map(self, extra_walls=None):
+        if not extra_walls:
+            self._added_walls.clear()
+
         self._grid_map, walls = create_map(
-            self._map_resolution, self._map_width, self._map_height, self._map_id, self._map_num_walls, self._robot_radius)
+            self._map_resolution, self._map_width, self._map_height, self._map_id, self._map_num_walls, self._robot_radius, self._added_walls)
 
         if self._map_inflate:
             inflate_map(self._grid_map, ceil(
@@ -235,6 +267,9 @@ class PathPlanner(Node):
 
         self._map_pub.publish(self._grid_map.to_ros('map'))
         self._walls_pub.publish(self.walls_to_ros(walls))
+
+    def add_wall(self, p1, p2):
+        pass
 
     def walls_to_ros(self, walls: list[tuple[tuple[float, float], tuple[float, float]]]) -> Marker:
         m = Marker()

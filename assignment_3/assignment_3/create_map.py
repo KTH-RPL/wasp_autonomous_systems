@@ -7,7 +7,7 @@ import random
 from math import ceil
 
 
-def create_map(resolution: float, width: float, height: float, map_num: int, num_walls: int, robot_radius: float) -> tuple[GridMap, list[tuple[float, float]]]:
+def create_map(resolution: float, width: float, height: float, map_num: int, num_walls: int, robot_radius: float, extra_walls: list[tuple[float, float]]) -> tuple[GridMap, list[tuple[float, float]]]:
     gm = GridMap(resolution, width, height)
 
     minimum = list(gm.min_coord())
@@ -25,11 +25,11 @@ def create_map(resolution: float, width: float, height: float, map_num: int, num
                     [((minimum[0] + size[0] / 2 - resolution / 2, minimum[1]),
                       (minimum[0] + size[0] / 2 - resolution / 2, minimum[1] + size[1] / 2))],
                     [((minimum[0] + size[0] / 2 - resolution / 2, minimum[1]),
-                      (minimum[0] + size[0] / 2 - resolution / 2, minimum[1] + size[1] / 2 - (robot_radius + resolution / 2))), 
-                     ((minimum[0] + size[0] / 2 - resolution / 2, maximum[1]), 
+                      (minimum[0] + size[0] / 2 - resolution / 2, minimum[1] + size[1] / 2 - (robot_radius + resolution / 2))),
+                     ((minimum[0] + size[0] / 2 - resolution / 2, maximum[1]),
                       (minimum[0] + size[0] / 2 - resolution / 2, maximum[1] - size[1] / 2 + (robot_radius + resolution / 2)))],
                     [((minimum[0] + size[0] / 2 - resolution / 2, minimum[1]),
-                      (minimum[0] + size[0] / 2 - resolution / 2, minimum[1] + size[1] / 2 - robot_size)), 
+                      (minimum[0] + size[0] / 2 - resolution / 2, minimum[1] + size[1] / 2 - robot_size)),
                      ((minimum[0] + size[0] / 2 - resolution / 2, maximum[1]),
                       (minimum[0] + size[0] / 2 - resolution / 2, maximum[1] - size[1] / 2 + robot_size))],
                     [((minimum[0] + size[0] / 2 - resolution / 2, minimum[1] + 3 * robot_size),
@@ -41,6 +41,8 @@ def create_map(resolution: float, width: float, height: float, map_num: int, num
     # Have border for all maps
     walls = [(minimum, (minimum[0], maximum[1])), ((minimum[0], maximum[1]), maximum),
              (maximum, (maximum[0], minimum[1])), ((maximum[0], minimum[1]), minimum)]
+    if extra_walls:
+        walls.extend(extra_walls)
 
     if map_num < len(environments):
         print(f'Creating map #{map_num}, with resolution {resolution}')
