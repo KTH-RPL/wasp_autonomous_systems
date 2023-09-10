@@ -25,7 +25,7 @@ def move_closer(x: float, y: float, target_x: float, target_y: float, max_edge_l
     dist = math.hypot(d_x, d_y)
 
     if dist < max_edge_length:
-        return (closer_x, closer_y)
+        return (target_x, target_y)
 
     d_x /= dist
     d_y /= dist
