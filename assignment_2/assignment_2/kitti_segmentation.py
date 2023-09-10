@@ -45,8 +45,6 @@ class KittiSegmentation(Node):
             [image_sub, info_sub], 10, 0.05)
         ts.registerCallback(self.callback)
 
-        self._frustum = None
-
     def callback(self, image: Image, info: CameraInfo):
         # Convert from ROS to OpenCV
         cv_image = self._cv_bridge.imgmsg_to_cv2(image)
