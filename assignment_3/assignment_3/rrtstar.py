@@ -33,7 +33,31 @@ def move_closer(x: float, y: float, target_x: float, target_y: float, max_edge_l
     return (x + d_x, y + d_y)
 
 
-def rrt(gm: GridMap, x1: float, y1: float, x2: float, y2: float, iterations: int = 10000, max_edge_length: float = 2.0, early_stop: bool = False) -> tuple[list[tuple[float, float]], list[tuple[tuple[float, float], tuple[float, float]]]]:
+def neighbors(vertices: kdtree.KDNode, point: tuple[float, float], radius: float) -> list[tuple[float, float]]:
+    neighbors = []
+    for neighbor in vertices.search_nn_dist(point, radius):
+        neighbors.append(neighbor)
+    return neighbors
+
+# Rad = r
+# G(V,E) //Graph containing edges and vertices
+# For itr in range(0…n)
+#     Xnew = RandomPosition()
+#     If Obstacle(Xnew) == True, try again
+#     Xnearest = Nearest(G(V,E),Xnew)
+#     Cost(Xnew) = Distance(Xnew,Xnearest)
+#     Xbest,Xneighbors = findNeighbors(G(V,E),Xnew,Rad)
+#     Link = Chain(Xnew,Xbest)
+#     For x’ in Xneighbors
+#         If Cost(Xnew) + Distance(Xnew,x’) < Cost(x’)
+#             Cost(x’) = Cost(Xnew)+Distance(Xnew,x’)
+#             Parent(x’) = Xnew
+#             G += {Xnew,x’}
+#     G += Link
+# Return G
+
+
+def rrtstar(gm: GridMap, x1: float, y1: float, x2: float, y2: float, iterations: int = 10000, max_edge_length: float = 2.0, early_stop: bool = False) -> tuple[list[tuple[float, float]], set[tuple[tuple[float, float], tuple[float, float]]]]:
     start = (x1, y1)
     goal = (x2, y2)
 
@@ -61,8 +85,9 @@ def rrt(gm: GridMap, x1: float, y1: float, x2: float, y2: float, iterations: int
     vertices = kdtree.create([start])
 
     came_from = {}
+    distance = {start: 0}
 
-    edges = []
+    edges = set()
 
     for _ in range(iterations):
 
@@ -71,15 +96,33 @@ def rrt(gm: GridMap, x1: float, y1: float, x2: float, y2: float, iterations: int
         new = move_closer(*near, *rand, max_edge_length)
 
         if gm.collision_free(*near, *new):
+            cost = distance[near] + \
+                math.hypot(new[0] - near[0], new[1] - near[1])
+            distance[new] = cost
+
+            # Rewire
+            for neighbor in neighbors(vertices, new, max_edge_length):
+                if near == neighbor:
+                    continue
+
+                new_cost = cost + \
+                    math.hypot(neighbor[0] - new[0], neighbor[1] - new[1])
+
+                if new_cost < distance[neighbor]:
+                    edges.remove((came_from[neighbor], neighbor))
+                    distance[neighbor] = new_cost
+                    came_from[neighbor] = new
+                    edges.add((new, neighbor))
+
             came_from[new] = near
             vertices.add(new)
-            edges.append((near, new))
+            edges.add((near, new))
 
             if early_stop:
                 # Check if we can connect to goal
                 if math.hypot(goal[0] - new[0], goal[1] - new[1]) < max_edge_length and gm.collision_free(*new, *goal):
                     came_from[goal] = new
-                    edges.append((new, goal))
+                    edges.add((new, goal))
                     return reconstruct_path(came_from, goal), edges
 
     near = nearest(vertices, goal)
@@ -87,7 +130,7 @@ def rrt(gm: GridMap, x1: float, y1: float, x2: float, y2: float, iterations: int
     # Check if we can connect to goal
     if math.hypot(goal[0] - near[0], goal[1] - near[1]) < max_edge_length and gm.collision_free(*near, *goal):
         came_from[goal] = near
-        edges.append((near, goal))
+        edges.add((near, goal))
         return reconstruct_path(came_from, goal), edges
 
     return [], edges

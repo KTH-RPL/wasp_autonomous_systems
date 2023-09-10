@@ -20,6 +20,7 @@ from assignment_3.breadth_first import bf
 from assignment_3.dijkstra import dijkstra
 from assignment_3.astar import astar
 from assignment_3.rrt import rrt
+from assignment_3.rrtstar import rrtstar
 
 from math import ceil, hypot
 import time
@@ -46,6 +47,7 @@ class PathPlanner(Node):
         self._planner_eight_connectivity = None
         self._planner_sampling_iterations = None
         self._planner_sampling_max_edge_length = None
+        self._planner_sampling_stop_when_goal_found = None
 
         self._map_resolution = None
         self._map_width = None
@@ -66,13 +68,15 @@ class PathPlanner(Node):
             namespace='planner',
             parameters=[
                 ('algorithm', 'bf', ParameterDescriptor(
-                    description='Planner to use, supported: bf, dijkstra, astar, rrt')),
+                    description='Planner to use, supported: bf, dijkstra, astar, rrt, rrtstar')),
                 ('8_connectivity', False, ParameterDescriptor(
                     description='Connectivity for cell planning (i.e., bf, dijkstra, astar)')),
                 ('sampling_iterations', 10000, ParameterDescriptor(
-                    description='How many samples for sampling based planning (i.e., rrt)')),
+                    description='How many samples for sampling based planning (i.e., rrt, rrtstar)')),
                 ('sampling_max_edge_length', 0.5, ParameterDescriptor(
-                    description='Max edge length, in meter, for sampling based planning (i.e., rrt)'))
+                    description='Max edge length, in meter, for sampling based planning (i.e., rrt, rrtstar)')),
+                ('sampling_stop_when_goal_found', False, ParameterDescriptor(
+                    description='Stop sampling when goal has been found, for sampling based planning (i.e., rrt, rrtstar)'))
             ])
 
         self.declare_parameters(
@@ -127,6 +131,8 @@ class PathPlanner(Node):
                 self._planner_sampling_iterations = p.get_parameter_value().integer_value
             elif 'planner.sampling_max_edge_length' == p.name:
                 self._planner_sampling_max_edge_length = p.get_parameter_value().double_value
+            elif 'planner.sampling_stop_when_goal_found' == p.name:
+                self._planner_sampling_stop_when_goal_found = p.get_parameter_value().bool_value
 
             update_map = update_map or p.name.startswith('map.')
             update_plan = update_plan or update_map or p.name.startswith(
@@ -177,16 +183,18 @@ class PathPlanner(Node):
         elif 'rrt' == self._planner_algorithm:
             print(f'Using RRT planner')
             planner = rrt
-            pass
+        elif 'rrt*' == self._planner_algorithm or 'rrtstar' == self._planner_algorithm:
+            print(f'Using RRT* planner')
+            planner = rrtstar
         else:
             print(
                 f'Planner {self._planner_algorithm} not supported, please select one of: bf, dijkstra, astar, rrt')
             return
 
         st = time.time()
-        if 'rrt' == self._planner_algorithm:
+        if self._planner_algorithm.startswith('rrt'):
             path, search = planner(self._grid_map, *self._robot_position,
-                                   *self._goal_position, iterations=self._planner_sampling_iterations, max_edge_length=self._planner_sampling_max_edge_length)
+                                   *self._goal_position, iterations=self._planner_sampling_iterations, max_edge_length=self._planner_sampling_max_edge_length, early_stop=self._planner_sampling_stop_when_goal_found)
         else:
             path, search = planner(
                 self._grid_map, *self._robot_position, *self._goal_position, eight_connectivity=self._planner_eight_connectivity)
@@ -208,7 +216,7 @@ class PathPlanner(Node):
         stamp = header.stamp if header else self.get_clock().now().to_msg()
         self._path_pub.publish(to_ros_path(path, 'map', stamp))
 
-        if 'rrt' == self._planner_algorithm:
+        if self._planner_algorithm.startswith('rrt'):
             self.publish_search_tree(search)
         else:
             self.publish_search_cells(search)
