@@ -124,7 +124,7 @@ class PathPlanner(Node):
             elif 'map.inflate' == p.name:
                 self._map_inflate = p.get_parameter_value().bool_value
             elif 'planner.algorithm' == p.name:
-                self._planner_algorithm = p.get_parameter_value().string_value
+                self._planner_algorithm = p.get_parameter_value().string_value.lower()
             elif 'planner.8_connectivity' == p.name:
                 self._planner_eight_connectivity = p.get_parameter_value().bool_value
             elif 'planner.sampling_iterations' == p.name:
