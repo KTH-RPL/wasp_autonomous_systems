@@ -56,6 +56,7 @@ class PathPlanner(Node):
         self._map_id = None
         self._map_num_walls = None
         self._map_inflate = None
+        self._map_remove_wall_distance = 1.0
 
         self._robot_position = None
         self._goal_position = None
@@ -100,7 +101,9 @@ class PathPlanner(Node):
                 ('num_walls', 5, ParameterDescriptor(
                     description='Number of walls to create when randomly generating map (i.e., map id is not one of [0..4])')),
                 ('inflate', False, ParameterDescriptor(
-                    description='Whether to inflate the map'))
+                    description='Whether to inflate the map')),
+                ('remove_wall_distance', 1.0, ParameterDescriptor(
+                    description='Distance your point has to be from the endpoints of the wall to be removed, in meters'))
             ])
 
         self.create_subscription(
@@ -131,6 +134,8 @@ class PathPlanner(Node):
                 self._map_num_walls = p.get_parameter_value().integer_value
             elif 'map.inflate' == p.name:
                 self._map_inflate = p.get_parameter_value().bool_value
+            elif 'map.remove_wall_distance' == p.name:
+                self._map_remove_wall_distance = p.get_parameter_value().double_value
             elif 'planner.algorithm' == p.name:
                 self._planner_algorithm = p.get_parameter_value().string_value.lower()
             elif 'planner.8_connectivity' == p.name:
@@ -144,7 +149,8 @@ class PathPlanner(Node):
             elif 'planner.replan' == p.name:
                 update_plan = True
 
-            update_map = update_map or p.name.startswith('map.')
+            update_map = update_map or (p.name.startswith(
+                'map.') and 'map.remove_wall_distance' != p.name)
             update_plan = update_plan or update_map or p.name.startswith(
                 'planner.')
 
@@ -181,8 +187,31 @@ class PathPlanner(Node):
         m.color.r = 1.0
 
         if self._new_wall_start:
-            self._added_walls.append(
-                (self._new_wall_start, (msg.point.x, msg.point.y)))
+            new_wall = (self._new_wall_start, (msg.point.x, msg.point.y))
+
+            remove_idx = None
+            min_distance = 100000000
+            for idx, wall in enumerate(self._added_walls):
+                d_1 = hypot(wall[0][0] - new_wall[0][0],
+                            wall[0][1] - new_wall[0][1])
+                d_2 = hypot(wall[1][0] - new_wall[1][0],
+                            wall[1][1] - new_wall[1][1])
+                d_3 = hypot(wall[0][0] - new_wall[1][0],
+                            wall[0][1] - new_wall[1][1])
+                d_4 = hypot(wall[1][0] - new_wall[0][0],
+                            wall[1][1] - new_wall[0][1])
+
+                if (d_1 < self._map_remove_wall_distance and d_2 < self._map_remove_wall_distance) or (d_3 < self._map_remove_wall_distance and d_4 < self._map_remove_wall_distance):
+                    distance = min(d_1 + d_2, d_3 + d_4)
+                    if distance < min_distance:
+                        min_distance = distance
+                        remove_idx = idx
+
+            if None != remove_idx:
+                del self._added_walls[remove_idx]
+            else:
+                self._added_walls.append(new_wall)
+
             self.update_map(self._added_walls)
             self._new_wall_start = None
             m.action = Marker.DELETEALL
