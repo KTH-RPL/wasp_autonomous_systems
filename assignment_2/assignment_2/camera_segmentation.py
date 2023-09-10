@@ -12,7 +12,7 @@ from ultralytics import YOLO
 class CameraSegmentation(Node):
 
     def __init__(self):
-        super().__init__('yolo')
+        super().__init__('camera_segmentation')
 
         # Load a pretrained model (recommended for training)
         self._model = YOLO("yolov8n-seg.pt")
