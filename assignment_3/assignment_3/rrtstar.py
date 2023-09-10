@@ -39,23 +39,6 @@ def neighbors(vertices: kdtree.KDNode, point: tuple[float, float], radius: float
         neighbors.append(neighbor)
     return neighbors
 
-# Rad = r
-# G(V,E) //Graph containing edges and vertices
-# For itr in range(0…n)
-#     Xnew = RandomPosition()
-#     If Obstacle(Xnew) == True, try again
-#     Xnearest = Nearest(G(V,E),Xnew)
-#     Cost(Xnew) = Distance(Xnew,Xnearest)
-#     Xbest,Xneighbors = findNeighbors(G(V,E),Xnew,Rad)
-#     Link = Chain(Xnew,Xbest)
-#     For x’ in Xneighbors
-#         If Cost(Xnew) + Distance(Xnew,x’) < Cost(x’)
-#             Cost(x’) = Cost(Xnew)+Distance(Xnew,x’)
-#             Parent(x’) = Xnew
-#             G += {Xnew,x’}
-#     G += Link
-# Return G
-
 
 def rrtstar(gm: GridMap, x1: float, y1: float, x2: float, y2: float, iterations: int = 10000, max_edge_length: float = 2.0, early_stop: bool = False) -> tuple[list[tuple[float, float]], set[tuple[tuple[float, float], tuple[float, float]]]]:
     start = (x1, y1)
