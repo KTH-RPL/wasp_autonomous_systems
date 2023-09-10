@@ -177,7 +177,7 @@ class PathPlanner(Node):
         elif 'dijkstra' == self._planner_algorithm:
             print(f'Using Dijkstra planner')
             planner = dijkstra
-        elif 'astar' == self._planner_algorithm:
+        elif 'a*' == self._planner_algorithm or 'astar' == self._planner_algorithm:
             print(f'Using A* planner')
             planner = astar
         elif 'rrt' == self._planner_algorithm:
