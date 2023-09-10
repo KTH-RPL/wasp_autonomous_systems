@@ -8,7 +8,7 @@ Panels:
         - /Path1/Topic1
         - /Start1/Topic1
       Splitter Ratio: 0.5
-    Tree Height: 1079
+    Tree Height: 363
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -130,7 +130,7 @@ Visualization Manager:
       Enabled: true
       Name: Start
       Namespaces:
-        start: true
+        {}
       Topic:
         Depth: 5
         Durability Policy: Volatile
@@ -143,7 +143,7 @@ Visualization Manager:
       Enabled: true
       Name: Goal
       Namespaces:
-        goal: true
+        {}
       Topic:
         Depth: 5
         Durability Policy: Volatile
@@ -156,7 +156,7 @@ Visualization Manager:
       Enabled: true
       Name: Search
       Namespaces:
-        search: true
+        {}
       Topic:
         Depth: 5
         Durability Policy: Volatile
@@ -220,7 +220,7 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Scale: 27.871959686279297
+      Scale: 11.226564407348633
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz_default_plugins)
       X: 0
