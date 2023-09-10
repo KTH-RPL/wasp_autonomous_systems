@@ -86,11 +86,11 @@ class PathPlanner(Node):
                     description='Cell size of the grid map in meters')),
                 ('width', 40.0, ParameterDescriptor(
                     description='Width of the grid map in meters')),
-                ('height', 20.0, ParameterDescriptor(
+                ('height', 40.0, ParameterDescriptor(
                     description='Height of the grid map in meters')),
-                ('id', 1,
+                ('id', 0,
                  ParameterDescriptor(
-                     description='Map number [1..4] are manually created maps, 0 is randomly generate map')),
+                     description='Map number [0..4] are manually created maps, 0 is randomly generate map')),
                 ('num_walls', 5, ParameterDescriptor(
                     description='Number of walls to create when randomly generating map (i.e., map is 0)')),
                 ('inflate', False, ParameterDescriptor(
@@ -292,7 +292,7 @@ class PathPlanner(Node):
 
         for cell in cells:
             p = self._grid_map.coord(*cell)
-            m.points.append(Point(x=p[0], y=p[1]))
+            m.points.append(Point(x=p[0], y=p[1], z=-m.scale.z / 2 + 0.01))
 
         self._search_pub.publish(m)
 
@@ -309,8 +309,10 @@ class PathPlanner(Node):
         m.color.b = 0.7
 
         for edge in edges:
-            m.points.append(Point(x=edge[0][0], y=edge[0][1]))
-            m.points.append(Point(x=edge[1][0], y=edge[1][1]))
+            m.points.append(
+                Point(x=edge[0][0], y=edge[0][1], z=-m.scale.z / 2 + 0.01))
+            m.points.append(
+                Point(x=edge[1][0], y=edge[1][1], z=-m.scale.z / 2 + 0.01))
 
         self._search_pub.publish(m)
 
