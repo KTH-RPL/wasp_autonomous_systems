@@ -76,7 +76,9 @@ class PathPlanner(Node):
                 ('sampling_max_edge_length', 0.5, ParameterDescriptor(
                     description='Max edge length, in meter, for sampling based planning (i.e., rrt, rrtstar)')),
                 ('sampling_stop_when_goal_found', False, ParameterDescriptor(
-                    description='Stop sampling when goal has been found, for sampling based planning (i.e., rrt, rrtstar)'))
+                    description='Stop sampling when goal has been found, for sampling based planning (i.e., rrt, rrtstar)')),
+                ('Resample', False, ParameterDescriptor(
+                    description='Toggle to resample (resamples every time this changes), for sampling based planning (i.e., rrt, rrtstar)'))
             ])
 
         self.declare_parameters(
@@ -133,6 +135,8 @@ class PathPlanner(Node):
                 self._planner_sampling_max_edge_length = p.get_parameter_value().double_value
             elif 'planner.sampling_stop_when_goal_found' == p.name:
                 self._planner_sampling_stop_when_goal_found = p.get_parameter_value().bool_value
+            elif 'planner.resample' == p.name:
+                update_plan = True
 
             update_map = update_map or p.name.startswith('map.')
             update_plan = update_plan or update_map or p.name.startswith(
