@@ -27,13 +27,10 @@ def move_closer(x: float, y: float, target_x: float, target_y: float, max_edge_l
     if dist < max_edge_length:
         return (target_x, target_y)
 
-    d_x /= dist
-    d_y /= dist
+    d_x *= max_edge_length / dist
+    d_y *= max_edge_length / dist
 
-    closer_x = d_x * max_edge_length
-    closer_y = d_y * max_edge_length
-
-    return (closer_x, closer_y)
+    return (x + d_x, y + d_y)
 
 
 def rrt(gm: GridMap, x1: float, y1: float, x2: float, y2: float, iterations: int = 10000, max_edge_length: float = 2.0) -> tuple[list[tuple[float, float]], list[tuple[tuple[float, float], tuple[float, float]]]]:
@@ -75,7 +72,7 @@ def rrt(gm: GridMap, x1: float, y1: float, x2: float, y2: float, iterations: int
         if gm.collision_free(*near, *new):
             came_from[new] = near
             vertices.add(new)
-            edges.append((near, (new[0], new[1])))
+            edges.append((near, new))
 
             # # Check if we can connect to goal
             # if gm.collision_free(*new, *goal):
@@ -86,9 +83,9 @@ def rrt(gm: GridMap, x1: float, y1: float, x2: float, y2: float, iterations: int
     near = nearest(vertices, goal)
 
     # Check if we can connect to goal
-    if gm.collision_free(*near, *goal):
+    if math.hypot(goal[0] - near[0], goal[1] - near[1]) < max_edge_length and gm.collision_free(*near, *goal):
         came_from[goal] = near
-        edges.append(((near[0], near[1]), goal))
+        edges.append((near, goal))
         return reconstruct_path(came_from, goal), edges
 
     return [], edges

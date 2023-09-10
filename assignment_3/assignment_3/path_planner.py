@@ -71,7 +71,7 @@ class PathPlanner(Node):
                     description='Connectivity for cell planning (i.e., bf, dijkstra, astar)')),
                 ('sampling_iterations', 10000, ParameterDescriptor(
                     description='How many samples for sampling based planning (i.e., rrt)')),
-                ('sampling_max_edge_length', 2.0, ParameterDescriptor(
+                ('sampling_max_edge_length', 0.5, ParameterDescriptor(
                     description='Max edge length, in meter, for sampling based planning (i.e., rrt)'))
             ])
 
@@ -186,7 +186,7 @@ class PathPlanner(Node):
         st = time.time()
         if 'rrt' == self._planner_algorithm:
             path, search = planner(self._grid_map, *self._robot_position,
-                                   *self._goal_position, iterations=self._planner_sampling_iterations)
+                                   *self._goal_position, iterations=self._planner_sampling_iterations, max_edge_length=self._planner_sampling_max_edge_length)
         else:
             path, search = planner(
                 self._grid_map, *self._robot_position, *self._goal_position, eight_connectivity=self._planner_eight_connectivity)
