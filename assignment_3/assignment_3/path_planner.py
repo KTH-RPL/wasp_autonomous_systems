@@ -90,9 +90,9 @@ class PathPlanner(Node):
                     description='Height of the grid map in meters')),
                 ('id', 0,
                  ParameterDescriptor(
-                     description='Map number [0..4] are manually created maps, 0 is randomly generate map')),
+                     description='Map id [0..4] are manually created maps, other are randomly generate maps')),
                 ('num_walls', 5, ParameterDescriptor(
-                    description='Number of walls to create when randomly generating map (i.e., map is 0)')),
+                    description='Number of walls to create when randomly generating map (i.e., map id is not one of [0..4])')),
                 ('inflate', False, ParameterDescriptor(
                     description='Whether to inflate the map'))
             ])
@@ -138,7 +138,7 @@ class PathPlanner(Node):
             update_plan = update_plan or update_map or p.name.startswith(
                 'planner.')
 
-        if self._map_resolution and self._map_width and self._map_height and self._map_id and self._map_num_walls and None != self._map_inflate and self._robot_radius:
+        if self._map_resolution and self._map_width and self._map_height and None != self._map_id and self._map_num_walls and None != self._map_inflate and self._robot_radius:
             if update_map:
                 self.update_map()
 
