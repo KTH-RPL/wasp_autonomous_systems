@@ -5,7 +5,7 @@ from glob import glob
 package_name = 'assignment_3'
 data_files = []
 data_files.append(('share/ament_index/resource_index/packages', ['resource/' + package_name]))
-data_files.append((os.path.join('share', package_name, 'launch'), glob(os.path.join('launch', '*launch.[pxy][yma]*'))))
+# data_files.append((os.path.join('share', package_name, 'launch'), glob(os.path.join('launch', '*launch.[pxy][yma]*'))))
 data_files.append(('share/' + package_name + '/rviz', ['rviz/planning.rviz']))
 data_files.append(('share/' + package_name, ['package.xml']))
 
