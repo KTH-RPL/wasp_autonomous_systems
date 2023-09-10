@@ -138,7 +138,7 @@ class PathPlanner(Node):
             update_plan = update_plan or update_map or p.name.startswith(
                 'planner.')
 
-        if self._map_resolution and self._map_width and self._map_height and None != self._map_id and self._map_num_walls and None != self._map_inflate and self._robot_radius:
+        if self._map_resolution and self._map_width and self._map_height and None != self._map_id and None != self._map_num_walls and None != self._map_inflate and self._robot_radius:
             if update_map:
                 self.update_map()
 
