@@ -24,24 +24,23 @@ class AltitudePID(Node):
         self.create_subscription(
             PointStamped, '/mavic_2_pro/gps', self.gps_callback, 10)
 
-        self._previous_error = 0
-        self._previous_z = 0
-        self._integral = 0
         self._previous_time = None
+        self._integral = 0
+        self._previous_z = 0
 
     def gps_callback(self, msg: PointStamped):
         # The control signal message
         u = Thrust()
         u.header.stamp = msg.header.stamp
 
+        # Initialize varaible that allow us to calculate deltas in time and z
         if not self._previous_time:
             self._previous_time = Time.from_msg(msg.header.stamp)
+            self._previous_z = msg.point.z
             return
 
         time = Time.from_msg(msg.header.stamp)
         dt = (time - self._previous_time).nanoseconds / 10**9
-        self._previous_time = time
-        self._previous_z = msg.point.z
 
         r = self.get_parameter(
             'r').get_parameter_value().double_value
@@ -80,7 +79,9 @@ class AltitudePID(Node):
         thrust = u_feedforward + kp * proportional + \
             ki * self._integral + kd * derivative
         
-        self._previous_error = error
+        # Store previous values for time and z to calculate dt and dz/dt respectively
+        self._previous_time = time
+        self._previous_z = msg.point.z
 
         # We are treatinh the drone as a single-input single output system but
         # keep in mind that there are four input, the speed of each motor m1-m4
