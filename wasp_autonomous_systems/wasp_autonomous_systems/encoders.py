@@ -35,8 +35,6 @@ class EncoderPublisher(Node):
 
         self._enc.encoder_left = left
         self._enc.encoder_right = right
-        self._enc.delta_time_left = delta.nanoseconds / 1000000.0
-        self._enc.delta_time_right = delta.nanoseconds / 1000000.0
 
         self._pub.publish(self._enc)
 
