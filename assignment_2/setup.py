@@ -30,6 +30,7 @@ setup(
             'odometry = assignment_2.odometry:main',
             'collision_detection = assignment_2.collision_detection:main',
             'kitti_segmentation = assignment_2.kitti_segmentation:main',
+            'kitti_segmentation_extra = assignment_2.kitti_segmentation_extra:main',
             'camera_segmentation = assignment_2.camera_segmentation:main'
         ],
     },
