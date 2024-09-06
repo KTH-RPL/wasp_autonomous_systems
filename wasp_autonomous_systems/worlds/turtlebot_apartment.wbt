@@ -90,6 +90,7 @@ WorldInfo {
   ]
   title "Complete apartment including two bedrooms, one bathroom, one restroom, stairs and a balcony"
   basicTimeStep 16
+  FPS 30
 }
 Viewpoint {
   orientation -0.1119626265841257 0.9920963074853238 0.056650568597051615 1.341062144783736

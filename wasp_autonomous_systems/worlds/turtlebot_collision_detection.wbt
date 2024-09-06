@@ -7,6 +7,7 @@ EXTERNPROTO "../resource/TurtleBot3Burger.proto"
 
 WorldInfo {
   basicTimeStep 16
+  FPS 30
 }
 Viewpoint {
   orientation -0.2094 0.659005 0.722402 1.05216
