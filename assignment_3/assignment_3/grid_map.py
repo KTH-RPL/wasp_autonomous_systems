@@ -99,7 +99,7 @@ class GridMap(Node):
         return min_c[0] <= x <= max_c[0] and min_c[1] <= y <= max_c[1]
 
     def collision_free(self, x1: float, y1: float, x2: float, y2: float) -> bool:
-        """Returns `true` if the straight line from `[x1, y1]` (including) to `[x2, y2]` (including) is collision free, `false` otherwise."""
+        """Returns `true` if the straight line from `(x1, y1)` (including) to `(x2, y2)` (including) is collision free, `false` otherwise."""
         if not self.euclidean_inside(x1, y1) or not self.euclidean_inside(x2, y2):
             return False
 
@@ -138,7 +138,7 @@ class GridMap(Node):
         return True
     
     def cells_along_line_segment(self, x1: float, y1: float, x2: float, y2: float) -> list[tuple[int, int]]:
-        """Returns the cells along the straight line from `[x1, y1]` (including) to `[x2, y2]` (including)"""
+        """Returns the cells along the straight line from `(x1, y1)` (including) to `(x2, y2)` (including)"""
 
         start = self.cell(x1, y1)
         goal = self.cell(x2, y2)
