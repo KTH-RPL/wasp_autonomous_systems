@@ -23,28 +23,28 @@ class GridMap(Node):
         self._data = np.full((self._height, self._width), 0, dtype=np.int8)
 
     def __getitem__(self, cell: tuple[int, int]) -> int:
-        """Return the value of the cell at (x, y), (Free: 0, Occupied: other).
+        """Returns the value of the cell at `[x, y]`, (Free: 0, Occupied: other).
 
-        Does _not_ perform any bounds checking! Use 'inside(x, y)' for that.
+        Does _not_ perform any bounds checks! Use `inside(x, y)` for that.
         """
         x, y = cell
         return self._data[y][x]
 
     def __setitem__(self, cell: tuple[int, int], value: int):
-        """Set the value of the cell at (x, y), (Free: 0, Occupied: other).
+        """Sets the value of the cell at `[x, y]`, (Free: 0, Occupied: other).
 
-        Does _not_ perform any bounds checking! Use 'inside(x, y)' for that.
+        Does _not_ perform any bounds checks! Use `inside(x, y)` for that.
         """
         x, y = cell
         self._data[y][x] = value
 
     def free(self, x: int, y: int) -> bool:
-        """Returns whether the cell [x, y] is free (i.e., is 0)"""
+        """Returns `true` if the cell `[x, y]` is free (i.e., is 0), `false` otherwise."""
         return 0 == self[x, y]
 
     @property
     def resolution(self):
-        """Map resolution [m/cell]"""
+        """Map resolution [meter/cell]"""
         return self._resolution
 
     @property
@@ -59,84 +59,121 @@ class GridMap(Node):
 
     def euclidean_width(self):
         """Map width in meters"""
-        return self.width / self.resolution
+        return self.width * self.resolution
 
     def euclidean_height(self):
         """Map height in meters"""
-        return self.height / self.resolution
+        return self.height * self.resolution
 
     @property
     def origin(self):
+        """Origin of the map."""
         return self._origin
 
     def cell(self, x: float, y: float) -> tuple[int, int]:
-        """Converts an Euclidean coordinate to a grid cell."""
-        return (floor((x - self._origin[0]) // self.resolution),
-                floor((y - self._origin[1]) // self.resolution))
+        """Converts a Euclidean coordinate `(x, y)` to a grid cell."""
+        return (floor((x - self._origin[0]) / self.resolution),
+                floor((y - self._origin[1]) / self.resolution))
 
     def coord(self, x: int, y: int) -> tuple[float, float]:
-        """Converts a grid cell to en Euclidean coordinate.
-
-        The center of the cell is returned.
-        """
-        return (x * self.resolution + self._origin[0] + self.resolution / 2,
-                y * self.resolution + self._origin[1] + self.resolution / 2)
+        """Converts the grid cell `[x, y]` to a Euclidean coordinate."""
+        return ((x + 0.5) * self.resolution + self._origin[0],
+                (y + 0.5) * self.resolution + self._origin[1])
 
     def min_coord(self) -> tuple[float, float]:
-        """Minimum Euclidean coordinate that the grid map covers"""
-        t = self.coord(0, 0)
-        return (t[0] - self.resolution / 2, t[1] - self.resolution / 2)
+        """Returns the minimum Euclidean coordinate that the grid covers."""
+        return self._origin
 
     def max_coord(self) -> tuple[float, float]:
-        """Maximum Euclidean coordinate that the grid map covers"""
-        t = self.coord(self.width - 1, self.height - 1)
-        eps = 0.0001
-        return (t[0] - eps + self.resolution / 2, t[1] - eps + self.resolution / 2)
+        """Returns the maximum Euclidean coordinate that the grid covers."""
+        return (self._origin[0] + self.euclidean_width(), self._origin[1] + self.euclidean_height())
 
     def inside(self, x: int, y: int) -> bool:
-        """Return whether a cell is inside the grid."""
+        """Returns `true` if the cell `[x, y]` is inside the grid, `false` otherwise."""
         return 0 <= x < self.width and 0 <= y < self.height
 
+    def euclidean_inside(self, x: float, y: float) -> bool:
+        """Returns `true` if the Euclidean coordinate `(x, y)` is inside the grid, `false` otherwise."""
+        min_c = self.min_coord()
+        max_c = self.max_coord()
+        return min_c[0] <= x <= max_c[0] and min_c[1] <= y <= max_c[1]
+
     def collision_free(self, x1: float, y1: float, x2: float, y2: float) -> bool:
-        """"""
-
-        return self.inside(*self.cell(x1, y1)) and self.inside(*self.cell(x2, y2)) and all(self.free(*cell) for cell in self.cells_along_line_segment(x1, y1, x2, y2))
-
-    def cells_along_line_segment(self, x1: float, y1: float, x2: float, y2: float) -> list[tuple[int, int]]:
-        """"""
+        """Returns `true` if the straight line from `[x1, y1]` (including) to `[x2, y2]` (including) is collision free, `false` otherwise."""
+        if not self.euclidean_inside(x1, y1) or not self.euclidean_inside(x2, y2):
+            return False
 
         start = self.cell(x1, y1)
         goal = self.cell(x2, y2)
 
         if start == goal:
-            return [start] if self.inside(*start) else []
+            return self.free(*start)
+
+        tmp = self.coord(*start)
+        border = (tmp[0] - x1, tmp[1] - y1)
 
         direction = [x2 - x1, y2 - y1]
-
+        dist = hypot(*direction)
+        direction[0] /= dist
+        direction[1] /= dist
         step = (int(sign(direction[0])), int(sign(direction[1])))
-        delta = tuple(step[i] * self.resolution / direction[i] if step[i] else float(
+
+        t_max = [(border[i] + sign(direction[i]) * self.resolution / 2) /
+                 direction[i] if 0 != step[i] else float('inf') for i in (0, 1)]
+
+        t_delta = tuple(self.resolution / fabs(direction[i]) if 0 != step[i] else float(
             'inf') for i in (0, 1))
 
-        p = (x1, y1)
+        steps = sum(
+            max(0, ceil((dist - t_max[i]) / t_delta[i])) if 0 != step[i] else 0 for i in (0, 1))
 
-        t_max = [float('inf'), float('inf')]
-        for i in (0, 1):
-            if 0 < step[i]:
-                t_max[i] = delta[i] * (1 - p[i] + floor(p[i]))
-            elif 0 > step[i]:
-                t_max[i] = delta[i] * (p[i] - floor(p[i]))
-
-        cells = [start] if self.inside(*start) else []
         cur = list(start)
-        while True:
+        for _ in range(steps):
             dim = 0 if t_max[0] <= t_max[1] else 1
+            t_max[dim] += t_delta[dim]
             cur[dim] += step[dim]
-            t_max[dim] += delta[dim]
-            if self.inside(*cur):
-                cells.append((cur[0], cur[1]))
+            if not self.free(*cur):
+                return False
 
-            if 1 < t_max[0] and 1 < t_max[1]:
-                break
+        return True
+    
+    def cells_along_line_segment(self, x1: float, y1: float, x2: float, y2: float) -> list[tuple[int, int]]:
+        """Returns the cells along the straight line from `[x1, y1]` (including) to `[x2, y2]` (including)"""
+
+        start = self.cell(x1, y1)
+        goal = self.cell(x2, y2)
+
+        if not self.inside(*start) or not self.inside(*goal):
+            return []
+
+        if start == goal:
+            return [start]
+
+        tmp = self.coord(*start)
+        border = (tmp[0] - x1, tmp[1] - y1)
+
+        direction = [x2 - x1, y2 - y1]
+        dist = hypot(*direction)
+        direction[0] /= dist
+        direction[1] /= dist
+        step = (int(sign(direction[0])), int(sign(direction[1])))
+
+        t_max = [(border[i] + sign(direction[i]) * self.resolution / 2) /
+                 direction[i] if step[i] else float('inf') for i in (0, 1)]
+
+        t_delta = tuple(self.resolution / fabs(direction[i]) if step[i] else float(
+            'inf') for i in (0, 1))
+
+        steps = sum(
+            max(0, ceil((dist - t_max[i]) / t_delta[i])) if step[i] else 0 for i in (0, 1))
+
+        cells = [start]
+        for _ in range(steps):
+            dim = 0 if t_max[0] <= t_max[1] else 1
+            t_max[dim] += t_delta[dim]
+            last = list(cells[-1])
+            last[dim] += step[dim]
+            cells.append((last[0], last[1]))
 
         return cells
 
