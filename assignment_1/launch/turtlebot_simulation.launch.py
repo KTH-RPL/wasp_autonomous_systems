@@ -43,15 +43,15 @@ def generate_launch_description():
             'gui': gui
     }.items())
 
-    rviz = Node(
-        package='rviz2',
-        namespace='',
-        executable='rviz2',
-        name='rviz2',
-        parameters=[{'use_sim_time': use_sim_time}],
-        arguments=[
-            '-d', [os.path.join(pkg_dir, 'rviz', 'turtlebot_simulation.rviz')]]
-    )
+    # rviz = Node(
+    #     package='rviz2',
+    #     namespace='',
+    #     executable='rviz2',
+    #     name='rviz2',
+    #     parameters=[{'use_sim_time': use_sim_time}],
+    #     arguments=[
+    #         '-d', [os.path.join(pkg_dir, 'rviz', 'turtlebot_simulation.rviz')]]
+    # )
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -70,5 +70,5 @@ def generate_launch_description():
             description='Enable or disable Webots GUI (if you have a slow computer it can be useful to turn this off)'
         ),
         sim,
-        rviz
+        # rviz
     ])
