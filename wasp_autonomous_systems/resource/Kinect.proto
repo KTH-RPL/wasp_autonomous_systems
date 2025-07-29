@@ -50,7 +50,7 @@ PROTO Kinect [
           roughness 0.2
           baseColorMap ImageTexture {
             url [
-              "textures/kinect_tilt_motor.jpg"
+              "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/devices/microsoft/protos/textures/kinect_tilt_motor.jpg"
             ]
           }
         }
@@ -95,12 +95,12 @@ PROTO Kinect [
                 roughness 0.1
                 baseColorMap ImageTexture {
                   url [
-                    "textures/kinect.jpg"
+                    "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/devices/microsoft/protos/textures/kinect.jpg"
                   ]
                 }
                 roughnessMap ImageTexture {
                   url [
-                    "textures/kinect_roughness.jpg"
+                    "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/devices/microsoft/protos/textures/kinect_roughness.jpg"
                   ]
                 }
               }

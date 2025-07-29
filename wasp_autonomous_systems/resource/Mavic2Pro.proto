@@ -37,7 +37,7 @@ Robot {
         roughness 0.8
       }
       geometry Mesh {
-        url "../meshes/body.obj"
+        url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/body.obj"
       }
     }
     Shape {
@@ -45,7 +45,7 @@ Robot {
         roughness 0.5
       }
       geometry Mesh {
-        url "../meshes/body_metal_parts.obj"
+        url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/body_metal_parts.obj"
       }
     }
     Shape {
@@ -56,7 +56,7 @@ Robot {
         metalness 0
       }
       geometry Mesh {
-        url "../meshes/body_lenses.obj"
+        url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/body_lenses.obj"
       }
     }
     DEF COMPASS Compass {
@@ -84,7 +84,7 @@ Robot {
           Shape {
             appearance USE METAL_APPEARANCE
             geometry Mesh {
-              url "../meshes/helix_a_joint.obj"
+              url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/helix_a_joint.obj"
             }
           }
           Shape {
@@ -92,7 +92,7 @@ Robot {
               baseColor 0.1 0.1 0.1
             }
             geometry Mesh {
-              url "../meshes/helix_a_plates.obj"
+              url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/helix_a_plates.obj"
             }
           }
           Pose {
@@ -102,7 +102,7 @@ Robot {
                 appearance PBRAppearance {
                   baseColor 0.5 0.5 0.5
                   baseColorMap ImageTexture {
-                    url "../meshes/fast_helix.png"
+                    url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/fast_helix.png"
                   }
                   metalness 0
                   roughness 0
@@ -140,13 +140,13 @@ Robot {
           Shape {
             appearance USE GREY_PLASTIC
             geometry Mesh {
-              url "../meshes/helix_a.obj"
+              url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/helix_a.obj"
             }
           }
           Shape {
             appearance USE METAL_APPEARANCE
             geometry Mesh {
-              url "../meshes/helix_a_joint.obj"
+              url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/helix_a_joint.obj"
             }
           }
           Shape {
@@ -154,7 +154,7 @@ Robot {
               baseColor 0.1 0.1 0.1
             }
             geometry Mesh {
-              url "../meshes/helix_a_plates.obj"
+              url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/helix_a_plates.obj"
             }
           }
         ]
@@ -204,7 +204,7 @@ Robot {
           Shape {
             appearance USE METAL_APPEARANCE
             geometry Mesh {
-              url "../meshes/helix_b_joint.obj"
+              url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/helix_b_joint.obj"
             }
           }
           Shape {
@@ -212,7 +212,7 @@ Robot {
               baseColor 0.1 0.1 0.1
             }
             geometry Mesh {
-              url "../meshes/helix_b_plates.obj"
+              url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/helix_b_plates.obj"
             }
           }
           Pose {
@@ -222,7 +222,7 @@ Robot {
                 appearance PBRAppearance {
                   baseColor 0.5 0.5 0.5
                   baseColorMap ImageTexture {
-                    url "../meshes/fast_helix.png"
+                    url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/fast_helix.png"
                   }
                   metalness 0
                   roughness 0
@@ -262,13 +262,13 @@ Robot {
               baseColor 0.5 0.5 0.5
             }
             geometry Mesh {
-              url "../meshes/helix_b.obj"
+              url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/helix_b.obj"
             }
           }
           Shape {
             appearance USE METAL_APPEARANCE
             geometry Mesh {
-              url "../meshes/helix_b_joint.obj"
+              url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/helix_b_joint.obj"
             }
           }
           Shape {
@@ -276,7 +276,7 @@ Robot {
               baseColor 0.1 0.1 0.1
             }
             geometry Mesh {
-              url "../meshes/helix_b_plates.obj"
+              url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/helix_b_plates.obj"
             }
           }
         ]
@@ -326,7 +326,7 @@ Robot {
           Shape {
             appearance USE METAL_APPEARANCE
             geometry Mesh {
-              url "../meshes/helix_a_joint.obj"
+              url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/helix_a_joint.obj"
             }
           }
           Shape {
@@ -334,7 +334,7 @@ Robot {
               baseColor 0.1 0.1 0.1
             }
             geometry Mesh {
-              url "../meshes/helix_a_plates.obj"
+              url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/helix_a_plates.obj"
             }
           }
           Pose {
@@ -344,7 +344,7 @@ Robot {
                 appearance PBRAppearance {
                   baseColor 0.5 0.5 0.5
                   baseColorMap ImageTexture {
-                    url "../meshes/fast_helix.png"
+                    url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/fast_helix.png"
                   }
                   metalness 0
                   roughness 0
@@ -384,13 +384,13 @@ Robot {
               baseColor 0.5 0.5 0.5
             }
             geometry Mesh {
-              url "../meshes/helix_a.obj"
+              url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/helix_a.obj"
             }
           }
           Shape {
             appearance USE METAL_APPEARANCE
             geometry Mesh {
-              url "../meshes/helix_a_joint.obj"
+              url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/helix_a_joint.obj"
             }
           }
           Shape {
@@ -398,7 +398,7 @@ Robot {
               baseColor 0.1 0.1 0.1
             }
             geometry Mesh {
-              url "../meshes/helix_a_plates.obj"
+              url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/helix_a_plates.obj"
             }
           }
         ]
@@ -453,7 +453,7 @@ Robot {
           Shape {
             appearance USE METAL_APPEARANCE
             geometry Mesh {
-              url "../meshes/camera_yaw.obj"
+              url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/camera_yaw.obj"
             }
           }
           DEF CAMERA_PITCH HingeJoint {
@@ -477,7 +477,7 @@ Robot {
                 Shape {
                   appearance USE METAL_APPEARANCE
                   geometry Mesh {
-                    url "../meshes/camera_pitch.obj"
+                    url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/camera_pitch.obj"
                   }
                 }
                 DEF CAMERA_ROLL HingeJoint {
@@ -501,13 +501,13 @@ Robot {
                       Shape {
                         appearance USE METAL_APPEARANCE
                         geometry Mesh {
-                          url "../meshes/camera_chassis.obj"
+                          url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/camera_chassis.obj"
                         }
                       }
                       Shape {
                         appearance USE GLASS
                         geometry Mesh {
-                          url "../meshes/camera_lens.obj"
+                          url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/camera_lens.obj"
                         }
                       }
                       DEF CAMERA_SLOT Pose {
@@ -573,7 +573,7 @@ Robot {
                 emissiveIntensity 50
               }
               geometry Mesh {
-                url "../meshes/front_led.obj"
+                url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/front_led.obj"
               }
             }
           ]
@@ -606,7 +606,7 @@ Robot {
                 emissiveIntensity 50
               }
               geometry Mesh {
-                url "../meshes/front_led.obj"
+                url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/front_led.obj"
               }
             }
           ]
@@ -643,7 +643,7 @@ Robot {
           Shape {
             appearance USE METAL_APPEARANCE
             geometry Mesh {
-              url "../meshes/helix_b_joint.obj"
+              url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/helix_b_joint.obj"
             }
           }
           Shape {
@@ -651,7 +651,7 @@ Robot {
               baseColor 0.1 0.1 0.1
             }
             geometry Mesh {
-              url "../meshes/helix_b_plates.obj"
+              url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/helix_b_plates.obj"
             }
           }
           Pose {
@@ -661,7 +661,7 @@ Robot {
                 appearance PBRAppearance {
                   baseColor 0.5 0.5 0.5
                   baseColorMap ImageTexture {
-                    url "../meshes/fast_helix.png"
+                    url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/fast_helix.png"
                   }
                   metalness 0
                   roughness 0
@@ -701,13 +701,13 @@ Robot {
               baseColor 0.5 0.5 0.5
             }
             geometry Mesh {
-              url "../meshes/helix_b.obj"
+              url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/helix_b.obj"
             }
           }
           Shape {
             appearance USE METAL_APPEARANCE
             geometry Mesh {
-              url "../meshes/helix_b_joint.obj"
+              url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/helix_b_joint.obj"
             }
           }
           Shape {
@@ -715,7 +715,7 @@ Robot {
               baseColor 0.1 0.1 0.1
             }
             geometry Mesh {
-              url "../meshes/helix_b_plates.obj"
+              url "https://raw.githubusercontent.com/cyberbotics/webots/refs/tags/R2025a/projects/robots/dji/mavic/protos/Mavic2Pro/meshes/helix_b_plates.obj"
             }
           }
         ]
