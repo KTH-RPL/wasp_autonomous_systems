@@ -50,7 +50,7 @@ PROTO Kinect [
           roughness 0.2
           baseColorMap ImageTexture {
             url [
-              "../meshes/kinect_tilt_motor.jpg"
+              "textures/kinect_tilt_motor.jpg"
             ]
           }
         }
@@ -95,12 +95,12 @@ PROTO Kinect [
                 roughness 0.1
                 baseColorMap ImageTexture {
                   url [
-                    "../meshes/kinect.jpg"
+                    "textures/kinect.jpg"
                   ]
                 }
                 roughnessMap ImageTexture {
                   url [
-                    "../meshes/kinect_roughness.jpg"
+                    "textures/kinect_roughness.jpg"
                   ]
                 }
               }
