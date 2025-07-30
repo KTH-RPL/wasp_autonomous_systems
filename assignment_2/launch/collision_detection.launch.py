@@ -47,15 +47,15 @@ def generate_launch_description():
     path = Node(package='wasp_autonomous_systems',
                 namespace='', executable='path')
 
-    rviz = Node(
-        package='rviz2',
-        namespace='',
-        executable='rviz2',
-        name='rviz2',
-        parameters=[{'use_sim_time': use_sim_time}],
-        arguments=[
-            '-d', [os.path.join(pkg_dir, 'rviz', 'collision_detection.rviz')]]
-    )
+    # rviz = Node(
+    #     package='rviz2',
+    #     namespace='',
+    #     executable='rviz2',
+    #     name='rviz2',
+    #     parameters=[{'use_sim_time': use_sim_time}],
+    #     arguments=[
+    #         '-d', [os.path.join(pkg_dir, 'rviz', 'collision_detection.rviz')]]
+    # )
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -75,5 +75,5 @@ def generate_launch_description():
         ),
         sim,
         path,
-        rviz
+        # rviz
     ])

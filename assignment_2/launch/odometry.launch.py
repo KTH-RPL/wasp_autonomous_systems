@@ -57,15 +57,15 @@ def launch_setup(context, *args, **kwargs):
             output="screen",
         ),
 
-        Node(
-            package='rviz2',
-            namespace='',
-            executable='rviz2',
-            name='rviz2',
-            parameters=[{'use_sim_time': loop}],
-            arguments=[
-                '-d', [os.path.join(pkg_dir, 'rviz', 'odometry.rviz')]]
-        )
+        # Node(
+        #     package='rviz2',
+        #     namespace='',
+        #     executable='rviz2',
+        #     name='rviz2',
+        #     parameters=[{'use_sim_time': loop}],
+        #     arguments=[
+        #         '-d', [os.path.join(pkg_dir, 'rviz', 'odometry.rviz')]]
+        # )
     ]
 
 
