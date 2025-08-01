@@ -19,12 +19,15 @@
 import os
 import launch
 from launch.substitutions import LaunchConfiguration
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_driver.webots_controller import WebotsController
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions.path_join_substitution import PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
@@ -41,7 +44,8 @@ def generate_launch_description():
         gui=gui
     )
 
-    robot_description_path = os.path.join(wasp_dir, 'urdf', 'mavic_webots.urdf')
+    robot_description_path = os.path.join(
+        wasp_dir, 'urdf', 'mavic_webots.urdf')
     mavic_driver = WebotsController(
         robot_name='mavic_2_pro',
         parameters=[
@@ -50,6 +54,13 @@ def generate_launch_description():
         ],
         respawn=True
     )
+
+    # Foxglove
+    use_foxglove = LaunchConfiguration("foxglove", default=False)
+    foxglove = IncludeLaunchDescription(PythonLaunchDescriptionSource([PathJoinSubstitution([
+        FindPackageShare('wasp_autonomous_systems'), 'launch', 'foxglove_bridge_launch.xml'])]),
+        launch_arguments={'use_sim_time': use_sim_time}.items(),
+        condition=launch.conditions.IfCondition(use_foxglove))
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -67,9 +78,16 @@ def generate_launch_description():
             default_value='true',
             description='Enable or disable Webots GUI (if you have a slow computer it can be useful to turn this off)'
         ),
+        DeclareLaunchArgument(
+            'foxglove',
+            default_value='false',
+            description='Enable or disable Foxglove'
+        ),
+        
         webots,
         webots._supervisor,
         mavic_driver,
+        foxglove,
 
         # This action will kill all nodes once the Webots simulation has exited
         launch.actions.RegisterEventHandler(

@@ -35,7 +35,6 @@ def generate_launch_description():
     mode = LaunchConfiguration('mode')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
     gui = LaunchConfiguration('gui', default='true')
-    use_rviz = LaunchConfiguration("rviz", default=True)
     use_foxglove = LaunchConfiguration("foxglove", default=True)
 
     sim = IncludeLaunchDescription(PythonLaunchDescriptionSource([PathJoinSubstitution([
@@ -48,8 +47,8 @@ def generate_launch_description():
     }.items())
 
     # RViz
+    use_rviz = LaunchConfiguration("rviz", default=False)
     rviz_config = os.path.join(pkg_dir, "rviz", "turtlebot_simulation.rviz")
-
     rviz = Node(
         package='rviz2',
         namespace='',
@@ -61,14 +60,10 @@ def generate_launch_description():
     )
 
     # Foxglove
+    use_foxglove = LaunchConfiguration("foxglove", default=False)
     foxglove = IncludeLaunchDescription(PythonLaunchDescriptionSource([PathJoinSubstitution([
         FindPackageShare('wasp_autonomous_systems'), 'launch', 'foxglove_bridge_launch.xml'])]),
-        launch_arguments={
-            'world': world,
-            'mode': mode,
-            'use_sim_time': use_sim_time,
-            'gui': gui
-    }.items(),
+        launch_arguments={'use_sim_time': use_sim_time}.items(),
         condition=launch.conditions.IfCondition(use_foxglove))
 
     return LaunchDescription([
@@ -89,12 +84,12 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'rviz',
-            default_value='true',
+            default_value='false',
             description='Enable or disable RViz'
         ),
         DeclareLaunchArgument(
             'foxglove',
-            default_value='true',
+            default_value='false',
             description='Enable or disable Foxglove'
         ),
         sim,

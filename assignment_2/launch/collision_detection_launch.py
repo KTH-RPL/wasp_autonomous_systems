@@ -17,6 +17,7 @@
 """Launch Webots TurtleBot3 Burger driver."""
 
 import os
+import launch
 from launch_ros.substitutions import FindPackageShare
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
@@ -41,21 +42,32 @@ def generate_launch_description():
         launch_arguments={
             'world': world,
             'mode': mode,
+            'use_sim_time': use_sim_time,
             'gui': gui
     }.items())
 
     path = Node(package='wasp_autonomous_systems',
                 namespace='', executable='path')
 
-    # rviz = Node(
-    #     package='rviz2',
-    #     namespace='',
-    #     executable='rviz2',
-    #     name='rviz2',
-    #     parameters=[{'use_sim_time': use_sim_time}],
-    #     arguments=[
-    #         '-d', [os.path.join(pkg_dir, 'rviz', 'collision_detection.rviz')]]
-    # )
+    # RViz
+    use_rviz = LaunchConfiguration("rviz", default=False)
+    rviz_config = os.path.join(pkg_dir, "rviz", "collision_detection.rviz")
+    rviz = Node(
+        package='rviz2',
+        namespace='',
+        executable='rviz2',
+        name='rviz2',
+        parameters=[{'use_sim_time': use_sim_time}],
+        arguments=['-d', rviz_config],
+        condition=launch.conditions.IfCondition(use_rviz),
+    )
+
+    # Foxglove
+    use_foxglove = LaunchConfiguration("foxglove", default=False)
+    foxglove = IncludeLaunchDescription(PythonLaunchDescriptionSource([PathJoinSubstitution([
+        FindPackageShare('wasp_autonomous_systems'), 'launch', 'foxglove_bridge_launch.xml'])]),
+        launch_arguments={'use_sim_time': use_sim_time}.items(),
+        condition=launch.conditions.IfCondition(use_foxglove))
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -73,7 +85,18 @@ def generate_launch_description():
             default_value='true',
             description='Enable or disable Webots GUI (if you have a slow computer it can be useful to turn this off)'
         ),
+        DeclareLaunchArgument(
+            'rviz',
+            default_value='false',
+            description='Enable or disable RViz'
+        ),
+        DeclareLaunchArgument(
+            'foxglove',
+            default_value='false',
+            description='Enable or disable Foxglove'
+        ),
         sim,
         path,
-        # rviz
+        rviz,
+        foxglove
     ])
