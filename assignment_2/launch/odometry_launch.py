@@ -8,7 +8,7 @@ from launch.conditions import IfCondition, UnlessCondition
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, OpaqueFunction, IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from launch.launch_description_sources import XMLLaunchDescriptionSource
+from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 

@@ -25,7 +25,7 @@ from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_driver.webots_controller import WebotsController
-from launch.launch_description_sources import XMLLaunchDescriptionSource
+from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 
