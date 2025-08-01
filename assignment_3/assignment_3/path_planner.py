@@ -352,7 +352,8 @@ class PathPlanner(Node):
         m.ns = 'search'
         m.id = 0
         m.type = Marker.CUBE_LIST
-        m.scale.x = m.scale.y = m.scale.z = self._grid_map.resolution - 0.001
+        m.scale.x = m.scale.y = self._grid_map.resolution - 0.001
+        m.scale.z = 0.1
         m.color.a = 0.5
         m.color.r = 0.0
         m.color.g = 0.0
@@ -360,7 +361,7 @@ class PathPlanner(Node):
 
         for cell in cells:
             p = self._grid_map.coord(*cell)
-            m.points.append(Point(x=p[0], y=p[1], z=-m.scale.z / 2 + 0.01))
+            m.points.append(Point(x=p[0], y=p[1], z=0.0))
 
         self._search_pub.publish(m)
 
@@ -378,9 +379,9 @@ class PathPlanner(Node):
 
         for edge in edges:
             m.points.append(
-                Point(x=edge[0][0], y=edge[0][1], z=-m.scale.z / 2 + 0.01))
+                Point(x=edge[0][0], y=edge[0][1], z=0.0))
             m.points.append(
-                Point(x=edge[1][0], y=edge[1][1], z=-m.scale.z / 2 + 0.01))
+                Point(x=edge[1][0], y=edge[1][1], z=0.0))
 
         self._search_pub.publish(m)
 

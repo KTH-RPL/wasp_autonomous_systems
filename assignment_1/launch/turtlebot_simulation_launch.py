@@ -17,6 +17,7 @@
 """Launch Webots TurtleBot3 Burger driver."""
 
 import os
+import launch
 from launch_ros.substitutions import FindPackageShare
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
@@ -34,24 +35,41 @@ def generate_launch_description():
     mode = LaunchConfiguration('mode')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
     gui = LaunchConfiguration('gui', default='true')
+    use_rviz = LaunchConfiguration("rviz", default=True)
+    use_foxglove = LaunchConfiguration("foxglove", default=True)
 
     sim = IncludeLaunchDescription(PythonLaunchDescriptionSource([PathJoinSubstitution([
-        FindPackageShare('wasp_autonomous_systems'), 'launch', 'webots_turtlebot_rgbd.launch.py'])]),
+        FindPackageShare('wasp_autonomous_systems'), 'launch', 'webots_turtlebot_rgbd_launch.py'])]),
         launch_arguments={
             'world': world,
             'mode': mode,
+            'use_sim_time': use_sim_time,
             'gui': gui
     }.items())
 
-    # rviz = Node(
-    #     package='rviz2',
-    #     namespace='',
-    #     executable='rviz2',
-    #     name='rviz2',
-    #     parameters=[{'use_sim_time': use_sim_time}],
-    #     arguments=[
-    #         '-d', [os.path.join(pkg_dir, 'rviz', 'turtlebot_simulation.rviz')]]
-    # )
+    # RViz
+    rviz_config = os.path.join(pkg_dir, "rviz", "turtlebot_simulation.rviz")
+
+    rviz = Node(
+        package='rviz2',
+        namespace='',
+        executable='rviz2',
+        name='rviz2',
+        parameters=[{'use_sim_time': use_sim_time}],
+        arguments=['-d', rviz_config],
+        condition=launch.conditions.IfCondition(use_rviz),
+    )
+
+    # Foxglove
+    foxglove = IncludeLaunchDescription(PythonLaunchDescriptionSource([PathJoinSubstitution([
+        FindPackageShare('wasp_autonomous_systems'), 'launch', 'foxglove_bridge_launch.xml'])]),
+        launch_arguments={
+            'world': world,
+            'mode': mode,
+            'use_sim_time': use_sim_time,
+            'gui': gui
+    }.items(),
+        condition=launch.conditions.IfCondition(use_foxglove))
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -69,6 +87,17 @@ def generate_launch_description():
             default_value='true',
             description='Enable or disable Webots GUI (if you have a slow computer it can be useful to turn this off)'
         ),
+        DeclareLaunchArgument(
+            'rviz',
+            default_value='true',
+            description='Enable or disable RViz'
+        ),
+        DeclareLaunchArgument(
+            'foxglove',
+            default_value='true',
+            description='Enable or disable Foxglove'
+        ),
         sim,
-        # rviz
+        rviz,
+        foxglove
     ])
