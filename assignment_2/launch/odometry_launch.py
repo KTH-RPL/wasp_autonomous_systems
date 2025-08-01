@@ -8,7 +8,7 @@ from launch.conditions import IfCondition, UnlessCondition
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, OpaqueFunction, IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.launch_description_sources import XMLLaunchDescriptionSource
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 
@@ -36,7 +36,7 @@ def launch_setup(context, *args, **kwargs):
 
     # Foxglove
     use_foxglove = LaunchConfiguration("foxglove", default=False)
-    foxglove = IncludeLaunchDescription(PythonLaunchDescriptionSource([PathJoinSubstitution([
+    foxglove = IncludeLaunchDescription(XMLLaunchDescriptionSource([PathJoinSubstitution([
         FindPackageShare('wasp_autonomous_systems'), 'launch', 'foxglove_bridge_launch.xml'])]),
         launch_arguments={'use_sim_time': loop}.items(),
         condition=launch.conditions.IfCondition(use_foxglove))

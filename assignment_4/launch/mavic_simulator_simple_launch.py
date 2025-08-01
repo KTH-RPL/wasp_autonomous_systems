@@ -25,7 +25,7 @@ from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_driver.webots_controller import WebotsController
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.launch_description_sources import XMLLaunchDescriptionSource
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 
@@ -57,7 +57,7 @@ def generate_launch_description():
 
     # Foxglove
     use_foxglove = LaunchConfiguration("foxglove", default=False)
-    foxglove = IncludeLaunchDescription(PythonLaunchDescriptionSource([PathJoinSubstitution([
+    foxglove = IncludeLaunchDescription(XMLLaunchDescriptionSource([PathJoinSubstitution([
         FindPackageShare('wasp_autonomous_systems'), 'launch', 'foxglove_bridge_launch.xml'])]),
         launch_arguments={'use_sim_time': use_sim_time}.items(),
         condition=launch.conditions.IfCondition(use_foxglove))

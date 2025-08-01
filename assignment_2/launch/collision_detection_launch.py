@@ -25,7 +25,7 @@ from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch import LaunchDescription
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.launch_description_sources import PythonLaunchDescriptionSource, XMLLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
 
 
@@ -64,7 +64,7 @@ def generate_launch_description():
 
     # Foxglove
     use_foxglove = LaunchConfiguration("foxglove", default=False)
-    foxglove = IncludeLaunchDescription(PythonLaunchDescriptionSource([PathJoinSubstitution([
+    foxglove = IncludeLaunchDescription(XMLLaunchDescriptionSource([PathJoinSubstitution([
         FindPackageShare('wasp_autonomous_systems'), 'launch', 'foxglove_bridge_launch.xml'])]),
         launch_arguments={'use_sim_time': use_sim_time}.items(),
         condition=launch.conditions.IfCondition(use_foxglove))
