@@ -319,12 +319,14 @@ TODO: Video showing the steps using Windows 11.
 
 We have tested the instructions and verified acceptable performance on the following platforms:
 
-| Type | OS | Arch | CPU | RAM&nbsp;&nbsp; | GPU | VM&nbsp;CPU(s) | VM&nbsp;RAM | VM&nbsp;Disk |
-| -------- | -------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- |
-| Desktop | Ubuntu 24.04 | x86-64 | Intel Core i7-8700K | 64 GB | Nvidia Titan X | 4 | 4 GB  | 10 GB |
-| Laptop | macOS 15 | AArch64 | Apple M3 | 16 GB | Apple M3 | 4 | 4 GB | 10 GB |
-| Desktop | Ubuntu 24.04 | x86-64 | AMD Ryzen 5 3600X | 32 GB | Nvidia GeForce GTX 1660 Super | 4 | 4 GB | 10 GB |
-| Laptop | Windows 10 | x86-64 | Intel Core i7-8550U | 16 GB | Nvidia GeForce MX150 | 4 | 4 GB | 10 GB |
-| Laptop | Ubuntu 24.04 | x86-64 | Intel Core i7-8550U | 16 GB | Nvidia GeForce MX150 | 4 | 4 GB | 10 GB |
-| Desktop | Windows 11 | x86-64 | Intel Core i7-6700K | 32 GB | Nvidia GeForce GTX 1650 | 4 | 4 GB | 10 GB |
-| Laptop | macOS 15 | x86-64 | Intel Core i | 16 GB | Intel Iris Plus Graphics | 4 | 4 GB | 10 GB |
+| Type | OS | Arch | CPU | RAM&nbsp;&nbsp; | GPU |
+| -------- | -------- | ------- | ------- | ------- | ------- |
+| Desktop | Ubuntu 24.04 | x86-64 | Intel Core i7-8700K | 64 GB | Nvidia Titan X |
+| Laptop | macOS 15 | AArch64 | Apple M3 | 16 GB | Apple M3 |
+| Desktop | Ubuntu 24.04 | x86-64 | AMD Ryzen 5 3600X | 32 GB | Nvidia GeForce GTX 1660 Super |
+| Laptop | Windows 10 | x86-64 | Intel Core i7-8550U | 16 GB | Nvidia GeForce MX150 |
+| Laptop | Ubuntu 24.04 | x86-64 | Intel Core i7-8550U | 16 GB | Nvidia GeForce MX150 |
+| Desktop | Windows 11 | x86-64 | Intel Core i7-6700K | 32 GB | Nvidia GeForce GTX 1650 |
+| Laptop | macOS 15 | x86-64 | Intel Core i | 16 GB | Intel Iris Plus Graphics |
+
+All were using a Multipass (VM) instance with _4_ CPUs, _4 GB_ of memory, and _10 GB_ of disk.
