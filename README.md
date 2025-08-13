@@ -350,6 +350,6 @@ We have tested the instructions and verified acceptable performance on the follo
 | Laptop | Windows 10 | x86-64 | Intel Core i7-8550U | 16 GB | Nvidia GeForce MX150 |
 | Laptop | Ubuntu 24.04 | x86-64 | Intel Core i7-8550U | 16 GB | Nvidia GeForce MX150 |
 | Desktop | Windows 11 | x86-64 | Intel Core i7-6700K | 32 GB | Nvidia GeForce GTX 1650 |
-| Laptop | macOS 15 | x86-64 | Intel Core i | 16 GB | Intel Iris Plus Graphics |
+| Laptop | macOS 15 | x86-64 | Intel Core i5 1038NG7 | 32 GB | Intel Iris Plus Graphics |
 
 All were using a Multipass (VM) instance with _4_ CPUs, _4 GB_ of memory, and _10 GB_ of disk.
