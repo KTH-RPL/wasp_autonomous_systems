@@ -90,6 +90,8 @@ then it should be enabled.
 
 If virtualization is not enabled on your computer, please follow the instructions below for your OS to enable it. You may need to ask IT support at your school to allow you to enable it.
 
+**NOTE:** Enable AMD IOMMU or Intel VT-d, if the options are available. AMD IOMMU and Intel VT-d are used for PCI device assignment. 
+
 #### Linux
 
 ---
