@@ -18,6 +18,27 @@ As we will use a VM, you need to enable virtualization. It is usually done in yo
 
 You can check if virtualization is enabled following the instructions below for your operating system.
 
+#### Ubuntu
+
+---
+
+For Ubuntu specifically, you can install `cpu-checker`. Otherwise, you can follow the instructions for `Linux` below.
+
+Run the command:
+
+```sh
+sudo apt install cpu-checker -y
+kvm-ok
+```
+
+If you see the output:
+
+```sh
+KVM acceleration can be used
+```
+
+then virtualization should be enabled.
+
 #### Linux
 
 ---
