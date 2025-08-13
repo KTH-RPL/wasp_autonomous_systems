@@ -23,7 +23,7 @@ def launch_setup(context, *args, **kwargs):
 
     # RViz
     use_rviz = LaunchConfiguration("rviz", default=False)
-    rviz_config = os.path.join(pkg_dir, "rviz", "collision_detection.rviz")
+    rviz_config = os.path.join(pkg_dir, "rviz", "odometry.rviz")
     rviz = Node(
         package='rviz2',
         namespace='',
