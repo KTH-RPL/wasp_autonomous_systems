@@ -10,6 +10,7 @@
 
   <exec_depend>rclpy</exec_depend>
   <exec_depend>ros2launch</exec_depend>
+  <exec_depend>rosbag2</exec_depend>
   <exec_depend>rqt_tf_tree</exec_depend>
   <exec_depend>rviz2</exec_depend>
   <exec_depend>teleop_twist_keyboard</exec_depend>
