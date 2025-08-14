@@ -201,6 +201,7 @@ runcmd:
 - echo "Creating ~/.config directory"
 - [ su, ubuntu, -c, mkdir /home/ubuntu/.config ]
 - echo "Installing PIP packages"
+- [ su, ubuntu, -c, pip install -U --user --break-system-packages torch torchvision --index-url https://download.pytorch.org/whl/cpu ]
 - [ su, ubuntu, -c, pip install -U --user --break-system-packages ultralytics ]
 - [ su, ubuntu, -c, pip install -U --user --break-system-packages transforms3d ]
 - [ su, ubuntu, -c, pip install -U --user --break-system-packages kdtree ]
