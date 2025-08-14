@@ -220,8 +220,7 @@ runcmd:
 - [ su, ubuntu, -c, virtualenv -p python3 /home/ubuntu/ros2_ws/venv ]
 - [ su, ubuntu, -c, touch /home/ubuntu/ros2_ws/venv/COLCON_IGNORE ]
 - echo "Installing PIP packages"
-- [ su, ubuntu, -c,  /home/ubuntu/ros2_ws/venv/bin/python3 -m pip install --upgrade pip ]
-- [ su, ubuntu, -c,  /home/ubuntu/ros2_ws/venv/bin/python3 -m pip install -r requirements.txt ]
+- [ su, ubuntu, -c, source /home/ubuntu/ros2_ws/venv/bin/activate && python3 -m pip install --upgrade pip && python3 -m pip install -r requirements.txt && deactivate ]
 - echo "Cloning course repository"
 - [ su, ubuntu, -c, git clone --recurse-submodules https://github.com/KTH-RPL/wasp_autonomous_systems.git -b ht25 /home/ubuntu/ros2_ws/src/wasp_autonomous_systems ]
 - echo "Building ROS workspace"
