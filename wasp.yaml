@@ -146,7 +146,7 @@ write_files:
 
     [[ -z "${XAUTHORITY}" ]] && export XAUTHORITY=$HOME/.Xauthority
     
-    # Source Python virtual envrionment
+    # Source Python virtual environment
     if [ -f /home/ubuntu/ros2_ws/venv/bin/activate ]; then
       source /home/ubuntu/ros2_ws/venv/bin/activate
     fi
