@@ -205,17 +205,6 @@ write_files:
   append: true
   defer: true
 
-- content: |
-    --extra-index-url https://download.pytorch.org/whl/cpu
-    numpy<2.0.0
-    ultralytics==8.3.179
-    transforms3d==0.4.2
-    kdtree==0.16
-  path: /home/ubuntu/requirements.txt
-  owner: ubuntu:ubuntu
-  append: false
-  defer: true
-
 runcmd:
 - echo "Creating ~/.config directory"
 - [ su, ubuntu, -c, mkdir /home/ubuntu/.config ]
@@ -225,7 +214,7 @@ runcmd:
 - [ su, ubuntu, -c, python3 -m venv /home/ubuntu/ros2_ws/venv --system-site-packages ]
 - [ su, ubuntu, -c, touch /home/ubuntu/ros2_ws/venv/COLCON_IGNORE ]
 - echo "Installing PIP packages"
-- [ su, ubuntu, -c, bash -c "source /home/ubuntu/ros2_ws/venv/bin/activate && python3 -m pip install --upgrade pip && python3 -m pip install -r requirements.txt && deactivate" ]
+- [ su, ubuntu, -c, bash -c "source /home/ubuntu/ros2_ws/venv/bin/activate && python3 -m pip install --upgrade pip && python3 -m pip install -r https://raw.githubusercontent.com/KTH-RPL/wasp_autonomous_systems/refs/heads/ht25/requirements.txt && deactivate" ]
 - echo "Cloning course repository"
 - [ su, ubuntu, -c, git clone --recurse-submodules https://github.com/KTH-RPL/wasp_autonomous_systems.git -b ht25 /home/ubuntu/ros2_ws/src/wasp_autonomous_systems ]
 - echo "Building ROS workspace"
