@@ -177,7 +177,12 @@ write_files:
         mkdir /home/ubuntu/shared/webots
       fi
       host_dir=$(mount | grep '/home/ubuntu/shared' | sed -rn 's/:(.*)\son\s\/home\/ubuntu\/shared.*/\1/p')
-      export WEBOTS_SHARED_FOLDER='"'$host_dir'"':'"'/home/ubuntu/shared/webots'"'
+      if [[ "$host_dir" =~ ^[a-zA-Z]:.* ]]; then
+        # Windows host
+        host_dir=$(echo "$host_dir" | sed -re 's/\\/\//g' -e 's/(.*):/\/mnt\/\1/')
+      fi
+      host_dir=$(echo $host_dir | sed -re 's/\s/\\ /g')
+      export WEBOTS_SHARED_FOLDER="$host_dir":/home/ubuntu/shared/webots
     fi
   path: /home/ubuntu/.bashrc
   owner: ubuntu:ubuntu
