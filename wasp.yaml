@@ -182,6 +182,14 @@ write_files:
         host_dir=$(echo "$host_dir" | sed -re 's/\\/\//g' -e 's/(.*):/\/mnt\/\1/')
       fi
       host_dir=$(echo $host_dir | sed -re 's/\s/\\ /g')
+      if [ -z "${host_dir}" ]; then
+        top="┏━━━━━━━━━━━━━━━━━  PLEASE NOTE ━━━━━━━━━━━━━━━━━┓"
+        middle="┃                                                ┃"
+        bottom="┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛"
+        t1="┃      Could not find host-shared directory.     ┃"
+        t2="┃      Please re-mount the shared directory.     ┃"
+        echo -e "\n\033[1;31m$top\n$middle\n$t1\n$t2\n$middle\n$bottom\033[0m\n"
+      fi
       export WEBOTS_SHARED_FOLDER="$host_dir/webots":/home/ubuntu/shared/webots
     fi
   path: /home/ubuntu/.bashrc
