@@ -182,7 +182,7 @@ write_files:
         host_dir=$(echo "$host_dir" | sed -re 's/\\/\//g' -e 's/(.*):/\/mnt\/\1/')
       fi
       host_dir=$(echo $host_dir | sed -re 's/\s/\\ /g')
-      export WEBOTS_SHARED_FOLDER="$host_dir":/home/ubuntu/shared/webots
+      export WEBOTS_SHARED_FOLDER="$host_dir/webots":/home/ubuntu/shared/webots
     fi
   path: /home/ubuntu/.bashrc
   owner: ubuntu:ubuntu
