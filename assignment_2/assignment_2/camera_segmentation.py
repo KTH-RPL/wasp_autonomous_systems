@@ -8,6 +8,7 @@ from rcl_interfaces.msg import ParameterDescriptor
 
 from ultralytics import YOLO
 
+import os
 
 class CameraSegmentation(Node):
 
@@ -15,10 +16,10 @@ class CameraSegmentation(Node):
         super().__init__('camera_segmentation')
 
         # Load a pretrained model (recommended for training)
-        self._model = YOLO("yolo11n-seg.pt")
-        # self._model.export(format="openvino", imgsz=640, int8=True, data="coco128.yaml")
-
-        # self._model = YOLO("yolo11n-seg_int8_openvino_model/", task="segment")
+        if 'YOLO11N_SEG_INT8_OPENVINO' in os.environ and os.path.isdir(os.environ['YOLO11N_SEG_INT8_OPENVINO']):
+            self._model = YOLO(os.environ['YOLO11N_SEG_INT8_OPENVINO'])
+        else:
+            self._model = YOLO('yolo11n-seg.pt')
 
         # Bridge to convert between ROS and OpenCV
         self._cv_bridge = CvBridge()
