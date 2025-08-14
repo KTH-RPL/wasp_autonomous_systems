@@ -209,13 +209,13 @@ runcmd:
 - [ su, ubuntu, -c, mkdir /home/ubuntu/.config ]
 - echo "Creating ROS workspace"
 - [ su, ubuntu, -c, mkdir -p /home/ubuntu/ros2_ws/src ]
+- echo "Cloning course repository"
+- [ su, ubuntu, -c, git clone --recurse-submodules https://github.com/KTH-RPL/wasp_autonomous_systems.git -b ht25 /home/ubuntu/ros2_ws/src/wasp_autonomous_systems ]
 - echo "Creating Python virtual environment"
 - [ su, ubuntu, -c, python3 -m venv /home/ubuntu/ros2_ws/venv --system-site-packages ]
 - [ su, ubuntu, -c, touch /home/ubuntu/ros2_ws/venv/COLCON_IGNORE ]
 - echo "Installing PIP packages"
-- [ su, ubuntu, -c, source /home/ubuntu/ros2_ws/venv/bin/activate && python3 -m pip install --upgrade pip && python3 -m pip install -r https://raw.githubusercontent.com/KTH-RPL/wasp_autonomous_systems/refs/heads/ht25/requirements.txt && deactivate ]
-- echo "Cloning course repository"
-- [ su, ubuntu, -c, git clone --recurse-submodules https://github.com/KTH-RPL/wasp_autonomous_systems.git -b ht25 /home/ubuntu/ros2_ws/src/wasp_autonomous_systems ]
+- [ su, ubuntu, -c, source /home/ubuntu/ros2_ws/venv/bin/activate && python3 -m pip install --upgrade pip && python3 -m pip install -r /home/ubuntu/ros2_ws/src/wasp_autonomous_systems/requirements.txt && deactivate ]
 - echo "Building ROS workspace"
-- [ su, ubuntu, -c, source /home/ubuntu/ros2_ws/venv/bin/activate && cd /home/ubuntu/ros2_ws && source /opt/ros/jazzy/setup.bash && python3 -m colcon build --symlink-install --packages-up-to-regex assignment && deactivate ]
+- [ su, ubuntu, -c, cd /home/ubuntu/ros2_ws && source venv/bin/activate && source /opt/ros/jazzy/setup.bash && python3 -m colcon build --symlink-install --packages-up-to-regex assignment && deactivate ]
 - echo "Setup completed"
