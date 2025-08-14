@@ -60,6 +60,7 @@ packages:
 - ros-jazzy-teleop-twist-keyboard
 - ros-jazzy-tf2-ros
 # assignment_2
+- python3-opencv
 - ros-jazzy-cv-bridge
 - ros-jazzy-message-filters
 - ros-jazzy-rosbag2
@@ -173,6 +174,13 @@ write_files:
     # export PIP_BREAK_SYSTEM_PACKAGES=1
     
     # Tell Webots what shared folder to use
+    
+    top="┏━━━━━━━━━━━━━━━━━  PLEASE NOTE ━━━━━━━━━━━━━━━━━┓"
+    middle="┃                                                ┃"
+    bottom="┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛"
+    t1="┃      Could not find host-shared directory.     ┃"
+    t2="┃      Please re-mount the shared directory.     ┃"
+    
     if [ -d /home/ubuntu/shared ]; then
       if [ ! -d /home/ubuntu/shared/webots ]; then
         mkdir /home/ubuntu/shared/webots
@@ -184,14 +192,11 @@ write_files:
       fi
       host_dir=$(echo $host_dir | sed -re 's/\s/\\ /g')
       if [ -z "${host_dir}" ]; then
-        top="┏━━━━━━━━━━━━━━━━━  PLEASE NOTE ━━━━━━━━━━━━━━━━━┓"
-        middle="┃                                                ┃"
-        bottom="┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛"
-        t1="┃      Could not find host-shared directory.     ┃"
-        t2="┃      Please re-mount the shared directory.     ┃"
         echo -e "\n\033[1;31m$top\n$middle\n$t1\n$t2\n$middle\n$bottom\033[0m\n"
       fi
       export WEBOTS_SHARED_FOLDER="$host_dir/webots":/home/ubuntu/shared/webots
+    else
+      echo -e "\n\033[1;31m$top\n$middle\n$t1\n$t2\n$middle\n$bottom\033[0m\n"
     fi
   path: /home/ubuntu/.bashrc
   owner: ubuntu:ubuntu
