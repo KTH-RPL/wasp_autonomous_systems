@@ -198,14 +198,16 @@ write_files:
   defer: true
 
 runcmd:
+- echo "Creating ~/.config directory"
 - [ su, ubuntu, -c, mkdir /home/ubuntu/.config ]
-# Install Pip dependencies
+- echo "Installing PIP packages"
 - [ su, ubuntu, -c, pip install -U --user --break-system-packages ultralytics ]
 - [ su, ubuntu, -c, pip install -U --user --break-system-packages transforms3d ]
 - [ su, ubuntu, -c, pip install -U --user --break-system-packages kdtree ]
-# Create ROS workspace
+- echo "Creating ROS workspace"
 - [ su, ubuntu, -c, mkdir -p /home/ubuntu/ros2_ws/src ]
-# Clone course repository
+- echo "Cloning course repository"
 - [ su, ubuntu, -c, git clone --recurse-submodules https://github.com/KTH-RPL/wasp_autonomous_systems.git -b ht25 /home/ubuntu/ros2_ws/src/wasp_autonomous_systems ]
-# Build workspace
+- echo "Building ROS workspace"
 - [ su, ubuntu, -c, cd /home/ubuntu/ros2_ws && source /opt/ros/jazzy/setup.bash && colcon build --symlink-install --packages-up-to-regex assignment ]
+- echo "Setup completed"
