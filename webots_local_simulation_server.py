@@ -67,7 +67,7 @@ while True:
             path_suffix = 'webots'
         else:
             # Windows
-            path_suffix = 'msys64\mingw64\bin\webots.exe'
+            path_suffix = 'msys64\\mingw64\\bin\\webots.exe'
         command[0] = os.path.join(os.environ['WEBOTS_HOME'], path_suffix)
     else:
         message = 'FAIL: WEBOTS_HOME environment variable is not defined. Please define a valid Webots installation folder.'
@@ -89,13 +89,16 @@ while True:
 
         world_file = re.sub(r"/mnt/([a-zA-Z])", r"\g<1>:", world_file)
 
+        if sys.platform == 'win32' or sys.platform == 'cygwin':
+            world_file = world_file.replace("/", "\\")
+
         if not os.path.isfile(world_file):
             message = f'FAIL: The world file \'{world_file}\' doesn\'t exist.'
             close_connection(connection, message)
             invalid_world_file = True
             break
 
-        command[idx+1] = '"' + world_file + '"'
+        command[idx+1] = world_file
         command = command[:idx+2]
     if invalid_world_file:
         continue
