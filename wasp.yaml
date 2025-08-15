@@ -26,7 +26,7 @@ apt:
 
 package_update: true
 package_upgrade: true
-package_reboot_if_required: false # This does not seem to work that great
+package_reboot_if_required: true # This does not seem to work that great
 
 packages:
 - build-essential
