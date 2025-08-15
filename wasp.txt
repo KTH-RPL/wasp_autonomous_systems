@@ -1,0 +1,3 @@
+#include
+https://raw.githubusercontent.com/KTH-RPL/wasp_autonomous_systems/ht25/cloud_config_ssh_pwauth.yaml
+https://raw.githubusercontent.com/KTH-RPL/wasp_autonomous_systems/ht25/cloud_config_main.yaml
