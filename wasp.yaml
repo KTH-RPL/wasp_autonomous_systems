@@ -51,7 +51,7 @@ packages:
 - python3-colcon-common-extensions
 - python3-setuptools
 - python3-vcstool
-- ros-jazzy-desktop-base
+- ros-jazzy-ros-base
 # Course dependencies (so we do not need to use Rosdep).
 # On native install we would like to have GUI utilities such as RViz and RQT,
 # but not here. That is why we do not want to use Rosdep.
