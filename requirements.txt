@@ -1,5 +1,6 @@
 --extra-index-url https://download.pytorch.org/whl/cpu
 numpy<2.0.0
 ultralytics==8.3.179
+nncf>=2.14.0
 transforms3d==0.4.2
 kdtree==0.16
