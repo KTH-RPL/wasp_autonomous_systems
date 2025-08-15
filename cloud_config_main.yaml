@@ -1,5 +1,8 @@
 #cloud-config
 
+users:
+  - default
+
 apt:
   sources:
     ros2:
