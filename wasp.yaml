@@ -36,7 +36,6 @@ packages:
 - python-is-python3
 - python3-pip
 - python3-venv
-- snapd
 - tig
 - unzip
 - vim
@@ -57,7 +56,6 @@ packages:
 - ros-jazzy-rclpy
 - ros-jazzy-rosbag2
 - ros-jazzy-ros2launch
-- ros-jazzy-teleop-twist-keyboard
 - ros-jazzy-tf2-ros
 # assignment_2
 - python3-opencv
@@ -65,7 +63,6 @@ packages:
 - ros-jazzy-message-filters
 - ros-jazzy-rosbag2
 - ros-jazzy-tf-transformations
-- ros-jazzy-usb-cam
 # assignment_3
 - ros-jazzy-nav-msgs
 - ros-jazzy-rclpy
