@@ -17,7 +17,7 @@ class CameraSegmentation(Node):
 
         # Load a pretrained model (recommended for training)
         if 'YOLO_MODELS_DIR' in os.environ and os.path.isdir(os.environ['YOLO_MODELS_DIR']):
-            self._model = YOLO(os.path.join(os.environ['YOLO_MODELS_DIR'], 'yolo11n-seg_int8_openvino_model')
+            self._model = YOLO(os.path.join(os.environ['YOLO_MODELS_DIR'], 'yolo11n-seg_int8_openvino_model'))
         else:
             self._model = YOLO('yolo11n-seg.pt')
 
