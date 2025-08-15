@@ -11,7 +11,7 @@ apt:
 
 package_update: true
 package_upgrade: true
-package_reboot_if_required: true # This does not seem to work that great
+package_reboot_if_required: true
 
 packages:
 - build-essential
@@ -186,8 +186,8 @@ write_files:
       echo -e "\n\033[1;31m$header\n$filler\n$text_1\n$text_2\n$filler\n$text_3\n$filler\n$footer\033[0m\n"
     fi
 
-    # Tell where quantized int8 Openvino model is
-    export YOLO11N_SEG_INT8_OPENVINO="/home/ubuntu/yolo11n-seg_int8_openvino_model"
+    # Tell where YOLO models are located
+    export YOLO_MODELS_DIR="/home/ubuntu/yolo_models"
   path: /home/ubuntu/.bashrc
   owner: ubuntu:ubuntu
   append: true
@@ -206,9 +206,9 @@ runcmd:
 - echo "Installing PIP packages"
 - [ su, ubuntu, -c, source /home/ubuntu/ros2_ws/venv/bin/activate && python3 -m pip install --upgrade pip && python3 -m pip install -r /home/ubuntu/ros2_ws/src/wasp_autonomous_systems/requirements.txt && deactivate ]
 - echo "Building ROS workspace"
-# - [ su, ubuntu, -c, cd /home/ubuntu/ros2_ws && source venv/bin/activate && source /opt/ros/jazzy/setup.bash && python3 -m colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release --symlink-install --packages-up-to-regex assignment && deactivate ]
-- echo "Export Openvino models"
-# - [ su, ubuntu, -c, mkdir /home/ubuntu/yolo_models ]
-# - [ su, ubuntu, -c, cd /home/ubuntu/yolo_models && source /home/ubuntu/ros2_ws/venv/bin/activate && yolo segment export model=yolo11n-seg.pt format=openvino int8=True device=cpu dynamic=True data=coco128-seg.yaml ]
-# - [ su, ubuntu, -c, cd /home/ubuntu/yolo_models && source /home/ubuntu/ros2_ws/venv/bin/activate && yolo segment export model=yolo11n-seg.pt format=openvino int8=True device=cpu dynamic=True data=coco128-seg.yaml ]
+- [ su, ubuntu, -c, cd /home/ubuntu/ros2_ws && source venv/bin/activate && source /opt/ros/jazzy/setup.bash && python3 -m colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release --symlink-install --packages-up-to-regex assignment && deactivate ]
+- echo "Download and export YOLO models"
+- [ su, ubuntu, -c, mkdir /home/ubuntu/yolo_models ]
+- [ su, ubuntu, -c, cd /home/ubuntu/yolo_models && source /home/ubuntu/ros2_ws/venv/bin/activate && yolo segment export model=yolo11n-seg.pt format=openvino half=True device=cpu dynamic=True && deactivate ]
+- [ su, ubuntu, -c, cd /home/ubuntu/yolo_models && source /home/ubuntu/ros2_ws/venv/bin/activate && yolo segment export model=yolo11n-seg.pt format=openvino int8=True device=cpu dynamic=True data=coco128-seg.yaml && deactivate ]
 - echo "Setup completed"
