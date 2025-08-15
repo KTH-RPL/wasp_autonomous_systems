@@ -1,0 +1,12 @@
+#cloud-config
+
+# It is not recommended to enable password (especially without root password). Instead you should use SSH keys.
+# For the course we use passwords to simplify the setup.
+chpasswd:
+  # Do not require user to change their password on next login
+  expire: false
+  users:
+  # Sets the password for ubuntu to be 'ubuntu' (OS does hashing)
+  - {name: ubuntu, password: $6$rounds=4096$B/6HA99pXxaF00fD$juUXltmZPHncS3njcmjFJS2nAD5U2iJkGq.2lHZ3eeP44HnOQ4OI/.PWGbKZZp04nMf5DxWhGExz06jMYUb02.}
+# Enables SSH password authentication
+ssh_pwauth: true
