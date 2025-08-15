@@ -1,4 +1,0 @@
-#cloud-config
-
-#include
-https://raw.githubusercontent.com/KTH-RPL/wasp_autonomous_systems/refs/heads/ht25/cloud_config.yaml
