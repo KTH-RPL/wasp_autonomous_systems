@@ -19,7 +19,7 @@ apt:
 
 package_update: true
 package_upgrade: true
-package_reboot_if_required: true
+package_reboot_if_required: false # Does not seem to work well with Multipass
 
 packages:
 - build-essential
