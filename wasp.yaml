@@ -198,21 +198,21 @@ write_files:
   defer: true
 
 runcmd:
-- echo "Creating ~/.config directory"
-- [ su, ubuntu, -c, mkdir /home/ubuntu/.config ]
-- echo "Creating ROS workspace"
-- [ su, ubuntu, -c, mkdir -p /home/ubuntu/ros2_ws/src ]
-- echo "Cloning course repository"
-- [ su, ubuntu, -c, git clone --recurse-submodules https://github.com/KTH-RPL/wasp_autonomous_systems.git -b ht25 /home/ubuntu/ros2_ws/src/wasp_autonomous_systems ]
-- echo "Creating Python virtual environment"
-- [ su, ubuntu, -c, python3 -m venv /home/ubuntu/ros2_ws/venv --system-site-packages ]
-- [ su, ubuntu, -c, touch /home/ubuntu/ros2_ws/venv/COLCON_IGNORE ]
-- echo "Installing PIP packages"
-- [ su, ubuntu, -c, source /home/ubuntu/ros2_ws/venv/bin/activate && python3 -m pip install --upgrade pip && python3 -m pip install -r /home/ubuntu/ros2_ws/src/wasp_autonomous_systems/requirements.txt && deactivate ]
-- echo "Building ROS workspace"
-- [ su, ubuntu, -c, cd /home/ubuntu/ros2_ws && source venv/bin/activate && source /opt/ros/jazzy/setup.bash && python3 -m colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release --symlink-install --packages-up-to-regex assignment && deactivate ]
-- echo "Download and export YOLO models"
-- [ su, ubuntu, -c, mkdir /home/ubuntu/yolo_models ]
-- [ su, ubuntu, -c, cd /home/ubuntu/yolo_models && source /home/ubuntu/ros2_ws/venv/bin/activate && yolo segment export model=yolo11n-seg.pt format=openvino half=True device=cpu dynamic=True && deactivate ]
-- [ su, ubuntu, -c, cd /home/ubuntu/yolo_models && source /home/ubuntu/ros2_ws/venv/bin/activate && yolo segment export model=yolo11n-seg.pt format=openvino int8=True device=cpu dynamic=True data=coco128-seg.yaml && deactivate ]
-- echo "Setup completed"
+- echo "Creating ~/.config directory" |& tee -a /home/ubuntu/setup.log
+- [ su, ubuntu, -c, mkdir /home/ubuntu/.config |& tee -a /home/ubuntu/setup.log ]
+- echo "Creating ROS workspace" |& tee -a /home/ubuntu/setup.log
+- [ su, ubuntu, -c, mkdir -p /home/ubuntu/ros2_ws/src |& tee -a /home/ubuntu/setup.log ]
+- echo "Cloning course repository" |& tee -a /home/ubuntu/setup.log
+- [ su, ubuntu, -c, git clone --recurse-submodules https://github.com/KTH-RPL/wasp_autonomous_systems.git -b ht25 /home/ubuntu/ros2_ws/src/wasp_autonomous_systems |& tee -a /home/ubuntu/setup.log ]
+- echo "Creating Python virtual environment" |& tee -a /home/ubuntu/setup.log
+- [ su, ubuntu, -c, python3 -m venv /home/ubuntu/ros2_ws/venv --system-site-packages |& tee -a /home/ubuntu/setup.log ]
+- [ su, ubuntu, -c, touch /home/ubuntu/ros2_ws/venv/COLCON_IGNORE |& tee -a /home/ubuntu/setup.log ]
+- echo "Installing PIP packages" |& tee -a /home/ubuntu/setup.log
+- [ su, ubuntu, -c, ( source /home/ubuntu/ros2_ws/venv/bin/activate ; python3 -m pip install --upgrade pip ; python3 -m pip install -r /home/ubuntu/ros2_ws/src/wasp_autonomous_systems/requirements.txt ; deactivate ) |& tee -a /home/ubuntu/setup.log]
+- echo "Download and export YOLO models" |& tee -a /home/ubuntu/setup.log
+- [ su, ubuntu, -c, mkdir /home/ubuntu/yolo_models |& tee -a /home/ubuntu/setup.log ]
+- [ su, ubuntu, -c, ( cd /home/ubuntu/yolo_models ; source /home/ubuntu/ros2_ws/venv/bin/activate ; yolo segment export model=yolo11n-seg.pt format=openvino half=True device=cpu dynamic=True ; deactivate ) |& tee -a /home/ubuntu/setup.log ]
+- [ su, ubuntu, -c, ( cd /home/ubuntu/yolo_models ; source /home/ubuntu/ros2_ws/venv/bin/activate ; yolo segment export model=yolo11n-seg.pt format=openvino int8=True device=cpu dynamic=True data=coco128-seg.yaml ; deactivate ) |& tee -a /home/ubuntu/setup.log ]
+- echo "Building ROS workspace" |& tee -a /home/ubuntu/setup.log
+- [ su, ubuntu, -c, ( cd /home/ubuntu/ros2_ws ; source venv/bin/activate ; source /opt/ros/jazzy/setup.bash ; python3 -m colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release --symlink-install --packages-up-to-regex assignment ; deactivate ) |& tee -a /home/ubuntu/setup.log ]
+- echo "Setup completed" |& tee -a /home/ubuntu/setup.log
