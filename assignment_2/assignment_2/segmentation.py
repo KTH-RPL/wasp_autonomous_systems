@@ -24,10 +24,6 @@ class Segmentation(Node):
         self.declare_parameter('device', 'cpu', ParameterDescriptor(
             description='Select device to run YOLO model on, use \'cpu\' for cpu, \'0\', \'1\', ... for GPU X'))
 
-        # Compressed topic
-        self.declare_parameter('compressed', False, ParameterDescriptor(
-            description='Whether the image topic is compressed or not'))
-
         # Load a pretrained model
         yolo_model = self.get_parameter(
             'yolo_model').get_parameter_value().string_value
@@ -51,41 +47,28 @@ class Segmentation(Node):
         # Bridge to convert between ROS and OpenCV
         self._cv_bridge = CvBridge()
 
-        # Subscribe to image topic
-        if self.get_parameter('compressed').get_parameter_value().bool_value:
-            sub = self.create_subscription(
-                CompressedImage, '/image', self.image_compressed_callback, 1)
-        else:
-            sub = self.create_subscription(
-                Image, '/image', self.image_callback, 1)
+        # Subscribers
+        sub = self.create_subscription(Image, '/image', self.image_callback, 1)
+        compressed_sub = self.create_subscription(
+            CompressedImage, sub.topic_name + '/compressed', self.image_callback, 1)
 
         # Publisher
         self._seg_pub = self.create_publisher(
             Image, sub.topic_name + '/segmentation', 10)
         self._seg_compressed_pub = self.create_publisher(
-            CompressedImage, sub.topic_name + '/compressed/segmentation', 10)
+            CompressedImage, compressed_sub.topic_name + '/segmentation', 10)
 
-    def image_callback(self, image: Image):
+    def image_callback(self, msg):
         if 0 == self._seg_pub.get_subscription_count() and 0 == self._seg_compressed_pub.get_subscription_count():
             return
 
         # Convert from ROS to OpenCV
-        cv_image = self._cv_bridge.imgmsg_to_cv2(
-            image, desired_encoding='rgb8')
+        if type(msg) is Image:
+            image = self._cv_bridge.imgmsg_to_cv2(msg, desired_encoding='rgb8')
+        else:
+            image = self._cv_bridge.compressed_imgmsg_to_cv2(
+                msg, desired_encoding='rgb8')
 
-        self.process_image(cv_image, image.header)
-
-    def image_compressed_callback(self, image: CompressedImage):
-        if 0 == self._seg_pub.get_subscription_count() and 0 == self._seg_compressed_pub.get_subscription_count():
-            return
-
-        # Convert from ROS to OpenCV
-        cv_image = self._cv_bridge.compressed_imgmsg_to_cv2(
-            image, desired_encoding='rgb8')
-
-        self.process_image(cv_image, image.header)
-
-    def process_image(self, image, header):
         device = self.get_parameter(
             'device').get_parameter_value().string_value
 
@@ -98,12 +81,12 @@ class Segmentation(Node):
             if 0 < self._seg_pub.get_subscription_count():
                 ret = self._cv_bridge.cv2_to_imgmsg(
                     im_array[..., ::-1], encoding="rgb8")
-                ret.header = header
+                ret.header = msg.header
                 self._seg_pub.publish(ret)
             if 0 < self._seg_compressed_pub.get_subscription_count():
                 ret = self._cv_bridge.cv2_to_compressed_imgmsg(
                     im_array[..., ::-1])
-                ret.header = header
+                ret.header = msg.header
                 self._seg_compressed_pub.publish(ret)
 
 
