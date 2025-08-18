@@ -48,6 +48,9 @@ packages:
 # but not here. That is why we do not want to use Rosdep.
 - ros-jazzy-ros2cli-common-extensions
 - ros-jazzy-foxglove-bridge
+- ros-jazzy-image-transport
+- ros-jazzy-compressed-image-transport
+- ros-jazzy-image-transport-plugins
 # assignment_1
 - ros-jazzy-rclpy
 - ros-jazzy-rosbag2
@@ -173,6 +176,9 @@ write_files:
     text_3="┃         \033[1;34m\e]8;;https://github.com/KTH-RPL/wasp_autonomous_systems/wiki/Setup-Multipass-VM#create-and-mount-shared-directory\aLink to Wiki for instructions\e]8;;\a\033[1;31m          ┃"
     
     if [ -d /home/ubuntu/shared ]; then
+      if [ ! -d /home/ubuntu/shared/rosbags ]; then
+        mkdir /home/ubuntu/shared/rosbags
+      fi
       if [ ! -d /home/ubuntu/shared/webots ]; then
         mkdir /home/ubuntu/shared/webots
       fi
