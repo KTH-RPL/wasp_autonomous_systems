@@ -41,6 +41,7 @@ packages:
 - ros-jazzy-image-transport
 - ros-jazzy-compressed-image-transport
 - ros-jazzy-image-transport-plugins
+- ros-jazzy-teleop-twist-keyboard 
 # assignment_1
 - ros-jazzy-rclpy
 - ros-jazzy-rosbag2
