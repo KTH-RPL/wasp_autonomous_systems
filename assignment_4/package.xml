@@ -8,6 +8,8 @@
   <maintainer email="dduberg@kth.se">Daniel Duberg</maintainer>
   <license>TODO: License declaration</license>
 
+  <depend>webots_ros2_mavic</depend>
+
   <exec_depend>rqt_reconfigure</exec_depend>
 
   <export>
