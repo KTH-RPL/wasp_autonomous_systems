@@ -1,0 +1,336 @@
+{
+  "configById": {
+    "3D!18i6zy7": {
+      "layers": {
+        "845139cb-26bc-40b3-8161-8ab60af4baf5": {
+          "visible": false,
+          "frameLocked": true,
+          "label": "Grid",
+          "instanceId": "845139cb-26bc-40b3-8161-8ab60af4baf5",
+          "layerId": "foxglove.Grid",
+          "size": 10,
+          "divisions": 10,
+          "lineWidth": 1,
+          "color": "#248eff",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "order": 1
+        }
+      },
+      "cameraState": {
+        "perspective": true,
+        "distance": 19.99999999999948,
+        "phi": 68.38113945208904,
+        "thetaOffset": 88.63636363636395,
+        "targetOffset": [
+          -0.09180398615168375,
+          0.02064280653370049,
+          3.800573835195196e-18
+        ],
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "targetOrientation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "fovy": 45,
+        "near": 0.5,
+        "far": 5000,
+        "logDepth": false
+      },
+      "followMode": "follow-pose",
+      "scene": {
+        "transforms": {
+          "visible": false
+        },
+        "enableStats": false,
+        "meshUpAxis": "y_up",
+        "syncCamera": false,
+        "ignoreColladaUpAxis": false
+      },
+      "transforms": {
+        "frame:camera_color_optical_frame": {
+          "visible": true
+        },
+        "frame:imu_link": {
+          "visible": true
+        }
+      },
+      "topics": {
+        "/move_base_simple/goal": {
+          "visible": false
+        },
+        "/scan": {
+          "visible": true,
+          "colorField": "intensity",
+          "colorMode": "colormap",
+          "colorMap": "turbo",
+          "pointSize": 10
+        },
+        "/Mavic_2_PRO/camera/image_color": {
+          "visible": false,
+          "frameLocked": true,
+          "cameraInfoTopic": "/Mavic_2_PRO/camera/camera_info",
+          "distance": 1,
+          "planarProjectionFactor": 0,
+          "color": "#ffffff"
+        },
+        "/initialpose": {
+          "visible": false
+        },
+        "/camera/color/image_raw": {
+          "visible": false,
+          "frameLocked": true,
+          "cameraInfoTopic": "/camera/color/camera_info",
+          "distance": 1,
+          "planarProjectionFactor": 0,
+          "color": "#ffffff"
+        },
+        "/camera/color/points": {
+          "visible": true,
+          "colorField": "rgb",
+          "colorMode": "rgb",
+          "colorMap": "rainbow",
+          "pointSize": 2,
+          "pointShape": "square",
+          "maxValue": 3,
+          "minValue": -8,
+          "stixelsEnabled": false,
+          "cubeOutline": false
+        },
+        "/camera/depth/color/points": {
+          "visible": true,
+          "colorField": "rgb",
+          "colorMode": "rgb",
+          "colorMap": "turbo"
+        },
+        "/map": {
+          "visible": true
+        },
+        "/goal_pose": {
+          "visible": false
+        },
+        "/new_wall_p0": {
+          "visible": true
+        },
+        "/search": {
+          "visible": true,
+          "showOutlines": true,
+          "color": "#ff0000ff",
+          "namespaces": {
+            "search": {
+              "visible": true
+            }
+          },
+          "selectedIdVariable": ""
+        },
+        "/start": {
+          "visible": true
+        },
+        "/walls": {
+          "visible": true
+        },
+        "/path": {
+          "visible": true
+        },
+        "/goal": {
+          "visible": true
+        },
+        "/robot_description": {
+          "visible": false,
+          "displayMode": "auto",
+          "showAxis": false,
+          "showOutlines": true
+        },
+        "/kitti/velo": {
+          "visible": true,
+          "colorField": "z",
+          "colorMode": "colormap",
+          "colorMap": "turbo"
+        },
+        "/kitti/camera/color/left/image": {
+          "visible": false,
+          "frameLocked": true,
+          "cameraInfoTopic": "/kitti/camera/color/left/camera_info",
+          "distance": 1,
+          "planarProjectionFactor": 0,
+          "color": "#ffffff"
+        }
+      },
+      "publish": {
+        "type": "pose_estimate",
+        "poseTopic": "/goal_pose",
+        "pointTopic": "/clicked_point",
+        "poseEstimateTopic": "/initialpose",
+        "poseEstimateXDeviation": 0.5,
+        "poseEstimateYDeviation": 0.5,
+        "poseEstimateThetaDeviation": 0.26179939
+      },
+      "imageMode": {},
+      "followTf": "base_link"
+    },
+    "Image!3hksycu": {
+      "cameraState": {
+        "distance": 20,
+        "perspective": true,
+        "phi": 60,
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "targetOffset": [
+          0,
+          0,
+          0
+        ],
+        "targetOrientation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "thetaOffset": 45,
+        "fovy": 45,
+        "near": 0.5,
+        "far": 5000
+      },
+      "followMode": "follow-pose",
+      "scene": {
+        "meshUpAxis": "y_up",
+        "enableStats": false
+      },
+      "transforms": {},
+      "topics": {
+        "/camera/depth/color/points": {
+          "visible": false,
+          "colorField": "rgb",
+          "colorMode": "rgb",
+          "colorMap": "turbo"
+        },
+        "/kitti/velo": {
+          "visible": false,
+          "colorField": "i",
+          "colorMode": "colormap",
+          "colorMap": "turbo"
+        }
+      },
+      "layers": {},
+      "publish": {
+        "type": "point",
+        "poseTopic": "/move_base_simple/goal",
+        "pointTopic": "/clicked_point",
+        "poseEstimateTopic": "/initialpose",
+        "poseEstimateXDeviation": 0.5,
+        "poseEstimateYDeviation": 0.5,
+        "poseEstimateThetaDeviation": 0.26179939
+      },
+      "imageMode": {
+        "imageTopic": "/kitti/camera/color/left/image/compressed",
+        "flipHorizontal": false,
+        "synchronize": false,
+        "rotation": 0,
+        "flipVertical": false,
+        "calibrationTopic": "/kitti/camera/color/left/camera_info"
+      }
+    },
+    "Image!7cqvu7": {
+      "cameraState": {
+        "distance": 20,
+        "perspective": true,
+        "phi": 60,
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "targetOffset": [
+          0,
+          0,
+          0
+        ],
+        "targetOrientation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "thetaOffset": 45,
+        "fovy": 45,
+        "near": 0.5,
+        "far": 5000
+      },
+      "followMode": "follow-pose",
+      "scene": {
+        "meshUpAxis": "y_up",
+        "enableStats": false
+      },
+      "transforms": {},
+      "topics": {
+        "/camera/depth/color/points": {
+          "visible": false,
+          "colorField": "rgb",
+          "colorMode": "rgb",
+          "colorMap": "turbo"
+        },
+        "/kitti/velo": {
+          "visible": false,
+          "colorField": "i",
+          "colorMode": "colormap",
+          "colorMap": "turbo"
+        }
+      },
+      "layers": {},
+      "publish": {
+        "type": "point",
+        "poseTopic": "/move_base_simple/goal",
+        "pointTopic": "/clicked_point",
+        "poseEstimateTopic": "/initialpose",
+        "poseEstimateXDeviation": 0.5,
+        "poseEstimateYDeviation": 0.5,
+        "poseEstimateThetaDeviation": 0.26179939
+      },
+      "imageMode": {
+        "imageTopic": "/kitti/camera/color/right/image/compressed",
+        "flipHorizontal": false,
+        "synchronize": false,
+        "rotation": 0,
+        "flipVertical": false,
+        "calibrationTopic": "/kitti/camera/color/right/camera_info"
+      }
+    }
+  },
+  "globalVariables": {
+    "": ""
+  },
+  "userNodes": {},
+  "playbackConfig": {
+    "speed": 1
+  },
+  "drawerConfig": {
+    "tracks": []
+  },
+  "layout": {
+    "first": "3D!18i6zy7",
+    "second": {
+      "first": "Image!3hksycu",
+      "second": "Image!7cqvu7",
+      "direction": "column"
+    },
+    "direction": "row",
+    "splitPercentage": 59.90840417971731
+  }
+}

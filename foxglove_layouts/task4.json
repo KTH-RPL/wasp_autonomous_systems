@@ -1,0 +1,40 @@
+{
+  "configById": {
+    "Plot!39psegk": {
+      "paths": [
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/mavic_2_pro/gps.point.z",
+          "enabled": true,
+          "color": "#4e98e2"
+        }
+      ],
+      "showXAxisLabels": true,
+      "showYAxisLabels": true,
+      "showLegend": true,
+      "legendDisplay": "floating",
+      "showPlotValuesInLegend": false,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "sidebarDimension": 240
+    },
+    "Parameters!12tuj63": {
+      "title": "Parameters"
+    }
+  },
+  "globalVariables": {
+    "": ""
+  },
+  "userNodes": {},
+  "playbackConfig": {
+    "speed": 1
+  },
+  "drawerConfig": {
+    "tracks": []
+  },
+  "layout": {
+    "direction": "row",
+    "first": "Plot!39psegk",
+    "second": "Parameters!12tuj63"
+  }
+}

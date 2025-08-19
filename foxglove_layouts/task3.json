@@ -1,0 +1,122 @@
+{
+  "configById": {
+    "3D!dv3xfw": {
+      "cameraState": {
+        "perspective": false,
+        "distance": 55.79019635032393,
+        "phi": 60.00000000000001,
+        "thetaOffset": 0,
+        "targetOffset": [
+          6.938893903907228e-17,
+          0,
+          0
+        ],
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "targetOrientation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "fovy": 45,
+        "near": 0.5,
+        "far": 5000
+      },
+      "followMode": "follow-pose",
+      "scene": {
+        "transforms": {
+          "visible": false
+        }
+      },
+      "transforms": {},
+      "topics": {
+        "/search": {
+          "visible": true
+        },
+        "/start": {
+          "visible": true
+        },
+        "/walls": {
+          "visible": true
+        },
+        "/path": {
+          "visible": true
+        },
+        "/new_wall_p0": {
+          "visible": true
+        },
+        "/move_base_simple/goal": {
+          "visible": true
+        },
+        "/map": {
+          "visible": true
+        },
+        "/initialpose": {
+          "visible": true
+        },
+        "/goal_pose": {
+          "visible": true
+        },
+        "/goal": {
+          "visible": true
+        }
+      },
+      "layers": {
+        "grid": {
+          "visible": false,
+          "drawBehind": false,
+          "frameLocked": true,
+          "label": "Grid",
+          "instanceId": "93439c50-7012-4ac1-9a7e-a9d1edad6ad9",
+          "layerId": "foxglove.Grid",
+          "size": 10,
+          "divisions": 10,
+          "lineWidth": 1,
+          "color": "#248eff",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "publish": {
+        "type": "pose",
+        "poseTopic": "/goal_pose",
+        "pointTopic": "/clicked_point",
+        "poseEstimateTopic": "/initialpose",
+        "poseEstimateXDeviation": 0.5,
+        "poseEstimateYDeviation": 0.5,
+        "poseEstimateThetaDeviation": 0.26179939
+      },
+      "imageMode": {}
+    },
+    "Parameters!12tuj63": {
+      "title": "Parameters"
+    }
+  },
+  "globalVariables": {
+    "": ""
+  },
+  "userNodes": {},
+  "playbackConfig": {
+    "speed": 1
+  },
+  "drawerConfig": {
+    "tracks": []
+  },
+  "layout": {
+    "first": "3D!dv3xfw",
+    "second": "Parameters!12tuj63",
+    "direction": "row"
+  }
+}
