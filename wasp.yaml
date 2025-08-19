@@ -1,16 +1,5 @@
 #cloud-config
 
-# It is not recommended to enable password (especially without root password). Instead you should use SSH keys.
-# For the course we use passwords to simplify the setup.
-chpasswd:
-  # Do not require user to change their password on next login
-  expire: false
-  users:
-  # Sets the password for ubuntu to be 'ubuntu' (OS does hashing)
-  - {name: ubuntu, password: $6$rounds=4096$B/6HA99pXxaF00fD$juUXltmZPHncS3njcmjFJS2nAD5U2iJkGq.2lHZ3eeP44HnOQ4OI/.PWGbKZZp04nMf5DxWhGExz06jMYUb02.}
-# Enables SSH password authentication
-ssh_pwauth: true
-
 apt:
   sources:
     ros2:
@@ -29,16 +18,16 @@ packages:
 - lsb-release
 - openssh-client
 - openssh-server
-- python3
 - python-is-python3
+- python3
 - python3-pip
 - python3-venv
+- pv
 - tig
 - unzip
 - vim
 - wget
 - zip
-- pv
 # ROS 2 specific packages
 - python3-colcon-common-extensions
 - python3-setuptools
@@ -172,8 +161,8 @@ write_files:
     header="┏━━━━━━━━━━━━━━━━━  \e[5m\e[4mPLEASE NOTE\e[24m\e[25m ━━━━━━━━━━━━━━━━━┓"
     filler="┃                                                ┃"
     footer="┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛"
-    text_1="┃ Can not find shared directory and/or rosbags.  ┃"
-    text_2="┃ Mount shared directory and/or extract rosbags. ┃"
+    text_1="┃         Cannot find shared directory.          ┃"
+    text_2="┃         Please mount shared directory.         ┃"
     text_3="┃         \033[1;34m\e]8;;https://github.com/KTH-RPL/wasp_autonomous_systems/wiki/Setup-Multipass-VM#create-and-mount-shared-directory\aLink to Wiki for instructions\e]8;;\a\033[1;31m          ┃"
     
     if [ -d /home/ubuntu/shared ]; then
@@ -186,7 +175,7 @@ write_files:
         host_dir=$(echo "$host_dir" | sed -re 's/\\/\//g' -e 's/(.*):/\/mnt\/\1/')
       fi
       host_dir=$(echo $host_dir | sed -re 's/\s/\\ /g')
-      if [ -z "${host_dir}" ] || [ ! -d /home/ubuntu/shared/rosbags ]; then
+      if [ -z "${host_dir}" ]; then
         echo -e "\n\033[1;31m$header\n$filler\n$text_1\n$text_2\n$filler\n$text_3\n$filler\n$footer\033[0m\n"
       fi
       export WEBOTS_SHARED_FOLDER="$host_dir/webots":/home/ubuntu/shared/webots
@@ -202,12 +191,10 @@ write_files:
   defer: true
 
 - content: |
-    8deb4357463bf41c4ed8b9fe8250f821  /home/ubuntu/shared/rosbags/kitti/metadata.yaml
-    ee2d738f5f780982de7f1fa30dc1d7ee  /home/ubuntu/shared/rosbags/kitti/kitti.mcap
-    5d3a05decc2b48b9206514febc509e02  /home/ubuntu/shared/rosbags/kitti/reliability_override.yaml
-    97c2d0ac023292d5c769709045750c1e  /home/ubuntu/shared/rosbags/real_robot/metadata.yaml
-    5e24de5872339815771afdaeb8eb31f1  /home/ubuntu/shared/rosbags/real_robot/real_robot.mcap
-    5d3a05decc2b48b9206514febc509e02  /home/ubuntu/shared/rosbags/real_robot/reliability_override.yaml
+    51c8538cfaf160ca58434f705905a566  ./real_robot/metadata.yaml
+    8bd65f7cb5d9c930c7eb9081f6399e9f  ./real_robot/real_robot_0.mcap
+    13feb2f5ca7b3be41a2654d8c68dbbe0  ./kitti/kitti_0.mcap
+    498c359324dbe267cb6f0fb4aed8fb71  ./kitti/metadata.yaml
   path: /home/ubuntu/rosbags_md5sums.txt
   owner: ubuntu:ubuntu
   defer: true
@@ -216,11 +203,10 @@ write_files:
     #!/bin/bash
 
     if [ -d /home/ubuntu/shared ]; then
-      if [ ! -d /home/ubuntu/shared/rosbags ]; then
-        mkdir /home/ubuntu/shared/rosbags
-      fi
       echo "Extracting rosbags"
-      cd /home/ubuntu/shared/rosbags && pv /home/ubuntu/rosbags.tar.zst | tar -I "unzstd -T0" -x
+      cd /home/ubuntu/shared
+      pv /home/ubuntu/rosbags.tar.zst | tar -I "unzstd -T0" -x
+      cd rosbags
       echo "Verifying checksums"
       if md5sum -c /home/ubuntu/rosbags_md5sums.txt; then
         echo -e "\033[1;32m✅ Successfully extracted the rosbags! ✅\033[0m"
@@ -231,8 +217,8 @@ write_files:
       header="┏━━━━━━━━━━━━━━━━━  \e[5m\e[4mPLEASE NOTE\e[24m\e[25m ━━━━━━━━━━━━━━━━━┓"
       filler="┃                                                ┃"
       footer="┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛"
-      text_1="┃  Cannot find shared directory and/or rosbags.  ┃"
-      text_2="┃ Mount shared directory and/or extract rosbags. ┃"
+      text_1="┃         Cannot find shared directory.          ┃"
+      text_2="┃         Please mount shared directory.         ┃"
       text_3="┃         \033[1;34m\e]8;;https://github.com/KTH-RPL/wasp_autonomous_systems/wiki/Setup-Multipass-VM#create-and-mount-shared-directory\aLink to Wiki for instructions\e]8;;\a\033[1;31m          ┃"
 
       echo -e "\n\033[1;31m$header\n$filler\n$text_1\n$text_2\n$filler\n$text_3\n$filler\n$footer\033[0m\n"
@@ -280,7 +266,7 @@ write_files:
     }
 
     # Download rosbags in background
-    curl -L -C - https://canvas.kth.se/files/9463849/download\?download_frd\=1\&verifier\=qKDXwy4CSWaIFCsmEeKxI44DJ7YvxpvWgujjKzTD --output /home/ubuntu/rosbags.tar.zst &
+    curl -L -C - https://canvas.kth.se/files/9466214/download\?download_frd\=1\&verifier\=T5vstcvsH7VgsLkkw9AqiprwenJLlGWfFFbriVOa --output /home/ubuntu/rosbags.tar.zst &
     ROSBAGS_DOWNLOAD_PID=$!
     
     log_info "mkdir /home/ubuntu/.config"
@@ -305,7 +291,7 @@ write_files:
 
     log_info "wait $ROSBAGS_DOWNLOAD_PID"
 
-    log_info "echo 3cfb8dd24390114330c7ff34159fbad3  /home/ubuntu/rosbags.tar.zst | md5sum -c -"
+    log_info "echo 7e87b4395a9e074903fe235fa9bb17a6  /home/ubuntu/rosbags.tar.zst | md5sum -c -"
 
   path: /home/ubuntu/wasp_setup.bash
   owner: ubuntu:ubuntu
