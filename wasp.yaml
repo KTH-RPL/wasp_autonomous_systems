@@ -284,8 +284,8 @@ write_files:
       fi
     }
 
-    # Download rosbags in background
-    curl -L -C - https://canvas.kth.se/files/9466214/download\?download_frd\=1\&verifier\=T5vstcvsH7VgsLkkw9AqiprwenJLlGWfFFbriVOa --output /home/ubuntu/rosbags.tar.zst &
+    # Download rosbags in background    
+    curl -L -C - https://canvas.kth.se/files/9471655/download\?download_frd\=1\&verifier\=4wOMCwu3QHS0duQGTKpn6HyhO9jCPGZSL3RM9kmu --output /home/ubuntu/rosbags.tar.zst &
     ROSBAGS_DOWNLOAD_PID=$!
     
     log_info "mkdir /home/ubuntu/.config"
