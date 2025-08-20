@@ -44,6 +44,50 @@ ros2 bag record --topics /camera/color/camera_info /camera/color/image/compresse
 ros2 run image_transport republish --ros-args -p use_sim_time:=true -p in_transport:="raw" -p out_transport:="compressed" --remap in:=/camera/color/image_raw --remap out/compressed:=/camera/color/image/compressed
 ```
 
+## Split the Rosbags
+
+Split the bags into 500 MiB chunks (if a file is larger than 2 GiB it can cause problems on some filesystems. It does not work with a Multipass mount using type `classic` on Windows for example).
+
+### kitti
+
+Create a file `out.yaml` with content:
+
+```sh
+output_bags:
+- uri: kitti
+  max_bagfile_size: 524288000
+  all_topics: true
+  all_services: true
+```
+
+run:
+
+```sh
+ros2 bag convert -i kitti2 -o out.yaml
+```
+
+where `kitti2` is the non-split rosbag.
+
+### real_robot
+
+Create a file `out.yaml` with content:
+
+```sh
+output_bags:
+- uri: real_robot
+  max_bagfile_size: 524288000
+  all_topics: true
+  all_services: true
+```
+
+run:
+
+```sh
+ros2 bag convert -i real_robot2 -o out.yaml
+```
+
+where `real_robot2` is the non-split rosbag.
+
 ## Compress the Rosbags
 
 Using Zstd with maximum compression. This will be slow to compress, but the file will be small and still fast to decompress.
