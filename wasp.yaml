@@ -268,19 +268,31 @@ write_files:
 - content: |
     #!/bin/bash
 
+    function cleanup {
+      sed -i "s/WAIT ⚠️/FAIL ❌ \[Never executed\]/g" $log_file
+    }
+
+    trap cleanup EXIT
+
     log_file=$1
 
     log_info()
     {
-      local start=$(date +%s)
+      local start=$EPOCHREALTIME
+
       eval "$@"
-      local exit_code=$?
-      local end=$(date +%s)
-      local duration=$((end-start))
-      if [ $exit_code -eq 0 ]; then
+      ret=$?
+
+      local end=$EPOCHREALTIME
+      local duration=$(echo "scale=2;($end-$start)/1" | bc)
+
+      if [ $ret -eq 0 ]; then
         sed -i "0,/WAIT ⚠️/s//PASS ✅ \[$duration s\]/" $log_file
       else
-        sed -i "0,/WAIT ⚠️/s//FAIL ❌ \[$duration s\]/" $log_file
+        sed -i "0,/WAIT ⚠️/s//FAIL ❌ \[$duration s\] \[Error code: $ret\]/" $log_file
+
+        # Terminate the script early
+        exit $ret
       fi
     }
 
