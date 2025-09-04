@@ -1,0 +1,11 @@
+3f2778a0807ddbdc55665e79253dd15d  ./real_robot/metadata.yaml
+a774f7605c6cc7869a6c04c9aa12d4e5  ./real_robot/real_robot_0.mcap
+cffee353731b9480e1c80e59f986dd52  ./real_robot/real_robot_1.mcap
+2cb5b99129f7c9ffe03084ad1e5f0202  ./real_robot/real_robot_2.mcap
+267e93bf931be3ab565724727378156d  ./real_robot/real_robot_3.mcap
+6ae77d900a9534621e6eb52b00c46994  ./kitti/metadata.yaml
+6981151ffcfdfe71a48f114af2baf30b  ./kitti/kitti_0.mcap
+de88547bb1db966321afabe045cc9c70  ./kitti/kitti_1.mcap
+3ac056f201e2101d9b6e126d797b8036  ./kitti/kitti_2.mcap
+deeefb621ec16759ad260e804764ac8e  ./kitti/kitti_3.mcap
+682341541be9c4585ce0036b36359d6c  ./kitti/kitti_4.mcap
