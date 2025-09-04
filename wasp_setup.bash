@@ -39,6 +39,9 @@ log_info "git clone --recurse-submodules https://github.com/KTH-RPL/wasp_autonom
 log_info "python3 -m venv /home/ubuntu/ros2_ws/venv --system-site-packages && touch /home/ubuntu/ros2_ws/venv/COLCON_IGNORE"
     
 log_info ". /home/ubuntu/ros2_ws/venv/bin/activate"
+
+. /opt/ros/jazzy/setup.bash && cd /home/ubuntu/ros2_ws && python3 -m colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release --symlink-install --packages-up-to-regex assignment &
+ROS_WORKSPACE_BUILD_PID=$!
     
 log_info "python3 -m pip install --upgrade pip && python3 -m pip install -r /home/ubuntu/ros2_ws/src/wasp_autonomous_systems/requirements.txt"
     
@@ -46,7 +49,8 @@ mkdir /home/ubuntu/yolo_models
 
 log_info "cd /home/ubuntu/yolo_models && yolo segment export model=yolo11n-seg.pt format=openvino half=True device=cpu dynamic=True && yolo segment export model=yolo11n-seg.pt format=openvino int8=True device=cpu dynamic=True data=coco128-seg.yaml"
     
-log_info ". /opt/ros/jazzy/setup.bash && cd /home/ubuntu/ros2_ws && python3 -m colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release --symlink-install --packages-up-to-regex assignment"
+log_info "wait $ROS_WORKSPACE_BUILD_PID"
+# log_info ". /opt/ros/jazzy/setup.bash && cd /home/ubuntu/ros2_ws && python3 -m colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release --symlink-install --packages-up-to-regex assignment"
 
 for i in 1 2 3 4; do
   log_info "test -d '/home/ubuntu/ros2_ws/install/assignment_$i'"
