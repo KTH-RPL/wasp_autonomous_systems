@@ -57,7 +57,7 @@ curl -L -O https://raw.githubusercontent.com/KTH-RPL/wasp_autonomous_systems/ht2
 
 curl -L -O https://raw.githubusercontent.com/KTH-RPL/wasp_autonomous_systems/ht25/extract_rosbags.bash
 
-curl -L -O https://raw.githubusercontent.com/KTH-RPL/wasp_autonomous_systems/ht25/setup.log
+curl -L https://raw.githubusercontent.com/KTH-RPL/wasp_autonomous_systems/ht25/setup.status -o setup.log
 
 curl -L -O https://raw.githubusercontent.com/KTH-RPL/wasp_autonomous_systems/ht25/wasp_setup.bash
 
