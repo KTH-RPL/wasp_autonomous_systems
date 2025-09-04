@@ -65,4 +65,4 @@ chmod a+x extract_rosbags.bash
 chmod a+x wasp_setup.bash
 
 ./wasp_setup.bash /home/ubuntu/setup.log
-chown root:root /home/ubuntu/setup.log
+sudo chown root:root /home/ubuntu/setup.log
