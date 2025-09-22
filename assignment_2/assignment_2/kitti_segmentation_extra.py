@@ -5,7 +5,7 @@ from rclpy.node import Node
 from rclpy.time import Duration
 
 from rcl_interfaces.msg import ParameterDescriptor
-from sensor_msgs.msg import CameraInfo, Image, PointCloud2
+from sensor_msgs.msg import CameraInfo, Image, CompressedImage, PointCloud2
 from std_msgs.msg import ColorRGBA
 import message_filters
 from sensor_msgs_py.point_cloud2 import read_points_numpy
@@ -20,6 +20,8 @@ from assignment_2.tf2_sensor_msgs import transform_points
 
 from ultralytics import YOLO
 from cv_bridge import CvBridge
+
+import os
 
 import numpy as np
 
@@ -64,15 +66,36 @@ class KittiSegmentation(Node):
     def __init__(self):
         super().__init__('kitti_segmentation')
 
-        # Load a pretrained model (recommended for training)
-        self._model = YOLO("yolov8n-seg.pt")
+        # YOLO model
+        self.declare_parameter('yolo_model', 'openvino_int8', ParameterDescriptor(
+            description='Select YOLO model, options: [torch, openvino_half, openvino_int8].'))
+
+        # Device parameter
+        self.declare_parameter('device', 'cpu', ParameterDescriptor(
+            description='Select device to run YOLO model on, use \'cpu\' for cpu, \'0\', \'1\', ... for GPU X'))
+
+        # Load a pretrained model
+        yolo_model = self.get_parameter(
+            'yolo_model').get_parameter_value().string_value
+        if 'YOLO_MODELS_DIR' in os.environ and os.path.isdir(os.environ['YOLO_MODELS_DIR']):
+            path = ''
+            if yolo_model == 'openvino_half':
+                path = os.path.join(
+                    os.environ['YOLO_MODELS_DIR'], 'yolo11n-seg_openvino_model')
+            elif yolo_model == 'openvino_int8':
+                path = os.path.join(
+                    os.environ['YOLO_MODELS_DIR'], 'yolo11n-seg_int8_openvino_model')
+            else:
+                path = os.path.join(
+                    os.environ['YOLO_MODELS_DIR'], 'yolo11n-seg.pt')
+
+            if os.path.isfile(path) or os.path.isdir(path):
+                self._model = YOLO(path)
+        else:
+            self._model = YOLO('yolo11n-seg.pt')
 
         # Bridge to convert between ROS and OpenCV
         self._cv_bridge = CvBridge()
-
-        # Device parameter
-        self.declare_parameter('device', '', ParameterDescriptor(
-            description='Select device to run YOLOv8 on, use \'cpu\' for cpu, \'0\', \'1\', ... for GPU X'))
 
         self.declare_parameter('downsample_voxel_size', 0.2, ParameterDescriptor(
             description='Select voxel size in meters for downsampling the point clouds'))
@@ -85,21 +108,19 @@ class KittiSegmentation(Node):
         self._tf_listener = TransformListener(
             self._tf_buffer, self, spin_thread=True)
 
-        # Publisher
-        self._seg_pub = self.create_publisher(
-            Image, 'segmentation/image_raw', 10)
-        self._seg_info_pub = self.create_publisher(
-            CameraInfo, 'segmentation/camera_info', 10)
-        self._map_pub = self.create_publisher(Marker, 'map', 10)
-        self._frustum_pub = self.create_publisher(Marker, 'frustum', 10)
-
         # Subscribe to image, camera info, and point cloud topics
         image_sub = message_filters.Subscriber(
-            self, Image, '/kitti/camera/color/left/image')
+            self, CompressedImage, '/kitti/camera/color/left/image/compressed')
         info_sub = message_filters.Subscriber(
             self, CameraInfo, '/kitti/camera/color/left/camera_info')
         cloud_sub = message_filters.Subscriber(
             self, PointCloud2, '/kitti/velo')
+
+        # Publisher
+        self._seg_pub = self.create_publisher(
+            CompressedImage, '/kitti/camera/color/left/image/compressed/segmentation', 10)
+        self._map_pub = self.create_publisher(Marker, 'map', 10)
+        self._frustum_pub = self.create_publisher(Marker, 'frustum', 10)
 
         self._static_id = 0
         self._dynamic_id = 0
@@ -127,9 +148,13 @@ class KittiSegmentation(Node):
         self._dynamic_id = 0
         self._map_pub.publish(Marker(action=Marker.DELETEALL))
 
-    def callback(self, image: Image, info: CameraInfo, cloud: PointCloud2):
+    def callback(self, image, info: CameraInfo, cloud: PointCloud2):
         # Convert from ROS to OpenCV
-        cv_image = self._cv_bridge.imgmsg_to_cv2(image)
+        if type(image) is Image:
+            cv_image = self._cv_bridge.imgmsg_to_cv2(image, desired_encoding='rgb8')
+        else:
+            cv_image = self._cv_bridge.compressed_imgmsg_to_cv2(
+                image, desired_encoding='rgb8')
 
         # Segment image to get instances
         instances = self.segment_image(cv_image, info)
@@ -162,7 +187,7 @@ class KittiSegmentation(Node):
 
         pixel = self.cloud_to_pixel(xyz, info)
 
-        static_xyz, static_pixel, dynamic_xyz, dynamic_pixel = self.seperate_static_dynamic(
+        static_xyz, static_pixel, dynamic_xyz, dynamic_pixel = self.separate_static_dynamic(
             xyz, pixel, dynamic_image)
 
         static_rgb = self.color_cloud(static_xyz, cv_image, static_pixel)
@@ -250,7 +275,7 @@ class KittiSegmentation(Node):
 
         return instances
 
-    def seperate_static_dynamic(self, xyz, pixel, dynamic_image):
+    def separate_static_dynamic(self, xyz, pixel, dynamic_image):
         static_indices = np.where(
             dynamic_image[pixel[:, 1], pixel[:, 0]] == [0, 0, 0])
         dynamic_indices = np.where(
@@ -310,25 +335,24 @@ class KittiSegmentation(Node):
             return cloud
 
     def color_cloud(self, cloud, cv_image, pixel):
-        rgb = np.zeros((cloud.shape[0], 3), dtype=float)
+        rgb = np.zeros((cloud.shape[0], 3), dtype=np.uint8)
         for i in range(cloud.shape[0]):
             rgb[i] = self.color(cv_image, *pixel[i])
         return rgb
 
     def color(self, cv_image, u, v):
         if 0 <= v < cv_image.shape[0] and 0 <= u < cv_image.shape[1]:
-            return 255 * cv_image[v, u]
-        return np.zeros((1, 1, 3), dtype=float)
+            return cv_image[v, u]
+        return np.zeros((1, 1, 3), dtype=np.uint8)
 
     def publish_segmentation(self, image, info: CameraInfo):
         # Plot a BGR numpy array of predictions
         im_array = image.plot()
         # Convert from OpenCV to ROS
-        image = self._cv_bridge.cv2_to_imgmsg(
-            im_array[..., ::-1], encoding="rgb8")
-        image.header = info.header
-        self._seg_info_pub.publish(info)
-        self._seg_pub.publish(image)
+        ret = self._cv_bridge.cv2_to_compressed_imgmsg(
+            im_array[..., ::-1])
+        ret.header = info.header
+        self._seg_pub.publish(ret)
 
     def publish_frustum(self, frustum: Frustum, header):
         m = Marker(header=header)
@@ -382,7 +406,7 @@ class KittiSegmentation(Node):
         marker.type = Marker.CUBE_LIST
         marker.scale.x = marker.scale.y = marker.scale.z = voxel_size
         marker.points = [Point(x=p[0], y=p[1], z=p[2]) for p in static_xyz]
-        marker.colors = [ColorRGBA(r=c[2], g=c[1], b=c[0], a=1.0)
+        marker.colors = [ColorRGBA(r=c[0] / 255.0, g=c[1] / 255.0, b=c[2] / 255.0, a=1.0)
                          for c in static_rgb]
         self._map_pub.publish(marker)
 
@@ -393,7 +417,7 @@ class KittiSegmentation(Node):
         marker.type = Marker.CUBE_LIST
         marker.scale.x = marker.scale.y = marker.scale.z = voxel_size + 0.05
         marker.points = [Point(x=p[0], y=p[1], z=p[2]) for p in dynamic_xyz]
-        marker.colors = [ColorRGBA(r=c[0], g=c[1], b=c[2], a=1.0)
+        marker.colors = [ColorRGBA(r=c[0] / 255.0, g=c[1] / 255.0, b=c[2] / 255.0, a=1.0)
                          for c in dynamic_rgb]
         self._map_pub.publish(marker)
 
