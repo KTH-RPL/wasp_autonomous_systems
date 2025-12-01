@@ -7,7 +7,7 @@ version = "0.1.0"
 
 [dependencies]
 colcon-common-extensions = "*"
-setuptools = "<=58.2.0"
+# setuptools = "<=58.2.0"
 kdtree = ">=0.16,<0.17"
 
 [tasks]
@@ -15,7 +15,8 @@ build = "cd $PIXI_PROJECT_ROOT && colcon build --symlink-install"
 ass_1 = "ros2 launch assignment_1 turtlebot_simulation_launch.py"
 ass_1_control = "ros2 run turtlebot3_teleop teleop_keyboard"
 ass_3 = "ros2 run assignment_3 path_planner"
-ass_3_viz = "ros2 rviz -d $PIXI_PROJECT_ROOT/src/assignment_3/rviz/planning.rviz"
+ass_3_viz = "rviz2 -d $PIXI_PROJECT_ROOT/src/assignment_3/rviz/planning.rviz"
+ass_3_rqt = "ros2 run rqt_reconfigure rqt_reconfigure"
 
 [feature.jazzy]
 channels = ["robostack-jazzy"]
