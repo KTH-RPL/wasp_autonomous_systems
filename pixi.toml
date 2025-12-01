@@ -11,12 +11,12 @@ colcon-common-extensions = "*"
 kdtree = ">=0.16,<0.17"
 
 [tasks]
-build = "cd $PIXI_PROJECT_ROOT && colcon build --symlink-install"
-ass_1 = "ros2 launch assignment_1 turtlebot_simulation_launch.py"
-ass_1_teleop = "ros2 run turtlebot3_teleop teleop_keyboard"
-ass_3 = "ros2 run assignment_3 path_planner"
-ass_3_viz = "rviz2 -d $PIXI_PROJECT_ROOT/src/assignment_3/rviz/planning.rviz"
-ass_3_rqt = "ros2 run rqt_reconfigure rqt_reconfigure"
+build = {cmd = "colcon build --symlink-install", inputs = ["src"]}
+ass_1 = {cmd = "ros2 launch assignment_1 turtlebot_simulation_launch.py", depends-on = ["build"]}
+ass_1_teleop = {cmd = "ros2 run turtlebot3_teleop teleop_keyboard"}
+ass_3 = {cmd = "ros2 run assignment_3 path_planner", depends-on = ["build"]}
+ass_3_viz = {cmd = "rviz2 -d $PIXI_PROJECT_ROOT/src/assignment_3/rviz/planning.rviz", depends-on = ["build"]}
+ass_3_rqt = {cmd = "ros2 run rqt_reconfigure rqt_reconfigure"}
 
 [feature.jazzy]
 channels = ["robostack-jazzy"]
@@ -47,8 +47,11 @@ ros-jazzy-turtlebot3-teleop = ">=2.3.3,<3"
 # ros-jazzy-nav2-bringup = "*"
 # ros-jazzy-navigation2 = "*"
 
-[feature.jazzy.activation]
+[activation]
 scripts = ["install/setup.sh"]
+
+[target.win-64.activation]
+scripts = ["install/setup.bat"]
 
 [feature.jazzy.activation.env]
 TURTLEBOT3_MODEL = "waffle_pi"
