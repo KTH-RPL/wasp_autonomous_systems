@@ -7,15 +7,15 @@ version = "0.1.0"
 
 [dependencies]
 colcon-common-extensions = "*"
-# setuptools = "<=58.2.0"
-# kdtree = ">=0.16,<0.17"
+setuptools = "<=58.2.0"
+kdtree = ">=0.16,<0.17"
 
 [tasks]
-start = "ros2 launch nav2_bringup tb4_simulation_launch.py headless:=False"
 build = "cd $PIXI_PROJECT_ROOT && colcon build --symlink-install"
-# ass_1 = "ros2 launch turtlebot3_gazebo turtlebot3_house.launch.py"
 ass_1 = "ros2 launch assignment_1 turtlebot_simulation_launch.py"
+ass_1_control = "ros2 run turtlebot3_teleop teleop_keyboard"
 ass_3 = "ros2 run assignment_3 path_planner"
+ass_3_viz = "ros2 rviz -d $PIXI_PROJECT_ROOT/src/assignment_3/rviz/planning.rviz"
 
 [feature.jazzy]
 channels = ["robostack-jazzy"]
@@ -56,9 +56,6 @@ GZ_SIM_RESOURCE_PATH = "$PIXI_PROJECT_ROOT/src/wasp_autonomous_systems/models:$G
 [target.osx-arm64.activation.env]
 # Required for the RVIZ2 to properly startup on osx
 RMW_IMPLEMENTATION = "rmw_cyclonedds_cpp"
-
-[feature.jazzy.tasks]
-start-tb4 = "ros2 launch nav2_bringup tb4_simulation_launch.py headless:=False"
 
 [environments]
 default = { features = ["jazzy"] }
