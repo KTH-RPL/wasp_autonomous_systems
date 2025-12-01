@@ -1,3 +1,0 @@
-[submodule "webots_ros2"]
-	path = webots_ros2
-	url = https://github.com/danielduberg/webots_ros2.git

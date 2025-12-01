@@ -167,3 +167,8 @@ cython_debug/
 
 # Log files
 log/
+
+# ROS workspace folders
+install/
+build/
+logs/

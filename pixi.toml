@@ -1,0 +1,66 @@
+[workspace]
+authors = ["danielduberg <danielduberg@gmail.com>"]
+channels = ["conda-forge"]
+name = "wasp_autonomous_systems"
+platforms = ["linux-64", "osx-arm64", "win-64"]
+version = "0.1.0"
+
+[dependencies]
+colcon-common-extensions = "*"
+# setuptools = "<=58.2.0"
+# kdtree = ">=0.16,<0.17"
+
+[tasks]
+start = "ros2 launch nav2_bringup tb4_simulation_launch.py headless:=False"
+build = "cd $PIXI_PROJECT_ROOT && colcon build --symlink-install"
+# ass_1 = "ros2 launch turtlebot3_gazebo turtlebot3_house.launch.py"
+ass_1 = "ros2 launch assignment_1 turtlebot_simulation_launch.py"
+ass_3 = "ros2 run assignment_3 path_planner"
+
+[feature.jazzy]
+channels = ["robostack-jazzy"]
+
+[feature.jazzy.dependencies]
+ros-jazzy-desktop-full = ">=0.11.0,<0.12"
+ros-jazzy-turtlebot3-simulations = ">=2.3.7,<3"
+ros-jazzy-turtlebot3-teleop = ">=2.3.3,<3"
+# ros-jazzy-desktop = "*"
+# ros-jazzy-rclcpp = "*"
+# ros-jazzy-rclpy = "*"
+# ros-jazzy-nav-msgs = "*"
+# ros-jazzy-ros2launch = "*"
+# ros-jazzy-rosbag2 = "*"
+# # ros-jazzy-rqt-tf-tree = "*"
+# ros-jazzy-rviz2 = "*"
+# ros-jazzy-teleop-twist-keyboard = "*"
+# ros-jazzy-tf2-ros = "*"
+
+# ros-jazzy-turtlebot3-gazebo = "*"
+# ros-jazzy-joint-state-publisher = "*"
+# ros-jazzy-xacro = "*"
+# ros-jazzy-ros-gz-bridge = "*"
+# # ros-jazzy-ros-gz-gazebo = "*"
+# ros-jazzy-ros-gz-image = "*"
+# ros-jazzy-ros-gz-interfaces = "*"
+# ros-jazzy-slam-toolbox = "*"
+# ros-jazzy-nav2-bringup = "*"
+# ros-jazzy-navigation2 = "*"
+
+[feature.jazzy.activation]
+scripts = ["install/setup.sh"]
+
+[feature.jazzy.activation.env]
+TURTLEBOT3_MODEL = "waffle_pi"
+GZ_SIM_RESOURCE_PATH = "$PIXI_PROJECT_ROOT/src/wasp_autonomous_systems/models:$GZ_SIM_RESOURCE_PATH"
+
+[target.osx-arm64.activation.env]
+# Required for the RVIZ2 to properly startup on osx
+RMW_IMPLEMENTATION = "rmw_cyclonedds_cpp"
+
+[feature.jazzy.tasks]
+start-tb4 = "ros2 launch nav2_bringup tb4_simulation_launch.py headless:=False"
+
+[environments]
+default = { features = ["jazzy"] }
+jazzy = { features = ["jazzy"] }
+
