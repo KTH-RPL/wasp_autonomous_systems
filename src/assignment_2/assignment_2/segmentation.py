@@ -54,7 +54,7 @@ class Segmentation(Node):
 
         # Publisher
         self._seg_pub = self.create_publisher(
-            Image, sub.topic_name + '/segmentation', 10)
+            Image, sub.topic_name + '_segmentation', 10)
         self._seg_compressed_pub = self.create_publisher(
             CompressedImage, compressed_sub.topic_name + '/segmentation', 10)
 

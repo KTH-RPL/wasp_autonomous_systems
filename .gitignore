@@ -172,3 +172,5 @@ log/
 install/
 build/
 logs/
+rosbags/
+yolo_models/
