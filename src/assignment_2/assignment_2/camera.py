@@ -25,6 +25,9 @@ class Camera(Node):
         self.declare_parameter('framerate', 10.0, ParameterDescriptor(description='Camera framerate (frames per second).'))
         self.declare_parameter('image_height', 720, ParameterDescriptor(description='Image height in pixels.'))
         self.declare_parameter('image_width', 1280, ParameterDescriptor(description='Image weidth in pixels.'))
+        self.declare_parameter('frame_id', "camera_link", ParameterDescriptor(description='Frame ID.'))
+
+        self.frame_id = self.get_parameter('frame_id').get_parameter_value().string_value
 
         timer_period = 1 / self.get_parameter('framerate').get_parameter_value().double_value # seconds
         self.cap = self.get_camera(0)
@@ -44,22 +47,17 @@ class Camera(Node):
     def timer_callback(self):
         success, img = self.cap.read()
         if success:
-            # if 0 < self.pub_.get_subscription_count():
-            ret = self._cv_bridge.cv2_to_imgmsg(img[..., ::-1], encoding="rgb8")
-            # ret.header = msg.header
-            self.pub_.publish(ret)
-            # if 0 < self.pub_comp_.get_subscription_count():
-            ret = self._cv_bridge.cv2_to_compressed_imgmsg(img[..., ::-1])
-            # ret.header = msg.header
-            self.pub_comp_.publish(ret)
-            # cv2.imshow("Result", img)
-            # if cv2.waitKey(1) & 0xFF == ord('q'):
-            #     return
-        # msg = String()
-        # msg.data = 'Hello World: %d' % self.i
-        # self.publisher_.publish(msg)
-        # self.get_logger().info('Publishing: "%s"' % msg.data)
-        # self.i += 1
+            timestamp = self.get_clock().now().to_msg()
+            if 0 < self.pub_.get_subscription_count():
+                ret = self._cv_bridge.cv2_to_imgmsg(img[..., ::-1], encoding="rgb8")
+                ret.header.frame_id = self.frame_id
+                ret.header.stamp = timestamp
+                self.pub_.publish(ret)
+            if 0 < self.pub_comp_.get_subscription_count():
+                ret = self._cv_bridge.cv2_to_compressed_imgmsg(img[..., ::-1])
+                ret.header.frame_id = self.frame_id
+                ret.header.stamp = timestamp
+                self.pub_comp_.publish(ret)
 
 
 def main(args=None):

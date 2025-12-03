@@ -150,11 +150,10 @@ ros2 run assignment_2 segmentation --ros-args -r /image:=/kitti/camera/color/lef
 ] }
 
 ass_2_task_3_cam = { cmd = '''
-ros2 run usb_cam usb_cam_node_exe
-& ros2 run usb_cam usb_cam_node_exe --ros-args -p framerate:=30.0 -p image_height:=720 -p image_width:=1280 -p pixel_format:=uyvy
-& ros2 run rqt_image_view rqt_image_view /image_raw
-& ros2 run assignment_2 segmentation --ros-args -p yolo_model:="openvino_int8"
-& ros2 run rqt_image_view rqt_image_view /segmentation/image_raw
+ros2 run assignment_2 camera --ros-args -p framerate:=10.0 -p image_height:=480 -p image_width:=640
+& ros2 run rqt_image_view rqt_image_view /image
+& ros2 run assignment_2 segmentation --ros-args -p yolo_model:="s"
+& ros2 run rqt_image_view rqt_image_view /image_segmentation
 ''', depends-on = [
 	"build",
 	"generate_yolo_models",

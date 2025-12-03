@@ -27,6 +27,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'camera = assignment_2.camera:main',
             'odometry = assignment_2.odometry:main',
             'collision_detection = assignment_2.collision_detection:main',
             'kitti_segmentation_extra = assignment_2.kitti_segmentation_extra:main',
