@@ -35,7 +35,7 @@ class CollisionDetector(Node):
 
         # TODO: Fill in
 
-        collision_detection_msg.collision = False  # TODO: Fill in
+        collision_detection_msg.collision = 50 < linear_acc_x # False  # TODO: Fill in
 
         self._pub.publish(collision_detection_msg)
 

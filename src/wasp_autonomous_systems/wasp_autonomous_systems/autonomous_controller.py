@@ -13,7 +13,7 @@ class AutonomousController(Node):
 
     def __init__(self):
         super().__init__('autonomous_controller')
-        self._pub = self.create_publisher(TwistStamped, '/diffdrive_controller/cmd_vel', 10)
+        self._pub = self.create_publisher(TwistStamped, '/cmd_vel', 10)
         self.create_subscription(
             Collision, '/collision_detected', self.collision_callback, 10)
         self._back = 0
@@ -50,23 +50,23 @@ class AutonomousController(Node):
     def collision_callback(self, msg: Collision):
         '''This function is called every time the collision detection topic is published to'''
 
-        if self._left or self._right:
+        if self._back or self._left or self._right:
             # We are currently already moving away from a previous collision, disregard this message
             return
 
         if msg.collision:
             # There was a collision
             # Move backwards for 100 time steps
-            self._back = 100
+            self._back = 50
             # Flip a coin to see if we should turn left or right
             if getrandbits(1):
                 # Turn left for 200 time steps
-                self._left = 75
+                self._left = 200
                 self._right = 0
             else:
                 # Turn right for 200 time steps
                 self._left = 0
-                self._right = 75
+                self._right = 200
 
 
 def main():

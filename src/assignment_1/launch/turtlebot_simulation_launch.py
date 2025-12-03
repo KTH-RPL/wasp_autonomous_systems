@@ -1,20 +1,4 @@
 #!/usr/bin/env python3
-#
-# Copyright 2019 ROBOTIS CO., LTD.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-# Authors: Joep Tool, Hyungyu Kim
 
 import os
 
@@ -27,7 +11,7 @@ from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
-    launch_file_dir = os.path.join(get_package_share_directory('turtlebot3_gazebo'), 'launch')
+    launch_file_dir = os.path.join(get_package_share_directory('wasp_autonomous_systems'), 'launch')
     ros_gz_sim = get_package_share_directory('ros_gz_sim')
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
@@ -56,32 +40,26 @@ def generate_launch_description():
 
     robot_state_publisher_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(launch_file_dir, 'robot_state_publisher.launch.py')
+            os.path.join(launch_file_dir, 'robot_state_publisher_launch.py')
         ),
         launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
     spawn_turtlebot_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(launch_file_dir, 'spawn_turtlebot3.launch.py')
+            os.path.join(launch_file_dir, 'spawn_turtlebot3_launch.py')
         ),
         launch_arguments={
             'x_pose': x_pose,
             'y_pose': y_pose
         }.items()
     )
-
+    
     set_env_vars_resources = AppendEnvironmentVariable(
             'GZ_SIM_RESOURCE_PATH',
             os.path.join(
-                get_package_share_directory('turtlebot3_gazebo'),
+                get_package_share_directory('wasp_autonomous_systems'),
                 'models'))
-    
-    # set_env_vars_resources = AppendEnvironmentVariable(
-    #         'GZ_SIM_RESOURCE_PATH',
-    #         os.path.join(
-    #             get_package_share_directory('wasp_autonomous_systems'),
-    #             'models'))
 
     ld = LaunchDescription()
 
