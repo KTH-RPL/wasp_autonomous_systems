@@ -4,6 +4,7 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /PointCloud21
         - /PointCloud21/Topic1
         - /PointCloud21/Autocompute Value Bounds1
         - /Left1/Topic1
@@ -57,9 +58,9 @@ Visualization Manager:
       Style: Flat Squares
       Topic:
         Depth: 5
-        Durability Policy: Volatile
-        History Policy: Keep Last
-        Reliability Policy: Best Effort
+        Durability Policy: System Default
+        History Policy: System Default
+        Reliability Policy: System Default
         Value: /kitti/velo
       Use Fixed Frame: true
       Use rainbow: true
