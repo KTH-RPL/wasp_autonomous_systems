@@ -23,6 +23,7 @@ setup(
     tests_require=[],
     entry_points={
         'console_scripts': [
+            'altitude_hold = assignment_4.altitude_hold:main',
             'altitude_manual = assignment_4.altitude_manual:main',
             'altitude_pid = assignment_4.altitude_pid:main'
         ],

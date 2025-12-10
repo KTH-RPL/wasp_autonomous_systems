@@ -4,9 +4,11 @@ import rclpy
 from rclpy.node import Node
 from rclpy.time import Time
 
-from wasp_autonomous_systems_interfaces.msg import Thrust
-from geometry_msgs.msg import PointStamped
+# from wasp_autonomous_systems_interfaces.msg import Thrust
+# from geometry_msgs.msg import PointStamped
 
+from actuator_msgs.msg import Actuators
+from nav_msgs.msg import Odometry
 
 class AltitudeHold(Node):
 
@@ -17,16 +19,16 @@ class AltitudeHold(Node):
         self.declare_parameter('target_height', 0.0)
 
         # Initialize the thrust publisher
-        self._thrust_pub = self.create_publisher(Thrust, 'thrust', 10)
+        self._thrust_pub = self.create_publisher(Actuators, 'drone/motor_speed', 10)
 
         # Subscribe to GPS topic (to get position) and call callback function on each recieved message
         self.create_subscription(
-            PointStamped, '/mavic_2_pro/gps', self.gps_callback, 10)
+            Odometry, '/odom', self.odom_callback, 10)
 
         # Store the time last message was recieved
         self._previous_time = None
 
-    def gps_callback(self, msg: PointStamped):
+    def odom_callback(self, msg: Odometry):
         """Takes GPS position and adjusts thrust.
 
         This function is called every time the GPS position is updated (i.e., when a message is published on the '/mavic_2_pro/gps' topic).
@@ -39,7 +41,7 @@ class AltitudeHold(Node):
         msg -- An GPS ROS message. To see more information about it run 'ros2 interface show geometry_msgs/msg/PointStamped' in a terminal.
         """
 
-        thrust = Thrust()
+        thrust = Actuators()
         thrust.header.stamp = msg.header.stamp
 
         if not self._previous_time:
@@ -56,12 +58,19 @@ class AltitudeHold(Node):
         target_height = self.get_parameter(
             'target_height').get_parameter_value().double_value
 
+        thrust.velocity = [
+            700,
+            700,
+            700,
+            700
+        ]
+
         # TODO: Fill in
 
-        thrust.m1 = 0.0  # TODO: Fill in
-        thrust.m2 = 0.0  # TODO: Fill in
-        thrust.m3 = 0.0  # TODO: Fill in
-        thrust.m4 = 0.0  # TODO: Fill in
+        # thrust.m1 = 0.0  # TODO: Fill in
+        # thrust.m2 = 0.0  # TODO: Fill in
+        # thrust.m3 = 0.0  # TODO: Fill in
+        # thrust.m4 = 0.0  # TODO: Fill in
 
         self._thrust_pub.publish(thrust)
 

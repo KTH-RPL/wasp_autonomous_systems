@@ -8,6 +8,7 @@ from launch.actions import AppendEnvironmentVariable
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
@@ -15,13 +16,13 @@ def generate_launch_description():
     ros_gz_sim = get_package_share_directory('ros_gz_sim')
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
-    x_pose = LaunchConfiguration('x_pose', default='-2.0')
-    y_pose = LaunchConfiguration('y_pose', default='-0.5')
+    x_pose = LaunchConfiguration('x_pose', default='0.0')
+    y_pose = LaunchConfiguration('y_pose', default='0.0')
 
     world = os.path.join(
-        get_package_share_directory('turtlebot3_gazebo'),
+        get_package_share_directory('wasp_autonomous_systems'),
         'worlds',
-        'turtlebot3_world.world'
+        'empty.world'
     )
 
     gzserver_cmd = IncludeLaunchDescription(
@@ -38,21 +39,51 @@ def generate_launch_description():
         launch_arguments={'gz_args': '-g -v2 '}.items()
     )
 
-    robot_state_publisher_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(launch_file_dir, 'robot_state_publisher_launch.py')
-        ),
-        launch_arguments={'use_sim_time': use_sim_time}.items()
+    # robot_state_publisher_cmd = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         os.path.join(launch_file_dir, 'robot_state_publisher_launch.py')
+    #     ),
+    #     launch_arguments={'use_sim_time': use_sim_time}.items()
+    # )
+
+    robot = 'quadrotor'
+    model_folder = 'quadrotor'
+
+    urdf_path = os.path.join(
+        get_package_share_directory('wasp_autonomous_systems'),
+        'models',
+        model_folder,
+        'model.sdf'
     )
 
-    spawn_turtlebot_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(launch_file_dir, 'spawn_turtlebot3_launch.py')
-        ),
-        launch_arguments={
-            'x_pose': x_pose,
-            'y_pose': y_pose
-        }.items()
+    start_gazebo_ros_spawner_cmd = Node(
+        package='ros_gz_sim',
+        executable='create',
+        arguments=[
+            '-name', robot,
+            '-file', urdf_path,
+            '-x', x_pose,
+            '-y', y_pose,
+            '-z', '0.01'
+        ],
+        output='screen',
+    )
+
+    bridge_params = os.path.join(
+        get_package_share_directory('wasp_autonomous_systems'),
+        'params',
+        model_folder+'_bridge.yaml'
+    )
+
+    start_gazebo_ros_bridge_cmd = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=[
+            '--ros-args',
+            '-p',
+            f'config_file:={bridge_params}',
+        ],
+        output='screen',
     )
     
     set_env_vars_resources = AppendEnvironmentVariable(
@@ -66,8 +97,9 @@ def generate_launch_description():
     # Add the commands to the launch description
     ld.add_action(gzserver_cmd)
     ld.add_action(gzclient_cmd)
-    ld.add_action(spawn_turtlebot_cmd)
-    ld.add_action(robot_state_publisher_cmd)
+    ld.add_action(start_gazebo_ros_spawner_cmd)
+    ld.add_action(start_gazebo_ros_bridge_cmd)
+    # ld.add_action(robot_state_publisher_cmd)
     ld.add_action(set_env_vars_resources)
 
     return ld

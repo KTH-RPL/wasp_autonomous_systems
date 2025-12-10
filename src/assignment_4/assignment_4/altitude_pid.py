@@ -4,8 +4,8 @@ import rclpy
 from rclpy.node import Node
 from rclpy.time import Time
 
-from wasp_autonomous_systems_interfaces.msg import Thrust
-from geometry_msgs.msg import PointStamped
+from actuator_msgs.msg import Actuators
+from nav_msgs.msg import Odometry
 
 
 class AltitudePID(Node):
@@ -19,24 +19,26 @@ class AltitudePID(Node):
         self.declare_parameter('kd', 0.0)
         self.declare_parameter('u_feedforward', 0.0)
 
-        self._thrust_pub = self.create_publisher(Thrust, 'thrust', 10)
+        self._thrust_pub = self.create_publisher(Actuators, 'drone/motor_speed', 10)
 
         self.create_subscription(
-            PointStamped, '/mavic_2_pro/gps', self.gps_callback, 10)
+            Odometry, '/odom', self.odom_callback, 10)
 
         self._previous_time = None
         self._integral = 0
         self._previous_z = 0
 
-    def gps_callback(self, msg: PointStamped):
+    def odom_callback(self, msg: Odometry):
         # The control signal message
-        u = Thrust()
+        u = Actuators()
         u.header.stamp = msg.header.stamp
+
+        z = msg.pose.pose.position.z
 
         # Initialize varaible that allow us to calculate deltas in time and z
         if not self._previous_time:
             self._previous_time = Time.from_msg(msg.header.stamp)
-            self._previous_z = msg.point.z
+            self._previous_z = z
             return
 
         time = Time.from_msg(msg.header.stamp)
@@ -51,7 +53,7 @@ class AltitudePID(Node):
         kd = self.get_parameter('kd').get_parameter_value().double_value
 
         # The height error
-        error = r - msg.point.z
+        error = r - z
 
         # The P-part which is proportional to the error
         proportional = error
@@ -73,7 +75,7 @@ class AltitudePID(Node):
         # will be zero except when the reference changes in which case the derivate will be 
         # huge which is what we want to filter away. We therefore drop that part and end up with
         # the following where we handle the case where dt=0 also
-        derivative = -(msg.point.z - self._previous_z) / dt if dt else 0
+        derivative = -(z - self._previous_z) / dt if dt else 0
 
         # Put the pieces together with u_feedforward + PID
         thrust = u_feedforward + kp * proportional + \
@@ -81,14 +83,20 @@ class AltitudePID(Node):
         
         # Store previous values for time and z to calculate dt and dz/dt respectively
         self._previous_time = time
-        self._previous_z = msg.point.z
+        self._previous_z = z
+
+        # thrust = max(660.0, thrust)
 
         # We are treatinh the drone as a single-input single output system but
         # keep in mind that there are four input, the speed of each motor m1-m4
-        u.m1 = thrust
-        u.m2 = thrust
-        u.m3 = thrust
-        u.m4 = thrust
+        u.velocity = [
+            thrust,
+            thrust,
+            thrust,
+            thrust,
+        ]
+
+        print(thrust)
 
         self._thrust_pub.publish(u)
 

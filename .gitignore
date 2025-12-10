@@ -173,4 +173,4 @@ install/
 build/
 logs/
 rosbags/
-yolo_models/
+yolo11n-seg.pt

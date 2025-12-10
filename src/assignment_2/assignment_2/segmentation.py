@@ -16,33 +16,11 @@ class Segmentation(Node):
     def __init__(self):
         super().__init__('segmentation')
 
-        # YOLO model
-        self.declare_parameter('yolo_model', 'openvino_int8', ParameterDescriptor(
-            description='Select YOLO model, options: [torch, openvino_half, openvino_int8].'))
-
         # Device parameter
         self.declare_parameter('device', 'cpu', ParameterDescriptor(
             description='Select device to run YOLO model on, use \'cpu\' for cpu, \'0\', \'1\', ... for GPU X'))
 
-        # Load a pretrained model
-        yolo_model = self.get_parameter(
-            'yolo_model').get_parameter_value().string_value
-        if 'YOLO_MODELS_DIR' in os.environ and os.path.isdir(os.environ['YOLO_MODELS_DIR']):
-            path = ''
-            if yolo_model == 'openvino_half':
-                path = os.path.join(
-                    os.environ['YOLO_MODELS_DIR'], 'yolo11n-seg_openvino_model')
-            elif yolo_model == 'openvino_int8':
-                path = os.path.join(
-                    os.environ['YOLO_MODELS_DIR'], 'yolo11n-seg_int8_openvino_model')
-            else:
-                path = os.path.join(
-                    os.environ['YOLO_MODELS_DIR'], 'yolo11n-seg.pt')
-
-            if os.path.isfile(path) or os.path.isdir(path):
-                self._model = YOLO(path)
-        else:
-            self._model = YOLO('yolo11n-seg.pt')
+        self._model = YOLO('yolo11n-seg.pt')
 
         # Bridge to convert between ROS and OpenCV
         self._cv_bridge = CvBridge()

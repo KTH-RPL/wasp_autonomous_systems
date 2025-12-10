@@ -3,8 +3,7 @@ Panels:
     Help Height: 0
     Name: Displays
     Property Tree Widget:
-      Expanded:
-        - /Square1
+      Expanded: ~
       Splitter Ratio: 0.5
     Tree Height: 427
   - Class: rviz_common/Selection
@@ -73,9 +72,9 @@ Visualization Manager:
       Style: Flat Squares
       Topic:
         Depth: 5
-        Durability Policy: Volatile
-        History Policy: Keep Last
-        Reliability Policy: Reliable
+        Durability Policy: System Default
+        History Policy: System Default
+        Reliability Policy: System Default
         Value: /camera/depth/color/points
       Use Fixed Frame: true
       Use rainbow: true
@@ -92,7 +91,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /camera/color/image
+        Value: /camera/color/image_raw
       Value: true
     - Alpha: 0.5
       Buffer Length: 1
@@ -241,7 +240,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/XYOrbit
-      Distance: 5.686068058013916
+      Distance: 4.40329122543335
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -256,10 +255,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.7947972416877747
+      Pitch: 0.954797089099884
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz_default_plugins)
-      Yaw: 3.1414999961853027
+      Yaw: 3.121499538421631
     Saved: ~
 Window Geometry:
   Color:

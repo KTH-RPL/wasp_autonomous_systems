@@ -34,148 +34,121 @@ torchvision = "==0.22"
 openvino = ">=2025.0.0,<2026"
 nncf = ">=2.5.0,<3"
 opencv = ">=4.11.0,<5"
+zstd = ">=1.5.7,<2"
+pyqtgraph = ">=0.14.0,<0.15"
 
 # [pypi-dependencies]
 # pv = {  }
 
 [target.linux.dependencies]
-libgl-devel = "*"
+libgl-devel = ">=1.7.0,<2"
 
 # TODO: Make sure to source after build
 
-# To build you can use - `pixi run -e <ros distro> build <Any other temporary args>`
 [target.win-64.tasks]
-build = { cmd = "colcon build --merge-install --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DPython_FIND_VIRTUALENV=ONLY -DPython3_FIND_VIRTUALENV=ONLY", inputs = [
-	"src",
+build = { cmd = "colcon build --merge-install --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DPython3_FIND_VIRTUALENV=ONLY", inputs = [
+	"src/**/*",
 	"setup.py",
 	"setup.cfg",
+], outputs = [
+	"install/**/*",
 ] }
 
 [target.unix.tasks]
-build = { cmd = "colcon build --symlink-install --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DPython_FIND_VIRTUALENV=ONLY -DPython3_FIND_VIRTUALENV=ONLY", inputs = [
-	"src",
+build = { cmd = "colcon build --symlink-install --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DPython3_FIND_VIRTUALENV=ONLY", inputs = [
+	"src/**/*",
 	"setup.py",
 	"setup.cfg",
+], outputs = [
+	"install/**/*",
 ] }
 
 
 [tasks]
-download_rosbags = { cmd = 'curl -fSL "https://canvas.kth.se/files/9471655/download?download_frd=1&verifier=4wOMCwu3QHS0duQGTKpn6HyhO9jCPGZSL3RM9kmu" | tar -I "unzstd -T0" -x', outputs = [
-	"rosbags/kitti/kitti_0.mcap",
-	"rosbags/kitti/kitti_1.mcap",
-	"rosbags/kitti/kitti_2.mcap",
-	"rosbags/kitti/kitti_3.mcap",
-	"rosbags/kitti/kitti_4.mcap",
+clear_workspace = { cmd = "rm -r build install log" }
+
+download_rosbags = { cmd = 'curl -fSL "https://canvas.kth.se/files/9471655/download?download_frd=1&verifier=4wOMCwu3QHS0duQGTKpn6HyhO9jCPGZSL3RM9kmu" | tar --use-compress-program=unzstd -x', outputs = [
+	"rosbags/kitti/kitti_*.mcap",
 	"rosbags/kitti/metadata.yaml",
-	"rosbags/real_robot/real_robot_0.mcap",
-	"rosbags/real_robot/real_robot_1.mcap",
-	"rosbags/real_robot/real_robot_2.mcap",
-	"rosbags/real_robot/real_robot_3.mcap",
+	"rosbags/real_robot/real_robot_*.mcap",
 	"rosbags/real_robot/metadata.yaml",
 ] }
 
-generate_yolo_models = { cmd = '''
-mkdir -p yolo_models
-&& cd yolo_models
-&& yolo segment export model=yolo11n-seg.pt format=openvino half=True device=cpu dynamic=True 
-&& yolo segment export model=yolo11n-seg.pt format=openvino int8=True device=cpu dynamic=True data=coco128-seg.yaml
-''', outputs = [
-	"yolo_models/yolo11n-seg_int8_openvino_model/metadata.yaml",
-	"yolo_models/yolo11n-seg_int8_openvino_model/yolo11n-seg.bin",
-	"yolo_models/yolo11n-seg_int8_openvino_model/yolo11n-seg.xml",
-	"yolo_models/yolo11n-seg_openvino_model/metadata.yaml",
-	"yolo_models/yolo11n-seg_openvino_model/yolo11n-seg.bin",
-	"yolo_models/yolo11n-seg_openvino_model/yolo11n-seg.xml",
-	"yolo11n-seg.pt",
-] }
+# Assignment 1 tasks
 
-# ros2 launch assignment_1 turtlebot_simulation_launch.py
-# & rviz2 -d src/assignment_1/rviz/turtlebot_simulation.rviz --ros-args -p use_sim_time:=true
-# & ros2 run turtlebot3_teleop teleop_keyboard
-ass_1_task_1 = { cmd = '''
+ass_1_1 = { cmd = '''
 ros2 launch assignment_1 turtlebot_simulation_launch.py
 & rviz2 -d src/assignment_1/rviz/turtlebot_simulation.rviz --ros-args -p use_sim_time:=true
-''', depends-on = [
-	"build",
-] }
-# ass_1_teleop = { cmd = "ros2 run turtlebot3_teleop teleop_keyboard" }
+''' }
 
-ass_1_task_2 = { cmd = '''
+ass_1_2 = { cmd = '''
+ros2 bag play --read-ahead-queue-size 100 -l -r 1.0 --clock 100 rosbags/real_robot
+& rviz2 -d src/assignment_1/rviz/real_robot.rviz --ros-args -p use_sim_time:=true
+''' }
+
+ass_1_3 = { cmd = '''
 ros2 bag play --read-ahead-queue-size 100 -l -r 1.0 --clock 100 rosbags/kitti
 & rviz2 -d src/assignment_1/rviz/kitti.rviz --ros-args -p use_sim_time:=true
-& ros2 run image_transport republish --ros-args -p in_transport:="compressed" -p out_transport:="raw" --remap in/compressed:=/kitti/camera/color/left/image/compressed --remap out:=/kitti/camera/color/left/image
-& ros2 run image_transport republish --ros-args -p in_transport:="compressed" -p out_transport:="raw" --remap in/compressed:=/kitti/camera/color/right/image/compressed --remap out:=/kitti/camera/color/right/image
 & ros2 launch wasp_autonomous_systems kitti_car_launch.py
-''', depends-on = [
-	"download_rosbags",
-] }
-# ass_1_task_2 = { cmd = "ros2 bag play --read-ahead-queue-size 100 -l -r 1.0 --clock 100 rosbags/kitti", depends-on = [
-# 	"download_rosbags",
-# ] }
-# ass_1_task_2_viz = { cmd = '''
-# rviz2 -d src/assignment_1/rviz/kitti.rviz --ros-args -p use_sim_time:=true
-# & ros2 run image_transport republish --ros-args -p in_transport:="compressed" -p out_transport:="raw" --remap in/compressed:=/kitti/camera/color/left/image/compressed --remap out:=/kitti/camera/color/left/image
-# & ros2 run image_transport republish --ros-args -p in_transport:="compressed" -p out_transport:="raw" --remap in/compressed:=/kitti/camera/color/right/image/compressed --remap out:=/kitti/camera/color/right/image
-# ''' }
+''' }
 
-ass_2_task_1 = { cmd = '''
+# Assignment 2 tasks
+
+ass_2_1 = { cmd = '''
 ros2 run assignment_2 odometry --ros-args -p use_sim_time:=true
 & ros2 bag play --read-ahead-queue-size 100 -l -r 1.0 --clock 100 -p rosbags/real_robot
 & rviz2 -d src/assignment_2/rviz/odometry.rviz --ros-args -p use_sim_time:=true
-& ros2 run image_transport republish --ros-args -p in_transport:="compressed" -p out_transport:="raw" --remap in/compressed:=/camera/color/image/compressed --remap out:=/camera/color/image
-''', depends-on = [
-	"build",
-	"download_rosbags",
-] }
+''' }
 
-ass_2_task_2 = { cmd = '''
+ass_2_2 = { cmd = '''
 ros2 launch assignment_2 collision_detection_launch.py
 & rviz2 -d src/assignment_2/rviz/collision_detection.rviz --ros-args -p use_sim_time:=true
 & pixi run ros2 run rqt_plot rqt_plot /imu/linear_acceleration
 & ros2 run assignment_2 collision_detection --ros-args -p use_sim_time:=true
 & ros2 run wasp_autonomous_systems autonomous_controller --ros-args -p use_sim_time:=true
-''', depends-on = [ 
-	"build",
-] }
+''' }
 
-ass_2_task_3_kitti = { cmd = '''
-ros2 run assignment_2 segmentation --ros-args -r /image:=/kitti/camera/color/left/image -p use_sim_time:=true -p yolo_model:="s"
+ass_2_3 = { cmd = '''
+ros2 run assignment_2 segmentation --ros-args -r /image:=/kitti/camera/color/left/image -p use_sim_time:=true
 & ros2 bag play --read-ahead-queue-size 100 -l -r 1.0 --clock 100 -p rosbags/kitti
 & rviz2 -d src/assignment_2/rviz/kitti_segmentation.rviz --ros-args -p use_sim_time:=true
-& ros2 run image_transport republish --ros-args -p in_transport:="compressed" -p out_transport:="raw" --remap in/compressed:=/kitti/camera/color/left/image/compressed --remap out:=/kitti/camera/color/left/image
-& ros2 run image_transport republish --ros-args -p in_transport:="compressed" -p out_transport:="raw" --remap in/compressed:=/kitti/camera/color/right/image/compressed --remap out:=/kitti/camera/color/right/image
 & ros2 launch wasp_autonomous_systems kitti_car_launch.py
-''', depends-on = [
-	"build",
-	"download_rosbags",
-	"generate_yolo_models",
-] }
+''' }
 
-ass_2_task_3_cam = { cmd = '''
+ass_2_4 = { cmd = '''
 ros2 run assignment_2 camera --ros-args -p framerate:=10.0 -p image_height:=480 -p image_width:=640
-& ros2 run rqt_image_view rqt_image_view /image
-& ros2 run assignment_2 segmentation --ros-args -p yolo_model:="s"
-& ros2 run rqt_image_view rqt_image_view /image_segmentation
-''', depends-on = [
-	"build",
-	"generate_yolo_models",
-] }
+& ros2 run assignment_2 segmentation
+& rqt --perspective-file src/assignment_2/rqt/camera_segmentation.perspective
+''' }
 
-ass_3 = { cmd = '''
-ros2 run assignment_3 path_planner
-& rviz2 -d $PIXI_PROJECT_ROOT/src/assignment_3/rviz/planning.rviz
+# Assignment 3 tasks
+
+ass_3_planner = { cmd = 'ros2 run assignment_3 path_planner' }
+
+ass_3_viewer = { cmd = '''
+rviz2 -d $PIXI_PROJECT_ROOT/src/assignment_3/rviz/planning.rviz
 & ros2 run rqt_reconfigure rqt_reconfigure /path_planner
-''', depends-on = ["build"] }
-# ass_3_viz = { cmd = "rviz2 -d $PIXI_PROJECT_ROOT/src/assignment_3/rviz/planning.rviz", depends-on = [
-# 	"build",
-# ] }
-# ass_3_rqt = { cmd = "ros2 run rqt_reconfigure rqt_reconfigure" }
+''' }
+
+ass_3 = [{ task = "ass_3_planner" }, { task = "ass_3_viewer" }]
+
+# ass_3 = { cmd = '''
+# ros2 run assignment_3 path_planner
+# & rviz2 -d $PIXI_PROJECT_ROOT/src/assignment_3/rviz/planning.rviz
+# & ros2 run rqt_reconfigure rqt_reconfigure /path_planner
+# ''', depends-on = ["build"] }
+# # ass_3_viz = { cmd = "rviz2 -d $PIXI_PROJECT_ROOT/src/assignment_3/rviz/planning.rviz", depends-on = [
+# # 	"build",
+# # ] }
+# # ass_3_rqt = { cmd = "ros2 run rqt_reconfigure rqt_reconfigure" }
+
+# Assignment 4 tasks
 
 [feature.jazzy]
 channels = ["robostack-jazzy"]
 
 [feature.jazzy.dependencies]
-ros-jazzy-desktop-full = ">=0.11.0,<0.12"
+ros-jazzy-desktop = ">=0.11.0,<0.12"
 ros-jazzy-turtlebot3-simulations = ">=2.3.7,<3"
 ros-jazzy-turtlebot3-teleop = ">=2.3.3,<3"
 ros-jazzy-image-transport-plugins = ">=4.0.5,<5"
@@ -184,13 +157,14 @@ ros-jazzy-ros-gz = ">=1.0.16,<2"
 ros-jazzy-tf-transformations = ">=1.1.0,<2"
 
 [feature.jazzy.activation.env]
-TURTLEBOT3_MODEL = "burger_cam"
+# TURTLEBOT3_MODEL = "burger_cam"
 GZ_SIM_RESOURCE_PATH = "$PIXI_PROJECT_ROOT/src/wasp_autonomous_systems/models:$GZ_SIM_RESOURCE_PATH"
-YOLO_MODELS_DIR = "$PIXI_PROJECT_ROOT/yolo_models"
 
-[target.osx.activation.env]
+# [target.osx.activation.env]
+[activation.env]
 # Required for the RVIZ2 to properly startup on osx
-# RMW_IMPLEMENTATION = "rmw_cyclonedds_cpp"
+RMW_IMPLEMENTATION = "rmw_cyclonedds_cpp"
+ROS_AUTOMATIC_DISCOVERY_RANGE = "LOCALHOST"
 
 [environments]
 default = { features = ["jazzy"] }
