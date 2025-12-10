@@ -65,7 +65,7 @@ build = { cmd = "colcon build --symlink-install --cmake-args -DCMAKE_EXPORT_COMP
 
 
 [tasks]
-clear_workspace = { cmd = "rm -r build install log" }
+clean_workspace = { cmd = "rm -r build install log" }
 
 download_rosbags = { cmd = 'curl -fSL "https://canvas.kth.se/files/9471655/download?download_frd=1&verifier=4wOMCwu3QHS0duQGTKpn6HyhO9jCPGZSL3RM9kmu" | tar --use-compress-program=unzstd -x', outputs = [
 	"rosbags/kitti/kitti_*.mcap",
