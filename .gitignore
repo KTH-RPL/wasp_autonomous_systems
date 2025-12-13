@@ -168,6 +168,9 @@ cython_debug/
 # Log files
 log/
 
+# Pixi
+.pixi/
+
 # ROS workspace folders
 install/
 build/
