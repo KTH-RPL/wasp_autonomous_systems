@@ -1,0 +1,15 @@
+[package.build.backend]
+channels = [
+  "https://prefix.dev/pixi-build-backends",
+  "https://prefix.dev/conda-forge",
+]
+name = "pixi-build-ros"
+version = "*"
+
+# [package.build.config]
+# distro = "humble"
+
+[[package.build.config.extra-package-mappings]]
+python3-ultralytics-pip = { conda = ["ultralytics"] }
+python3-transforms3d = { conda = ["transforms3d"] }
+python3-pyqtgraph = { conda = ["pyqtgraph"] }

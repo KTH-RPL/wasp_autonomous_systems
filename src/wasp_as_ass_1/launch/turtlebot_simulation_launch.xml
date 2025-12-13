@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+	<let name="world" value="$(find-pkg-share wasp_as)/worlds/small_house.sdf" />
+	<let name="robot" value="turtlebot3_waffle_rgbd" />
+	<let name="x_pos" value="0.0" />
+	<let name="y_pos" value="0.0" />
+	<let name="z_pos" value="0.01" />
+
+	<let name="robot_config_file" value="$(find-pkg-share wasp_as)/config/$(var robot)_bridge.yaml" />
+	<let name="rviz_config_file" value="$(find-pkg-share wasp_as_ass_1)/rviz/turtlebot_simulation.rviz" />
+
+	<!-- Rviz for visualization -->
+
+	<node pkg="rviz2" exec="rviz2" name="rviz2" args="-d $(var rviz_config_file)" ros_args="-p use_sim_time:=true" output="screen" on_exit="shutdown" />
+
+	<!-- Gazebo for simulation -->
+
+	<include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
+		<arg name="gz_args" value="-r $(var world)" />
+		<arg name="on_exit_shutdown" value="True" />
+	</include>
+
+	<!-- Robot state publisher to see robot in Rviz -->
+
+	<node pkg="robot_state_publisher" exec="robot_state_publisher" name="robot_state_publisher" ros_args="-p use_sim_time:=true" output="screen" respawn="true">
+		<param name="robot_description" value="$(command 'xacro $(find-pkg-share wasp_as)/models/$(var robot).xacro')"/>
+	</node>
+
+	<!-- Spawn robot in Rviz -->
+
+	<node pkg="ros_gz_sim" exec="create" name="robot_spawner" args="-name $(var robot) -file $(find-pkg-share wasp_as)/models/$(var robot)/model.sdf -x $(var x_pos) -y $(var y_pos) -z $(var z_pos)" output="screen" />
+
+	<!-- Bridge between ROS and Gazebo -->
+
+	<node pkg="ros_gz_bridge" exec="parameter_bridge" name="parameter_bridge" ros_args="-p config_file:=$(var robot_config_file) -p use_sim_time:=true" output="screen" respawn="true" />
+</launch>

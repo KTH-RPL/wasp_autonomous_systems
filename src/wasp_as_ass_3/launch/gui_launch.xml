@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+	<let name="rviz_config_file" value="$(find-pkg-share wasp_as_ass_3)/rviz/planning.rviz" />
+
+	<!-- Rviz for visualization -->
+
+	<node pkg="rviz2" exec="rviz2" name="rviz2" args="-d $(var rviz_config_file)" output="screen" on_exit="shutdown" />
+
+	<!-- Rqt reconfigure -->
+
+	<node pkg="rqt_reconfigure" exec="rqt_reconfigure" name="rqt_reconfigure" output="screen" />
+</launch>

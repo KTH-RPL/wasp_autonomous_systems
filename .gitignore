@@ -174,3 +174,4 @@ build/
 logs/
 rosbags/
 yolo11n-seg.pt
+src/*/files.txt

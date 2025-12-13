@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+	<arg name="rate" default="1.0" />
+
+	<let name="rviz_config_file" value="$(find-pkg-share wasp_as_ass_2)/rviz/kitti.rviz" />
+
+	<!-- Rviz for visualization -->
+
+	<node pkg="rviz2" exec="rviz2" name="rviz2" args="-d $(var rviz_config_file)" output="screen" on_exit="shutdown">
+		<param name="use_sim_time" value="true" />
+	</node>
+
+	<!-- Segmentation -->
+
+	<node pkg="wasp_as_ass_2" exec="segmentation" name="segmentation" output="screen" on_exit="shutdown">
+		<param name="use_sim_time" value="true" />
+		<remap from="/image" to="/kitti/camera/color/left/image" />
+	</node>
+
+	<!-- Robot state publisher to see car in Rviz -->
+
+	<node pkg="robot_state_publisher" exec="robot_state_publisher" name="robot_state_publisher" output="screen" respawn="true">
+		<param name="use_sim_time" value="true" />
+		<param name="robot_description" value="$(command 'xacro $(find-pkg-share wasp_as)/models/car.xacro')" />
+	</node>
+	
+	<!-- Play the rosbag -->
+
+	<executable cmd="ros2 bag play --read-ahead-queue-size 100 -l -r $(var rate) --clock 100 rosbags/kitti" output="screen" />
+</launch>

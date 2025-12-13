@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+	<let name="world" value="$(find-pkg-share turtlebot3_gazebo)/worlds/turtlebot3_world.sdf" />
+	<let name="robot" value="turtlebot3_waffle_rgbd" />
+	<let name="x_pos" value="-2.0" />
+	<let name="y_pos" value="-0.5" />
+	<let name="z_pos" value="0.01" />
+
+	<let name="robot_config_file" value="$(find-pkg-share wasp_as)/config/$(var robot)_bridge.yaml" />
+	<let name="rviz_config_file" value="$(find-pkg-share wasp_as_ass_2)/rviz/collision_detection.rviz" />
+
+	<!-- Gazebo for simulation -->
+
+	<include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
+		<arg name="gz_args" value="-r $(var world)" />
+		<arg name="on_exit_shutdown" value="True" />
+	</include>
+
+	<!-- Robot state publisher to see robot in Rviz -->
+
+	<node pkg="robot_state_publisher" exec="robot_state_publisher" name="robot_state_publisher" output="screen" respawn="true">
+		<param name="use_sim_time" value="true" />
+		<param name="robot_description" value="$(command 'xacro $(find-pkg-share wasp_as)/models/$(var robot).xacro')"/>
+	</node>
+
+	<!-- Spawn robot in Rviz -->
+
+	<node pkg="ros_gz_sim" exec="create" name="robot_spawner" args="-name $(var robot) -file $(find-pkg-share wasp_as)/models/$(var robot)/model.sdf -x $(var x_pos) -y $(var y_pos) -z $(var z_pos)" output="screen" />
+
+	<!-- Bridge between ROS and Gazebo -->
+
+	<node pkg="ros_gz_bridge" exec="parameter_bridge" name="parameter_bridge" output="screen" respawn="true">
+		<param name="use_sim_time" value="true" />
+		<param name="config_file" value="$(var robot_config_file)"/>
+	</node>
+
+	<!-- Rviz for visualization -->
+
+	<node pkg="rviz2" exec="rviz2" name="rviz2" args="-d $(var rviz_config_file)" output="screen" on_exit="shutdown">
+		<param name="use_sim_time" value="true" />
+	</node>
+
+	<!-- Rqt for plotting -->
+
+	<node pkg="rqt_plot" exec="rqt_plot" name="rqt_plot" args="/imu/linear_acceleration" output="screen">
+		<param name="use_sim_time" value="true" />
+	</node>
+
+	<!-- Collision detection -->
+
+	<node pkg="wasp_as_ass_2" exec="collision_detection" name="collision_detection" output="screen">
+		<param name="use_sim_time" value="true" />
+	</node>
+
+	<!-- Autonomous controller -->
+
+	<node pkg="wasp_as_ass_2" exec="autonomous_controller" name="autonomous_controller" output="screen" respawn="true">
+		<param name="use_sim_time" value="true" />
+	</node>
+</launch>

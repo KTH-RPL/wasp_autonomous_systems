@@ -1,72 +1,54 @@
 [workspace]
-authors = ["danielduberg <danielduberg@gmail.com>"]
-channels = ["conda-forge"]
 name = "wasp_autonomous_systems"
+authors = ["Daniel Duberg <danielduberg@gmail.com>"]
+channels = [
+	"https://prefix.dev/pixi-build-backends",
+	"https://prefix.dev/conda-forge",
+	"https://prefix.dev/robostack-humble",
+]
 version = "0.1.0"
-platforms = ["linux-64", "win-64", "osx-64", "osx-arm64", "linux-aarch64"]
+platforms = [
+	"osx-arm64",
+	"linux-64",
+	# "win-64", # TODO: Requires Jazzy for Gazebo support, change to Jazzy when https://github.com/RoboStack/ros-jazzy/pull/135 is merged
+	# "linux-aarch64",
+]
+preview = ["pixi-build"]
 
-# This will automatically activate the ros workspace on activation
-[target.win.activation]
-scripts = ["install/setup.bat"]
+# [activation.env]
+# GZ_SIM_RESOURCE_PATH = "$PIXI_PROJECT_ROOT/src/wasp_as/models:$GZ_SIM_RESOURCE_PATH"
 
-[target.unix.activation]
-# For activation scripts, we use bash for Unix-like systems
-scripts = ["install/setup.bash"]
+[activation]
+scripts = ["install/setup.sh"]
 
 [dependencies]
-python = "*"
-# Build tools
-compilers = "*"
-cmake = "*"
-pkg-config = "*"
-make = "*"
-ninja = "*"
-# ROS specific tools
-rosdep = "*"
-colcon-common-extensions = "*"
-setuptools = "==70.3.0"
-# Assignment 3
-kdtree = ">=0.16,<0.17"
-transforms3d = ">=0.4.2,<0.5"
-ultralytics = ">=8.3.234,<9"
-pytorch-cpu = "==2.7"
-torchvision = "==0.22"
-openvino = ">=2025.0.0,<2026"
-nncf = ">=2.5.0,<3"
-opencv = ">=4.11.0,<5"
+# ROS
+# ros-jazzy-ros2run = ">=0.32.6,<0.33"
+# ros-humble-ros2run = ">=0.18.12,<0.19"
+ros-humble-desktop = "*"
+colcon-ros = "*"
+# Course packages
+ros-humble-wasp-as-ass-1 = { path = "src/wasp_as_ass_1" }
+ros-humble-wasp-as-ass-2 = { path = "src/wasp_as_ass_2" }
+ros-humble-wasp-as-ass-3 = { path = "src/wasp_as_ass_3" }
+ros-humble-wasp-as-ass-4 = { path = "src/wasp_as_ass_4" }
+ros-humble-wasp-as = { path = "src/wasp_as" }
+ros-humble-wasp-as-interfaces = { path = "src/wasp_as_interfaces" }
+# To decompress rosbags
 zstd = ">=1.5.7,<2"
-pyqtgraph = ">=0.14.0,<0.15"
 
-# [pypi-dependencies]
-# pv = {  }
-
-[target.linux.dependencies]
-libgl-devel = ">=1.7.0,<2"
-
-# TODO: Make sure to source after build
-
-[target.win-64.tasks]
-build = { cmd = "colcon build --merge-install --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DPython3_FIND_VIRTUALENV=ONLY", inputs = [
-	"src/**/*",
-	"setup.py",
-	"setup.cfg",
-], outputs = [
-	"install/**/*",
-] }
-
-[target.unix.tasks]
-build = { cmd = "colcon build --symlink-install --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DPython3_FIND_VIRTUALENV=ONLY", inputs = [
-	"src/**/*",
-	"setup.py",
-	"setup.cfg",
-], outputs = [
-	"install/**/*",
-] }
+# # Various libraries needed for assignments
+# kdtree = ">=0.16,<0.17"
+# transforms3d = ">=0.4.2,<0.5"
+# ultralytics = ">=8.3.234,<9"
+# pytorch-cpu = "==2.7"
+# torchvision = "==0.22"
+# # opencv = ">=4.11.0,<5"
+# # Nicer plotting in RQT
+# pyqtgraph = ">=0.14.0,<0.15"
 
 
 [tasks]
-clean_workspace = { cmd = "rm -r build install log" }
-
 download_rosbags = { cmd = 'curl -fSL "https://canvas.kth.se/files/9471655/download?download_frd=1&verifier=4wOMCwu3QHS0duQGTKpn6HyhO9jCPGZSL3RM9kmu" | tar --use-compress-program=unzstd -x', outputs = [
 	"rosbags/kitti/kitti_*.mcap",
 	"rosbags/kitti/metadata.yaml",
@@ -74,63 +56,71 @@ download_rosbags = { cmd = 'curl -fSL "https://canvas.kth.se/files/9471655/downl
 	"rosbags/real_robot/metadata.yaml",
 ] }
 
+# Dev tasks
+
+install = "colcon build --symlink-install --cmake-args -DPython_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python -DPYTHON_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_FIND_STRATEGY=LOCATION -DPython_FIND_STRATEGY=LOCATION"
+test = "colcon test --merge-install"
+
 # Assignment 1 tasks
 
-ass_1_1 = { cmd = '''
-ros2 launch assignment_1 turtlebot_simulation_launch.py
-& rviz2 -d src/assignment_1/rviz/turtlebot_simulation.rviz --ros-args -p use_sim_time:=true
-''' }
-
-ass_1_2 = { cmd = '''
-ros2 bag play --read-ahead-queue-size 100 -l -r 1.0 --clock 100 rosbags/real_robot
-& rviz2 -d src/assignment_1/rviz/real_robot.rviz --ros-args -p use_sim_time:=true
-''' }
-
-ass_1_3 = { cmd = '''
-ros2 bag play --read-ahead-queue-size 100 -l -r 1.0 --clock 100 rosbags/kitti
-& rviz2 -d src/assignment_1/rviz/kitti.rviz --ros-args -p use_sim_time:=true
-& ros2 launch wasp_autonomous_systems kitti_car_launch.py
-''' }
+ass_1_1 = { cmd = "ros2 launch wasp_as_ass_1 turtlebot_simulation_launch.xml" }
+ass_1_2 = { cmd = "ros2 launch wasp_as_ass_1 real_robot_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
+ass_1_3 = { cmd = "ros2 launch wasp_as_ass_1 kitti_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
 
 # Assignment 2 tasks
 
-ass_2_1 = { cmd = '''
-ros2 run assignment_2 odometry --ros-args -p use_sim_time:=true
-& ros2 bag play --read-ahead-queue-size 100 -l -r 1.0 --clock 100 -p rosbags/real_robot
-& rviz2 -d src/assignment_2/rviz/odometry.rviz --ros-args -p use_sim_time:=true
-''' }
-
-ass_2_2 = { cmd = '''
-ros2 launch assignment_2 collision_detection_launch.py
-& rviz2 -d src/assignment_2/rviz/collision_detection.rviz --ros-args -p use_sim_time:=true
-& pixi run ros2 run rqt_plot rqt_plot /imu/linear_acceleration
-& ros2 run assignment_2 collision_detection --ros-args -p use_sim_time:=true
-& ros2 run wasp_autonomous_systems autonomous_controller --ros-args -p use_sim_time:=true
-''' }
-
-ass_2_3 = { cmd = '''
-ros2 run assignment_2 segmentation --ros-args -r /image:=/kitti/camera/color/left/image -p use_sim_time:=true
-& ros2 bag play --read-ahead-queue-size 100 -l -r 1.0 --clock 100 -p rosbags/kitti
-& rviz2 -d src/assignment_2/rviz/kitti_segmentation.rviz --ros-args -p use_sim_time:=true
-& ros2 launch wasp_autonomous_systems kitti_car_launch.py
-''' }
-
-ass_2_4 = { cmd = '''
-ros2 run assignment_2 camera --ros-args -p framerate:=10.0 -p image_height:=480 -p image_width:=640
-& ros2 run assignment_2 segmentation
-& rqt --perspective-file src/assignment_2/rqt/camera_segmentation.perspective
-''' }
+ass_2_1 = { cmd = "ros2 launch wasp_as_ass_2 odometry_launch.xml" }
+ass_2_2 = { cmd = "ros2 launch wasp_as_ass_2 collision_detection_launch.xml" }
+ass_2_3 = { cmd = "ros2 launch wasp_as_ass_2 kitti_segmentation_launch.xml" }
+ass_2_4 = { cmd = "ros2 launch wasp_as_ass_2 camera_segmentation_launch.xml" }
 
 # Assignment 3 tasks
 
-ass_3_planner = { cmd = 'ros2 run assignment_3 path_planner' }
+ass_3 = { cmd = "ros2 launch wasp_as_ass_3 planning_launch.xml" }
+ass_3_planner = { cmd = "ros2 run wasp_as_ass_3 path_planner" }
+ass_3_gui = { cmd = "ros2 launch wasp_as_ass_3 gui_launch.xml" }
 
-ass_3_viewer = { cmd = '''
-rviz2 -d $PIXI_PROJECT_ROOT/src/assignment_3/rviz/planning.rviz
-& ros2 run rqt_reconfigure rqt_reconfigure /path_planner
-''' }
+# Assignment 4 tasks
 
-ass_3 = [{ task = "ass_3_planner" }, { task = "ass_3_viewer" }]
+# Assignment 2 tasks
+
+# ass_2_1 = { cmd = '''
+# ros2 run assignment_2 odometry --ros-args -p use_sim_time:=true
+# & ros2 bag play --read-ahead-queue-size 100 -l -r 1.0 --clock 100 -p rosbags/real_robot
+# & rviz2 -d src/assignment_2/rviz/odometry.rviz --ros-args -p use_sim_time:=true
+# ''' }
+
+# ass_2_2 = { cmd = '''
+# ros2 launch assignment_2 collision_detection_launch.py
+# & rviz2 -d src/assignment_2/rviz/collision_detection.rviz --ros-args -p use_sim_time:=true
+# & pixi run ros2 run rqt_plot rqt_plot /imu/linear_acceleration
+# & ros2 run assignment_2 collision_detection --ros-args -p use_sim_time:=true
+# & ros2 run wasp_autonomous_systems autonomous_controller --ros-args -p use_sim_time:=true
+# ''' }
+
+# ass_2_3 = { cmd = '''
+# ros2 run assignment_2 segmentation --ros-args -r /image:=/kitti/camera/color/left/image -p use_sim_time:=true
+# & ros2 bag play --read-ahead-queue-size 100 -l -r 1.0 --clock 100 -p rosbags/kitti
+# & rviz2 -d src/assignment_2/rviz/kitti_segmentation.rviz --ros-args -p use_sim_time:=true
+# & ros2 launch wasp_autonomous_systems kitti_car_launch.py
+# ''' }
+
+# ass_2_4 = { cmd = '''
+# ros2 run assignment_2 camera --ros-args -p framerate:=10.0 -p image_height:=480 -p image_width:=640
+# & ros2 run assignment_2 segmentation
+# & rqt --perspective-file src/assignment_2/rqt/camera_segmentation.perspective
+# ''' }
+
+# Assignment 3 tasks
+
+# ass_3_planner = { cmd = 'ros2 run assignment_3 path_planner' }
+
+# ass_3_viewer = { cmd = '''
+# rviz2 -d $PIXI_PROJECT_ROOT/src/assignment_3/rviz/planning.rviz
+# & ros2 run rqt_reconfigure rqt_reconfigure /path_planner
+# ''' }
+
+# ass_3 = [{ task = "ass_3_planner" }, { task = "ass_3_viewer" }]
 
 # ass_3 = { cmd = '''
 # ros2 run assignment_3 path_planner
@@ -144,28 +134,167 @@ ass_3 = [{ task = "ass_3_planner" }, { task = "ass_3_viewer" }]
 
 # Assignment 4 tasks
 
-[feature.jazzy]
-channels = ["robostack-jazzy"]
+# # This will automatically activate the ros workspace on activation
+# [target.win.activation]
+# scripts = ["install/setup.bat"]
 
-[feature.jazzy.dependencies]
-ros-jazzy-desktop = ">=0.11.0,<0.12"
-ros-jazzy-turtlebot3-simulations = ">=2.3.7,<3"
-ros-jazzy-turtlebot3-teleop = ">=2.3.3,<3"
-ros-jazzy-image-transport-plugins = ">=4.0.5,<5"
-ros-jazzy-compressed-image-transport = ">=4.0.5,<5"
-ros-jazzy-ros-gz = ">=1.0.16,<2"
-ros-jazzy-tf-transformations = ">=1.1.0,<2"
+# [target.unix.activation]
+# # For activation scripts, we use bash for Unix-like systems
+# scripts = ["install/setup.bash"]
 
-[feature.jazzy.activation.env]
-# TURTLEBOT3_MODEL = "burger_cam"
-GZ_SIM_RESOURCE_PATH = "$PIXI_PROJECT_ROOT/src/wasp_autonomous_systems/models:$GZ_SIM_RESOURCE_PATH"
+# [dependencies]
+# python = "*"
+# # Build tools
+# compilers = "*"
+# cmake = "*"
+# pkg-config = "*"
+# make = "*"
+# ninja = "*"
+# # ROS specific tools
+# rosdep = "*"
+# colcon-common-extensions = "*"
+# setuptools = "==70.3.0"
+# # Assignment 3
+# kdtree = ">=0.16,<0.17"
+# transforms3d = ">=0.4.2,<0.5"
+# ultralytics = ">=8.3.234,<9"
+# pytorch-cpu = "==2.7"
+# torchvision = "==0.22"
+# openvino = ">=2025.0.0,<2026"
+# nncf = ">=2.5.0,<3"
+# opencv = ">=4.11.0,<5"
+# zstd = ">=1.5.7,<2"
+# pyqtgraph = ">=0.14.0,<0.15"
 
-# [target.osx.activation.env]
-[activation.env]
-# Required for the RVIZ2 to properly startup on osx
-RMW_IMPLEMENTATION = "rmw_cyclonedds_cpp"
-ROS_AUTOMATIC_DISCOVERY_RANGE = "LOCALHOST"
+# # [pypi-dependencies]
+# # pv = {  }
 
-[environments]
-default = { features = ["jazzy"] }
-jazzy = { features = ["jazzy"] }
+# [target.linux.dependencies]
+# libgl-devel = ">=1.7.0,<2"
+
+# # TODO: Make sure to source after build
+
+# [target.win-64.tasks]
+# build = { cmd = "colcon build --merge-install --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DPython3_FIND_VIRTUALENV=ONLY", inputs = [
+# 	"src/**/*",
+# 	"setup.py",
+# 	"setup.cfg",
+# ], outputs = [
+# 	"install/**/*",
+# ] }
+
+# [target.unix.tasks]
+# build = { cmd = "colcon build --symlink-install --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DPython3_FIND_VIRTUALENV=ONLY", inputs = [
+# 	"src/**/*",
+# 	"setup.py",
+# 	"setup.cfg",
+# ], outputs = [
+# 	"install/**/*",
+# ] }
+
+
+# [tasks]
+# clean_workspace = { cmd = "rm -r build install log" }
+
+# download_rosbags = { cmd = 'curl -fSL "https://canvas.kth.se/files/9471655/download?download_frd=1&verifier=4wOMCwu3QHS0duQGTKpn6HyhO9jCPGZSL3RM9kmu" | tar --use-compress-program=unzstd -x', outputs = [
+# 	"rosbags/kitti/kitti_*.mcap",
+# 	"rosbags/kitti/metadata.yaml",
+# 	"rosbags/real_robot/real_robot_*.mcap",
+# 	"rosbags/real_robot/metadata.yaml",
+# ] }
+
+# # Assignment 1 tasks
+
+# ass_1_1 = { cmd = '''
+# ros2 launch assignment_1 turtlebot_simulation_launch.py
+# & rviz2 -d src/assignment_1/rviz/turtlebot_simulation.rviz --ros-args -p use_sim_time:=true
+# ''' }
+
+# ass_1_2 = { cmd = '''
+# ros2 bag play --read-ahead-queue-size 100 -l -r 1.0 --clock 100 rosbags/real_robot
+# & rviz2 -d src/assignment_1/rviz/real_robot.rviz --ros-args -p use_sim_time:=true
+# ''' }
+
+# ass_1_3 = { cmd = '''
+# ros2 bag play --read-ahead-queue-size 100 -l -r 1.0 --clock 100 rosbags/kitti
+# & rviz2 -d src/assignment_1/rviz/kitti.rviz --ros-args -p use_sim_time:=true
+# & ros2 launch wasp_autonomous_systems kitti_car_launch.py
+# ''' }
+
+# # Assignment 2 tasks
+
+# ass_2_1 = { cmd = '''
+# ros2 run assignment_2 odometry --ros-args -p use_sim_time:=true
+# & ros2 bag play --read-ahead-queue-size 100 -l -r 1.0 --clock 100 -p rosbags/real_robot
+# & rviz2 -d src/assignment_2/rviz/odometry.rviz --ros-args -p use_sim_time:=true
+# ''' }
+
+# ass_2_2 = { cmd = '''
+# ros2 launch assignment_2 collision_detection_launch.py
+# & rviz2 -d src/assignment_2/rviz/collision_detection.rviz --ros-args -p use_sim_time:=true
+# & pixi run ros2 run rqt_plot rqt_plot /imu/linear_acceleration
+# & ros2 run assignment_2 collision_detection --ros-args -p use_sim_time:=true
+# & ros2 run wasp_autonomous_systems autonomous_controller --ros-args -p use_sim_time:=true
+# ''' }
+
+# ass_2_3 = { cmd = '''
+# ros2 run assignment_2 segmentation --ros-args -r /image:=/kitti/camera/color/left/image -p use_sim_time:=true
+# & ros2 bag play --read-ahead-queue-size 100 -l -r 1.0 --clock 100 -p rosbags/kitti
+# & rviz2 -d src/assignment_2/rviz/kitti_segmentation.rviz --ros-args -p use_sim_time:=true
+# & ros2 launch wasp_autonomous_systems kitti_car_launch.py
+# ''' }
+
+# ass_2_4 = { cmd = '''
+# ros2 run assignment_2 camera --ros-args -p framerate:=10.0 -p image_height:=480 -p image_width:=640
+# & ros2 run assignment_2 segmentation
+# & rqt --perspective-file src/assignment_2/rqt/camera_segmentation.perspective
+# ''' }
+
+# # Assignment 3 tasks
+
+# ass_3_planner = { cmd = 'ros2 run assignment_3 path_planner' }
+
+# ass_3_viewer = { cmd = '''
+# rviz2 -d $PIXI_PROJECT_ROOT/src/assignment_3/rviz/planning.rviz
+# & ros2 run rqt_reconfigure rqt_reconfigure /path_planner
+# ''' }
+
+# ass_3 = [{ task = "ass_3_planner" }, { task = "ass_3_viewer" }]
+
+# # ass_3 = { cmd = '''
+# # ros2 run assignment_3 path_planner
+# # & rviz2 -d $PIXI_PROJECT_ROOT/src/assignment_3/rviz/planning.rviz
+# # & ros2 run rqt_reconfigure rqt_reconfigure /path_planner
+# # ''', depends-on = ["build"] }
+# # # ass_3_viz = { cmd = "rviz2 -d $PIXI_PROJECT_ROOT/src/assignment_3/rviz/planning.rviz", depends-on = [
+# # # 	"build",
+# # # ] }
+# # # ass_3_rqt = { cmd = "ros2 run rqt_reconfigure rqt_reconfigure" }
+
+# # Assignment 4 tasks
+
+# [feature.jazzy]
+# channels = ["robostack-jazzy"]
+
+# [feature.jazzy.dependencies]
+# ros-jazzy-desktop = ">=0.11.0,<0.12"
+# ros-jazzy-turtlebot3-simulations = ">=2.3.7,<3"
+# ros-jazzy-turtlebot3-teleop = ">=2.3.3,<3"
+# ros-jazzy-image-transport-plugins = ">=4.0.5,<5"
+# ros-jazzy-compressed-image-transport = ">=4.0.5,<5"
+# ros-jazzy-ros-gz = ">=1.0.16,<2"
+# ros-jazzy-tf-transformations = ">=1.1.0,<2"
+
+# [feature.jazzy.activation.env]
+# # TURTLEBOT3_MODEL = "burger_cam"
+# GZ_SIM_RESOURCE_PATH = "$PIXI_PROJECT_ROOT/src/wasp_autonomous_systems/models:$GZ_SIM_RESOURCE_PATH"
+
+# # [target.osx.activation.env]
+# [activation.env]
+# # Required for the RVIZ2 to properly startup on osx
+# RMW_IMPLEMENTATION = "rmw_cyclonedds_cpp"
+# ROS_AUTOMATIC_DISCOVERY_RANGE = "LOCALHOST"
+
+# [environments]
+# default = { features = ["jazzy"] }
+# jazzy = { features = ["jazzy"] }

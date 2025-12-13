@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+	<!-- Planning -->
+
+	<node pkg="wasp_as_ass_3" exec="path_planner" name="path_planner" output="screen" respawn="true" />
+
+	<!-- GUI -->
+
+	<include file="$(find-pkg-share wasp_as_ass_3)/launch/gui_launch.xml" />
+</launch>
