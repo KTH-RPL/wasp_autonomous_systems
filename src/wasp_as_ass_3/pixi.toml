@@ -6,8 +6,5 @@ channels = [
 name = "pixi-build-ros"
 version = "*"
 
-# [package.build.config]
-# distro = "humble"
-
 [[package.build.config.extra-package-mappings]]
 python-kdtree = { conda = ["kdtree"] }

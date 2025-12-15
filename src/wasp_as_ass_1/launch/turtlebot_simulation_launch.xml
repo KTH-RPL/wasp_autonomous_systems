@@ -16,7 +16,14 @@
 	<!-- Gazebo for simulation -->
 
 	<include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
-		<arg name="gz_args" value="-r $(var world)" />
+		<arg name="gz_args" value="-v4 -s -r $(var world)" />
+		<arg name="on_exit_shutdown" value="True" />
+	</include>
+
+	<!-- Gazebo GUI -->
+
+	<include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
+		<arg name="gz_args" value="-v4 -g $(var world)" />
 		<arg name="on_exit_shutdown" value="True" />
 	</include>
 
