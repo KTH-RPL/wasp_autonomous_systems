@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+	<!-- Quadrotor simulation -->
+
+	<include file="$(find-pkg-share wasp_as_ass_4)/launch/quadrotor_launch.xml" />
+
+	<!-- Manual altitude controller -->
+
+	<node pkg="wasp_as_ass_4" exec="altitude_manual" name="altitude_manual" output="screen" respawn="true" />
+
+	<!-- Rqt reconfigure to adjust thrust and per-motor offsets live -->
+
+	<node pkg="rqt_reconfigure" exec="rqt_reconfigure" name="rqt_reconfigure" output="screen" />
+
+	<!-- Rqt for plotting height over time -->
+
+	<node pkg="rqt_plot" exec="rqt_plot" name="rqt_plot" args="/odom/pose/pose/position/z" output="screen" />
+</launch>

@@ -184,10 +184,10 @@ class GridMap(Node):
         og.info.resolution = self.resolution
         og.info.width = self.width
         og.info.height = self.height
-        og.info.origin.position.x = self._origin[0]
-        og.info.origin.position.y = self._origin[1]
+        og.info.origin.position.x = self.origin[0]
+        og.info.origin.position.y = self.origin[1]
 
-        og.data = self._data.flatten().tolist()
+        og.data = self.__data.flatten().tolist()
 
         return og
 

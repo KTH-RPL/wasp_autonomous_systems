@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
-	<let name="world" value="$(find-pkg-share turtlebot3_gazebo)/worlds/turtlebot3_world.sdf" />
+	<let name="world" value="$(find-pkg-share turtlebot3_gazebo)/worlds/turtlebot3_world.world" />
 	<let name="robot" value="turtlebot3_waffle_rgbd" />
 	<let name="x_pos" value="-2.0" />
 	<let name="y_pos" value="-0.5" />
@@ -12,7 +12,7 @@
 	<!-- Gazebo for simulation -->
 
 	<include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
-		<arg name="gz_args" value="-r $(var world)" />
+		<arg name="gz_args" value="-s -r $(var world)" />
 		<arg name="on_exit_shutdown" value="True" />
 	</include>
 
@@ -54,7 +54,7 @@
 
 	<!-- Autonomous controller -->
 
-	<node pkg="wasp_as_ass_2" exec="autonomous_controller" name="autonomous_controller" output="screen" respawn="true">
+	<node pkg="wasp_as" exec="autonomous_controller" name="autonomous_controller" output="screen" respawn="true">
 		<param name="use_sim_time" value="true" />
 	</node>
 </launch>

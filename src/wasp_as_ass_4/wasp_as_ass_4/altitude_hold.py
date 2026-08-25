@@ -59,10 +59,10 @@ class AltitudeHold(Node):
             'target_height').get_parameter_value().double_value
 
         thrust.velocity = [
-            700,
-            700,
-            700,
-            700
+            700.0,
+            700.0,
+            700.0,
+            700.0
         ]
 
         # TODO: Fill in

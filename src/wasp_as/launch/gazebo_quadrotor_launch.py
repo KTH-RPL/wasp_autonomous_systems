@@ -22,7 +22,7 @@ def generate_launch_description():
     world = os.path.join(
         get_package_share_directory('wasp_as'),
         'worlds',
-        'empty.world'
+        'empty.sdf'
     )
 
     gzserver_cmd = IncludeLaunchDescription(
@@ -30,13 +30,6 @@ def generate_launch_description():
             os.path.join(ros_gz_sim, 'launch', 'gz_sim.launch.py')
         ),
         launch_arguments={'gz_args': ['-r -s -v2 ', world], 'on_exit_shutdown': 'true'}.items()
-    )
-
-    gzclient_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(ros_gz_sim, 'launch', 'gz_sim.launch.py')
-        ),
-        launch_arguments={'gz_args': '-g -v2 '}.items()
     )
 
     # robot_state_publisher_cmd = IncludeLaunchDescription(
@@ -71,7 +64,7 @@ def generate_launch_description():
 
     bridge_params = os.path.join(
         get_package_share_directory('wasp_as'),
-        'params',
+        'config',
         model_folder+'_bridge.yaml'
     )
 
@@ -96,7 +89,6 @@ def generate_launch_description():
 
     # Add the commands to the launch description
     ld.add_action(gzserver_cmd)
-    ld.add_action(gzclient_cmd)
     ld.add_action(start_gazebo_ros_spawner_cmd)
     ld.add_action(start_gazebo_ros_bridge_cmd)
     # ld.add_action(robot_state_publisher_cmd)

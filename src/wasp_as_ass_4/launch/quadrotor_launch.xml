@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+	<!-- Gazebo simulation, quadrotor spawn, and ROS<->Gazebo bridge -->
+
+	<include file="$(find-pkg-share wasp_as)/launch/gazebo_quadrotor_launch.py" />
+</launch>

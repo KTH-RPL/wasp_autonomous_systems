@@ -76,3 +76,7 @@ ass_3_planner = { cmd = "ros2 run wasp_as_ass_3 path_planner" }
 ass_3_gui = { cmd = "ros2 launch wasp_as_ass_3 gui_launch.xml" }
 
 # Assignment 4 tasks
+
+ass_4_manual = { cmd = "ros2 launch wasp_as_ass_4 manual_launch.xml" }
+ass_4_hold = { cmd = "ros2 launch wasp_as_ass_4 hold_launch.xml" }
+ass_4_pid = { cmd = "ros2 launch wasp_as_ass_4 pid_launch.xml" }
