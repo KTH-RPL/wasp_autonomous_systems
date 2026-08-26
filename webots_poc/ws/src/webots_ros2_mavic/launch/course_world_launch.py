@@ -19,10 +19,19 @@ from webots_ros2_driver.webots_controller import WebotsController
 def generate_launch_description():
     package_dir = get_package_share_directory('webots_ros2_mavic')
     gui = LaunchConfiguration('gui', default='true')
+    # Must be a bare LaunchConfiguration (not a literal string/PathJoinSubstitution
+    # baked at construction time) - WebotsLauncher's Ros2Supervisor-injection
+    # mechanism works by overwriting the 'world' launch configuration's value
+    # (to point at its temp copy with the injected supervisor Robot node)
+    # right before the actual `webots` process command line gets resolved.
+    # A literal path bypasses that indirection entirely and silently loads
+    # the original world file with no supervisor robot in it - confirmed by
+    # testing (Ros2Supervisor retries forever, /clock never publishes).
+    world = LaunchConfiguration('world', default='course_mavic_world.wbt')
 
     webots = WebotsLauncher(
-        world=PathJoinSubstitution([package_dir, 'worlds', 'course_mavic_world.wbt']),
-        ros2_supervisor=False,
+        world=PathJoinSubstitution([package_dir, 'worlds', world]),
+        ros2_supervisor=True,
         gui=gui,
         mode='realtime',
     )
@@ -31,17 +40,23 @@ def generate_launch_description():
     mavic_driver = WebotsController(
         robot_name='mavic_2_pro',
         parameters=[
-            {'robot_description': robot_description_path},
+            {'robot_description': robot_description_path,
+             'use_sim_time': True},
         ],
         respawn=True
     )
 
     return LaunchDescription([
         DeclareLaunchArgument(
+            'world',
+            default_value='course_mavic_world.wbt',
+        ),
+        DeclareLaunchArgument(
             'gui',
             default_value='true',
         ),
         webots,
+        webots._supervisor,
         mavic_driver,
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(

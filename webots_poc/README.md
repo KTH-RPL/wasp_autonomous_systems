@@ -92,21 +92,66 @@ isn't part of this branch.
   Assignment-3-style repeated-run harness). Ephemeral/ad hoc, not polished
   tooling, kept for reproducibility.
 
+## Fixed: `Ros2Supervisor` crash-loop on macOS
+
+This used to crash-loop under `ros2 launch` (worked fine standalone via
+`ros2 run webots_ros2_driver ros2_supervisor.py`), which is why every
+launch file in this branch used `ros2_supervisor=False` /
+`use_sim_time: False`. Root-caused and fixed — two independent bugs,
+confirmed via live instrumentation and a 5-cycle restart soak test
+(0 crashes, `/clock` publishing every cycle):
+
+1. **The actual crash.** `ros2_supervisor.py` is installed as a raw script
+   with a `#!/usr/bin/env python3` shebang. `launch_ros`'s `Node` action
+   execs that script path directly, which routes the exec through macOS's
+   SIP-protected `/usr/bin/env` — dyld strips `DYLD_*`/`LD_*` environment
+   variables when loading a SIP-protected binary, so the eventual `python3`
+   process never sees `DYLD_LIBRARY_PATH`, regardless of what
+   `additional_env`/the parent `ros2 launch` process had (confirmed: `ros2
+   launch`'s own process has it set correctly; `/usr/bin/env`'s child does
+   not). The compiled `driver` binary and Webots' own `webots-controller`
+   binary aren't scripts, so they're exec'd directly with no shebang hop —
+   that's why only the supervisor ever hit this. **Fix:** `prefix=sys.
+   executable` on `darwin` in `Ros2SupervisorLauncher`'s `Node(...)` call
+   (`webots_launcher.py`) — forces the exec through our already-correct
+   `python3` directly, bypassing the shebang/`/usr/bin/env` hop entirely.
+2. **A separate, silent no-op.** `WebotsLauncher` always makes a temp copy
+   of the world file and (when `ros2_supervisor=True`) appends a `Robot {
+   name "Ros2Supervisor" controller "<extern>" supervisor TRUE }` node to
+   that copy — but only actually *loads* the temp copy if the `world=`
+   argument is a bare `LaunchConfiguration` reference; a literal string or
+   a `PathJoinSubstitution` (what every launch file in this repo used)
+   silently bypasses the indirection and loads the original world file with
+   no supervisor robot in it. No error, no warning — the supervisor just
+   retries forever ("not in the list of robots with `<extern>` controllers")
+   and `/clock` never publishes. **Fix:** in `course_world_launch.py`,
+   route the filename through `world = LaunchConfiguration('world',
+   default='course_mavic_world.wbt')` first (matching `ht25`'s own working
+   launch file pattern, which does exactly this), not a literal path.
+   **Any other launch file in this branch that wants `ros2_supervisor=True`
+   needs the same treatment** — `turtlebot_launch.py`/
+   `apartment_rgbd_launch.py` still use a literal `PathJoinSubstitution`
+   and `ros2_supervisor=False`, untouched by this fix (never needed it —
+   see "What this does and doesn't get you" below).
+
+**What this does and doesn't get you:** with both fixed, `Ros2Supervisor`
+runs stably and `/clock` publishes real simulation time, so `use_sim_time:
+True` is now safe (`course_world_launch.py` sets it). That's a genuine
+correctness improvement over the previous wall-clock-timestamp workaround.
+**It does NOT give you an in-place "reset simulation on flip" — that
+capability doesn't exist.** `ros2_supervisor.py`'s ROS node only exposes
+`spawn_urdf_robot`/`spawn_node_from_string`/`animation_start_recording`/
+`animation_stop_recording` services; there's no reset/reload service to
+call, even now that the node runs. A flipped drone still needs either
+Webots' own native GUI "Revert" (untested here, but it's core Webots
+functionality independent of ROS/the supervisor, so it should already work
+regardless of any of this) or a new small custom ROS service wrapping
+`wb_supervisor_simulation_reset_physics()`/`wb_supervisor_world_reload()` —
+neither built here. Test scripts: `/tmp/supervisor_soak_cycles.sh` +
+instrumentation notes (ephemeral, under `/tmp`).
+
 ## Known unresolved issues
 
-- **`Ros2Supervisor` crash-loops on macOS when launched via `ros2 launch`**
-  (works fine standalone via `ros2 run webots_ros2_driver
-  ros2_supervisor.py`). Root cause: `ros2 launch`'s `Node` action drops
-  `DYLD_LIBRARY_PATH` somewhere before the child process starts, specific to
-  `Ros2SupervisorLauncher` (other `Node` actions, like the compiled driver,
-  get it fine). Not fixed — worked around throughout this branch by setting
-  `ros2_supervisor=False` and `use_sim_time: False` on the driver instead
-  (safe: `mode='realtime'` keeps sim time close enough to wall time that
-  this doesn't matter in practice, and none of the nodes here depend on
-  `/clock`). This means there's currently no in-place "reset simulation"
-  without a full Webots restart — only relevant if a robot actually flips
-  over or ends up in an unrecoverable state, which was rare in testing (see
-  `testing/` soak test results).
 - Embedded Python plugins inside the C++ driver (`PythonPlugin.cpp`) fail
   silently on this build (a swallowed exception, `PyErr_Print()` missing on
   that code path) — root cause not found. Not a blocker: worked around

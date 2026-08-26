@@ -282,6 +282,20 @@ class Ros2SupervisorLauncher(Node):
             namespace='Ros2Supervisor',
             remappings=[('/Ros2Supervisor/clock', '/clock')],
             output=output,
+            # macOS fix: ros2_supervisor.py is installed as a raw script with
+            # a `#!/usr/bin/env python3` shebang. launch_ros execs that
+            # script path directly, which routes the exec through macOS's
+            # SIP-protected /usr/bin/env - dyld strips DYLD_*/LD_* variables
+            # when loading a SIP-protected binary, so python3 never sees
+            # DYLD_LIBRARY_PATH regardless of what additional_env/the parent
+            # process passed (confirmed via instrumentation: ros2 launch's
+            # own process has it set correctly, /usr/bin/env's child does
+            # not). The compiled `driver` binary and Webots' own
+            # `webots-controller` binary aren't scripts, so they're exec'd
+            # directly with no shebang hop and never hit this. Fix: force
+            # the exec through our own already-correct python3 directly,
+            # bypassing the shebang/env hop entirely.
+            prefix=sys.executable if sys.platform == 'darwin' else None,
             # Set WEBOTS_HOME to the webots_ros2_driver installation folder
             # to load the correct libController libraries from the Python API.
             # EXPERIMENTAL macOS fix: on macOS the controller Python API expects
@@ -291,13 +305,9 @@ class Ros2SupervisorLauncher(Node):
             additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix(port) + 'Ros2Supervisor',
                             'WEBOTS_HOME': get_webots_home() if sys.platform == 'darwin'
                             else get_package_prefix('webots_ros2_driver'),
-                            # EXPERIMENTAL macOS fix: unlike the WebotsController action,
-                            # this launcher's spawned python3 process was observed to not
-                            # inherit DYLD_LIBRARY_PATH from the parent `ros2 launch`
-                            # environment at all (verified via `ps eww <pid>`), causing
-                            # rosidl typesupport .so files (e.g. webots_ros2_msgs) to fail
-                            # to dlopen their own dependent dylibs. Pass it through
-                            # explicitly rather than relying on inheritance.
+                            # Belt-and-suspenders: with the shebang bypassed
+                            # above this should now actually reach the
+                            # process, unlike before.
                             **({'DYLD_LIBRARY_PATH': os.environ['DYLD_LIBRARY_PATH']}
                                if sys.platform == 'darwin' and 'DYLD_LIBRARY_PATH' in os.environ else {})},
             respawn=respawn,
