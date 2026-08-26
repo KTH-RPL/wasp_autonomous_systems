@@ -1,29 +1,10 @@
 from setuptools import find_packages, setup
-import os
-from glob import glob
-
-def all_files_in_folder(folder: str):
-    files = glob(os.path.join(folder, "**/*"), recursive=True)
-    files = [f for f in files if os.path.isfile(f)]
-    return [(os.path.join('share', package_name, os.path.split(path)[0]), [path]) for path in files]
 
 package_name = 'wasp_as'
 data_files = [
     ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
-    # Launch files
-    (os.path.join('share', package_name, 'launch'), glob('launch/*')),
-    # Config files
-    (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
-    # Worlds
-    (os.path.join('share', package_name, 'worlds'), glob(os.path.join('worlds', '*.sdf'))),
     ('share/' + package_name, ['package.xml'])
 ]
-# Meshes
-data_files.extend(all_files_in_folder('meshes'))
-# Models
-data_files.extend(all_files_in_folder('models'))
-# Media
-data_files.extend(all_files_in_folder('media'))
 
 setup(
     name=package_name,
