@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<robot name="Mavic Webots">
+    <webots>
+        <device reference="gps" type="GPS">
+            <ros>
+                <enabled>true</enabled>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+
+        <plugin type="webots_ros2_driver::Ros2IMU">
+            <enabled>true</enabled>
+            <topicName>/imu</topicName>
+            <alwaysOn>true</alwaysOn>
+            <frameName>imu_link</frameName>
+            <inertialUnitName>inertial unit</inertialUnitName>
+            <gyroName>gyro</gyroName>
+        </plugin>
+
+        <plugin type="webots_ros2_driver::Ros2MavicController">
+            <topicName>thrust</topicName>
+        </plugin>
+
+        <!-- Driven directly by Ros2MavicController; disable the auto-instantiated
+             per-device Ros2Motor plugin so there is only one thing commanding
+             these motors. -->
+        <device reference="front left propeller" type="RotationalMotor">
+            <ros>
+                <enabled>false</enabled>
+            </ros>
+        </device>
+        <device reference="front right propeller" type="RotationalMotor">
+            <ros>
+                <enabled>false</enabled>
+            </ros>
+        </device>
+        <device reference="rear left propeller" type="RotationalMotor">
+            <ros>
+                <enabled>false</enabled>
+            </ros>
+        </device>
+        <device reference="rear right propeller" type="RotationalMotor">
+            <ros>
+                <enabled>false</enabled>
+            </ros>
+        </device>
+    </webots>
+</robot>

@@ -1,0 +1,12 @@
+<library path="webots_ros2_driver_mavic_controller">
+  <class
+    type="webots_ros2_driver::Ros2MavicController"
+    base_class_type="webots_ros2_driver::PluginInterface">
+    <description>
+      EXPERIMENTAL (not upstream): C++ port of mavic_driver.py's roll/pitch/yaw
+      stabilization, taking an externally supplied thrust (+ optional per-motor
+      offsets) in place of its own vertical PID, matching this course's
+      assignment_4 Thrust/altitude_manual interface.
+    </description>
+  </class>
+</library>

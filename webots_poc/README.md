@@ -1,0 +1,132 @@
+# Webots-on-macOS proof of concept (exploratory, not decided)
+
+This branch preserves an exploratory investigation into running **Webots
+natively on macOS** (via Pixi/RoboStack, no VM) as a candidate simulator for
+the course, done as an alternative to `ht26-alpha`'s Gazebo-based port.
+
+**This is not a decided direction.** The only thing actually committed to
+for HT26 is using Pixi. Both Gazebo and native Webots have real, unresolved
+problems on macOS; this branch exists so the Webots side of that comparison
+isn't lost, not because a decision has been made.
+
+## Why this exists
+
+Gazebo segfaults on macOS for any robot with a camera or GPU-lidar sensor —
+a `SIGSEGV` in `Ogre2RenderEngine::InitImpl()` ("`NSWindow should only be
+instantiated on the main thread!`"), because Gazebo's Sensors system spins
+up a render thread off the main thread, which macOS forbids outright. This
+is a genuine, unfixable-from-the-repo engine bug (see `ht26-alpha`'s
+`README.md`, "Known issues on macOS"). It blocks:
+
+- **Assignment 1** (RGB-D camera) completely — the assignment's whole point
+  is comparing simulated RGB-D data to real recorded data, so a
+  camera-less workaround defeats it.
+- **Assignment 2** (collision detection) in its default launch config
+  (spawns a camera-equipped robot), though the actual exercise only needs
+  `/imu` — a camera-and-lidar-less Turtlebot variant would also fix this
+  *without* Webots, and is a cheaper fix if Gazebo is kept (not yet
+  implemented in `ht26-alpha`).
+
+Webots' own camera/depth rendering doesn't go through that crashing code
+path at all. This branch tests whether that holds up in practice.
+
+## Status: Assignments 1, 2, and 4 all confirmed working AND soak-tested
+
+All three were validated with two kinds of test, both passing 8/8:
+
+1. **Full restart-cycle soak test** (GUI rendering on): repeatedly launch
+   the whole stack from cold, verify sensors/actuators come up correctly,
+   fully tear down, relaunch. Tests that Webots itself starts up reliably.
+2. **Restart-just-the-code test** (the one that actually matters for
+   students): kill and restart only the student-facing code, while Webots
+   and its driver process are left running and never touched. Confirmed
+   Webots never needs restarting just because a student's script crashed
+   or was edited and rerun — verified via identical process IDs
+   before/after every cycle.
+
+Assignment 3 (path planning) has no simulator dependency either way and
+isn't part of this branch.
+
+## Layout
+
+- `ws/src/` — a colcon workspace. `webots_ros2_driver`,`webots_ros2_msgs`,
+  `webots_ros2_importer`, `webots_ros2_control`, `webots_ros2_tests` are
+  `cyberbotics/webots_ros2` @ tag `2025.0.1`, with macOS build/rpath/dyld
+  patches applied to `webots_ros2_driver` (`if(APPLE)`-guarded, Linux path
+  untouched) plus two new files: `Ros2Motor.cpp/.hpp` (unused by Mavic, see
+  below) and `Ros2MavicController.cpp/.hpp` (see Assignment 4 below).
+  - `webots_ros2_mavic/` — reused as the catch-all package for world/
+    resource/launch files across all three assignments (nothing
+    Mavic-specific about most of it despite the name):
+    - `worlds/course_mavic_world.wbt` + `resource/{Mavic2Pro.proto,
+      course_mavic_webots.urdf}` — the real course Mavic world (Assignment 4)
+    - `worlds/turtlebot_collision_detection.wbt` +
+      `resource/{TurtleBot3Burger.proto, turtlebot_webots.urdf}` — the real
+      course Turtlebot collision-detection world (Assignment 2)
+    - `worlds/turtlebot_apartment.wbt` + `resource/{Kinect.proto,
+      turtlebot_webots_rgbd.urdf}` — the real course apartment world with an
+      RGB-D Kinect-equipped Turtlebot (Assignment 1)
+    - `launch/turtlebot_launch.py`, `launch/course_world_launch.py` — launch
+      files for the above
+  - `wasp_autonomous_systems_interfaces/` — copied from the real course repo
+    (`Collision.msg`, `Encoders.msg`, etc.) so the packages below build
+    against the real message types.
+  - `assignment_1_solution/` — `encoders.py` (ported verbatim from the real
+    course repo) + `launch/apartment_rgbd_launch.py`.
+  - `assignment_2_solution/` — a filled-in `collision_detection.py`
+    (threshold on IMU deviation-from-gravity magnitude) + `cleaning_robot.py`
+    (a Roomba-style bump-and-turn demo built on top of it) +
+    `launch/cleaning_robot_launch.py`.
+- `assignment_4_skeleton/{altitude_manual,altitude_hold,altitude_pid}.py` —
+  the real student skeleton files with two safety fixes added: a working
+  Ctrl+C handler (`rclpy.init()`'s built-in SIGINT handler invalidates the
+  context before a plain `except KeyboardInterrupt:` block can publish —
+  fixed with a custom `signal.signal()` handler registered before the spin
+  loop) and a braking landing (`land()` estimates vertical velocity from
+  consecutive GPS readings and brakes before cutting to zero thrust, instead
+  of free-falling into a hard landing that could flip the drone). **Not yet
+  wired into `ws/src/` or applied to the real course repo's assignment_4
+  package** — still standalone files.
+- `testing/` — the soak-test and reliability-test scripts used to validate
+  all of the above (restart-cycle scripts, sensor-rate checks, an
+  Assignment-3-style repeated-run harness). Ephemeral/ad hoc, not polished
+  tooling, kept for reproducibility.
+
+## Known unresolved issues
+
+- **`Ros2Supervisor` crash-loops on macOS when launched via `ros2 launch`**
+  (works fine standalone via `ros2 run webots_ros2_driver
+  ros2_supervisor.py`). Root cause: `ros2 launch`'s `Node` action drops
+  `DYLD_LIBRARY_PATH` somewhere before the child process starts, specific to
+  `Ros2SupervisorLauncher` (other `Node` actions, like the compiled driver,
+  get it fine). Not fixed — worked around throughout this branch by setting
+  `ros2_supervisor=False` and `use_sim_time: False` on the driver instead
+  (safe: `mode='realtime'` keeps sim time close enough to wall time that
+  this doesn't matter in practice, and none of the nodes here depend on
+  `/clock`). This means there's currently no in-place "reset simulation"
+  without a full Webots restart — only relevant if a robot actually flips
+  over or ends up in an unrecoverable state, which was rare in testing (see
+  `testing/` soak test results).
+- Embedded Python plugins inside the C++ driver (`PythonPlugin.cpp`) fail
+  silently on this build (a swallowed exception, `PyErr_Print()` missing on
+  that code path) — root cause not found. Not a blocker: worked around
+  entirely by using a C++ plugin (`Ros2MavicController`) instead of the
+  upstream `MavicDriver` Python plugin for Assignment 4.
+- None of this has been soak-tested for anything beyond restart-cycle
+  reliability — no multi-hour sessions, no adversarial student-style rapid
+  parameter tuning via `rqt`/Foxglove.
+
+## If picking this up
+
+- Re-clone `github.com/cyberbotics/webots_ros2` @ tag `2025.0.1` and diff
+  against `ws/src/webots_ros2_driver` if you need to re-verify exactly what
+  changed, or just trust this checked-in copy.
+- The macOS-only build gotchas that aren't fixed by this branch's patches:
+  plain `colcon build` needs `LIBRARY_PATH=<pixi-env>/lib` exported (`ld:
+  library 'yaml-cpp'/'atomic' not found` otherwise) and the built driver
+  needs `DYLD_LIBRARY_PATH` including `<pixi-env>/lib` at runtime
+  (conda-forge/RoboStack binaries use `@loader_path`-relative rpaths that
+  only resolve inside the conda prefix).
+- Use `colcon build --symlink-install` — a plain `colcon build` copies
+  files, so editing a `.py` file and re-testing without rebuilding will
+  silently run the stale version.
