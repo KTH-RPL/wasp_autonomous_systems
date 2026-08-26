@@ -10,7 +10,11 @@ version = "0.1.0"
 platforms = [
 	"osx-arm64",
 	"linux-64",
-	# "win-64", # TODO: Requires Jazzy for Gazebo support, change to Jazzy when https://github.com/RoboStack/ros-jazzy/pull/135 is merged
+	# "win-64", # TODO: disabled pending Windows verification. The original reason
+	# here (needing Jazzy for Gazebo support) is now moot - Gazebo isn't used by
+	# any assignment anymore (see the Webots migration, commit a969193) - but that
+	# doesn't mean Humble+Webots works on Windows: the patched webots_ros2_driver
+	# has only been build-tested on macOS/Linux, never Windows.
 	# "linux-aarch64",
 ]
 preview = ["pixi-build"]
