@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
-	<!-- Quadrotor simulation -->
+	<!-- Quadrotor simulation (Webots) -->
 
-	<include file="$(find-pkg-share wasp_as_ass_4)/launch/quadrotor_launch.xml" />
+	<include file="$(find-pkg-share wasp_as_webots)/launch/course_world_launch.py" />
 
 	<!-- PID altitude controller -->
 
@@ -14,5 +14,5 @@
 
 	<!-- Rqt for plotting height over time -->
 
-	<node pkg="rqt_plot" exec="rqt_plot" name="rqt_plot" args="/odom/pose/pose/position/z" output="screen" />
+	<node pkg="rqt_plot" exec="rqt_plot" name="rqt_plot" args="/mavic_2_pro/gps/point/z" output="screen" />
 </launch>

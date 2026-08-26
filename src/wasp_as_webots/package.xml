@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>wasp_as_webots</name>
+  <version>1.0.0</version>
+  <description>Course Webots worlds, robot resources, and launch files for assignments 1, 2, and 4</description>
+  <maintainer email="patric@kth.se">Patric Jensfelt</maintainer>
+  <license>Apache License 2.0</license>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>webots_ros2_driver</exec_depend>
+  <exec_depend>webots_ros2_control</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

@@ -13,8 +13,7 @@
   <exec_depend>rqt_plot</exec_depend>
   <exec_depend>wasp_as</exec_depend>
   <exec_depend>rclpy</exec_depend>
-  <exec_depend>actuator_msgs</exec_depend>
-  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>python3-pyqtgraph</exec_depend>
 

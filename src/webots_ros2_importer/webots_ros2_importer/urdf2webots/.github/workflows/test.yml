@@ -1,0 +1,27 @@
+name: Test
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+jobs:
+  tests:
+    strategy:
+      matrix:
+        python: ['3.7', '3.8', '3.9', '3.10']
+    runs-on: ubuntu-latest
+    env:
+      CI: 1
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Set up Python ${{ matrix.python }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python }}
+    - name: Test
+      run: |
+        pip install --upgrade --editable .
+        pip install -r tests/requirements.txt
+        python -m unittest discover -s tests

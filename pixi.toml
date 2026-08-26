@@ -27,6 +27,13 @@ ros-humble-wasp-as-ass-3 = { path = "src/wasp_as_ass_3" }
 ros-humble-wasp-as-ass-4 = { path = "src/wasp_as_ass_4" }
 ros-humble-wasp-as = { path = "src/wasp_as" }
 ros-humble-wasp-as-interfaces = { path = "src/wasp_as_interfaces" }
+# Webots simulator (replaces Gazebo, which segfaults on macOS for any
+# camera/lidar-equipped robot - see README's "Known issues on macOS")
+ros-humble-webots-ros2-driver = { path = "src/webots_ros2_driver" }
+ros-humble-webots-ros2-msgs = { path = "src/webots_ros2_msgs" }
+ros-humble-webots-ros2-importer = { path = "src/webots_ros2_importer" }
+ros-humble-webots-ros2-control = { path = "src/webots_ros2_control" }
+ros-humble-wasp-as-webots = { path = "src/wasp_as_webots" }
 # To decompress rosbags
 zstd = ">=1.5.7,<2"
 
@@ -35,7 +42,7 @@ zstd = ">=1.5.7,<2"
 scripts = ["install/setup.bat"]
 
 [target.unix.activation]
-scripts = ["install/setup.sh"]
+scripts = ["install/setup.sh", "packaging/webots_env_activation.sh"]
 
 # To build you can use - `pixi run -e <ros distro> build <Any other temporary args>`
 [feature.build.target.win-64.tasks]
@@ -58,14 +65,14 @@ build = "colcon build --symlink-install --cmake-args -DPython_EXECUTABLE=$CONDA_
 
 # Assignment 1 tasks
 
-ass_1_1 = { cmd = "ros2 launch wasp_as_ass_1 turtlebot_simulation_launch.xml" }
+ass_1_1 = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_1 turtlebot_apartment_launch.py'" }
 ass_1_2 = { cmd = "ros2 launch wasp_as_ass_1 real_robot_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
 ass_1_3 = { cmd = "ros2 launch wasp_as_ass_1 kitti_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
 
 # Assignment 2 tasks
 
 ass_2_1 = { cmd = "ros2 launch wasp_as_ass_2 odometry_launch.xml" }
-ass_2_2 = { cmd = "ros2 launch wasp_as_ass_2 collision_detection_launch.xml" }
+ass_2_2 = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_2 collision_detection_webots_launch.py'" }
 ass_2_3 = { cmd = "ros2 launch wasp_as_ass_2 kitti_segmentation_launch.xml" }
 ass_2_4 = { cmd = "ros2 launch wasp_as_ass_2 camera_segmentation_launch.xml" }
 
@@ -77,6 +84,6 @@ ass_3_gui = { cmd = "ros2 launch wasp_as_ass_3 gui_launch.xml" }
 
 # Assignment 4 tasks
 
-ass_4_manual = { cmd = "ros2 launch wasp_as_ass_4 manual_launch.xml" }
-ass_4_hold = { cmd = "ros2 launch wasp_as_ass_4 hold_launch.xml" }
-ass_4_pid = { cmd = "ros2 launch wasp_as_ass_4 pid_launch.xml" }
+ass_4_manual = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_4 manual_launch.xml'" }
+ass_4_hold = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_4 hold_launch.xml'" }
+ass_4_pid = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_4 pid_launch.xml'" }

@@ -4,7 +4,7 @@ import rclpy
 from rclpy.node import Node
 from rclpy.time import Time
 
-from wasp_autonomous_systems_interfaces.msg import Encoders
+from wasp_as_interfaces.msg import Encoders
 from control_msgs.msg import DynamicJointState
 
 from math import pi

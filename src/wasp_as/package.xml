@@ -8,9 +8,11 @@
   <maintainer email="dduberg@kth.se">Daniel Duberg</maintainer>
   <license>TODO: License declaration</license>
 
-  <exec_depend>ros_gz_sim</exec_depend>
-  <exec_depend>ros_gz_bridge</exec_depend>
-  <exec_depend>turtlebot3_simulations</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>webots_ros2_driver</exec_depend>
+  <exec_depend>control_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>wasp_as_interfaces</exec_depend>
 
   <export>
     <build_type>ament_python</build_type>

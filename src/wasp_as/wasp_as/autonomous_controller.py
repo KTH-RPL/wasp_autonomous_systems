@@ -3,8 +3,8 @@
 import rclpy
 from rclpy.node import Node
 
-from wasp_autonomous_systems_interfaces.msg import Collision
-from geometry_msgs.msg import TwistStamped
+from wasp_as_interfaces.msg import Collision
+from geometry_msgs.msg import Twist
 
 from random import getrandbits
 
@@ -13,7 +13,7 @@ class AutonomousController(Node):
 
     def __init__(self):
         super().__init__('autonomous_controller')
-        self._pub = self.create_publisher(TwistStamped, '/cmd_vel', 10)
+        self._pub = self.create_publisher(Twist, '/cmd_vel', 10)
         self.create_subscription(
             Collision, '/collision_detected', self.collision_callback, 10)
         self._back = 0
@@ -27,23 +27,22 @@ class AutonomousController(Node):
     def timer_callback(self):
         '''This Function is called at a fixed interval'''
 
-        msg = TwistStamped()
-        msg.header.stamp = self.get_clock().now().to_msg()
+        msg = Twist()
         if self._back:
             # Move backwards
-            msg.twist.linear.x = -0.3
+            msg.linear.x = -0.3
             self._back -= 1
         elif self._left:
             # Turn left
-            msg.twist.angular.z = 1.0
+            msg.angular.z = 1.0
             self._left -= 1
         elif self._right:
             # Turn right
-            msg.twist.angular.z = -1.0
+            msg.angular.z = -1.0
             self._right -= 1
         else:
             # Move forward
-            msg.twist.linear.x = 0.3
+            msg.linear.x = 0.3
         # Publish command
         self._pub.publish(msg)
 
