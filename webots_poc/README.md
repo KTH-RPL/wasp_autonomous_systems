@@ -171,6 +171,93 @@ just be told about directly. Test scripts:
 `testing/supervisor_soak_cycles.sh` + the `osascript` snippet above
 (not scripted into a reusable file yet).
 
+## Packaging: `pixi-build-ros` can build this from source automatically
+
+Investigated whether `ht26-alpha`'s existing `pixi-build-ros` mechanism
+(already used for `src/wasp_as_ass_1..4` etc. via `path = "..."` dependencies
+in the root `pixi.toml`) could build this patched `webots_ros2_driver` the
+same way — eliminating the need to manually `export LIBRARY_PATH=...`/
+`export DYLD_LIBRARY_PATH=...` before every build/run, which is how this
+whole investigation was actually tested (see `wasp-as-webots-macos-
+investigation` memory / "If picking this up" below). **Result: yes, with
+three fixes, all applied in this branch's `ws/src/`:**
+
+1. **Each locally-built package needs its own tiny companion `pixi.toml`**
+   declaring the build backend (already present alongside `package.xml` in
+   `webots_ros2_driver/`, `webots_ros2_msgs/`, `webots_ros2_importer/` in
+   this branch):
+   ```toml
+   [package.build.backend]
+   channels = [
+     "https://prefix.dev/pixi-build-backends",
+     "https://prefix.dev/conda-forge",
+   ]
+   name = "pixi-build-ros"
+   version = "*"
+   ```
+   Without this, `pixi install` fails with "does not contain a supported
+   manifest" even though `package.xml` is right there — a `package.xml`
+   alone isn't sufficient, despite what the error's own hint text implies.
+   The referenced source directories also need to be `git add`ed (tracked,
+   not necessarily committed) — `pixi-build-ros`'s source resolution
+   silently ignores untracked files.
+2. **A genuine upstream bug, unrelated to any macOS patch**, blocks
+   compilation: `Ros2LightSensor.cpp` has a C++ chained comparison (`X < Y <
+   Z`, which doesn't mean what it looks like) that plain `colcon build` only
+   warns about, but `pixi-build-ros`'s stricter build flags treat as a hard
+   error. Fixed (rewritten as `X < Y && Y < Z`) — this file isn't even used
+   by any of the three assignments here, so it was never hit before.
+3. **`DYLD_LIBRARY_PATH` still can't be eliminated at the linking level.**
+   The driver embeds `@rpath/Contents/lib/controller/libController.dylib`
+   (baked in by Cyberbotics' own Webots.app build), and `CMakeLists.txt`
+   already tries to add `/Applications/Webots.app` as a matching absolute
+   rpath entry — but conda/pixi-build's binary-relocation step strips any
+   rpath pointing outside the build prefix, so that never survives into the
+   installed binary (confirmed via `otool -l`: only `@loader_path/..` made
+   it through). Practical fix: automate the *export* instead of trying to
+   eliminate it, via the root `pixi.toml`:
+   ```toml
+   [target.unix.activation.env]
+   DYLD_LIBRARY_PATH = "/Applications/Webots.app/Contents/lib/controller"
+   ```
+   **This works for `pixi shell`/`pixi shell-hook`, but NOT for `pixi run
+   <task>`** — confirmed via direct testing (`pixi run bash -c 'echo
+   $DYLD_LIBRARY_PATH'` comes back empty even with `--force-activate`; this
+   looks like a genuine `pixi` limitation, not something specific to this
+   package). Since `ht26-alpha`'s actual usage pattern is `pixi run
+   ass_4_manual`-style tasks, that gap matters. Workaround, confirmed
+   working: declare the env var directly on each relevant task instead:
+   ```toml
+   ass_4_manual = { cmd = "ros2 launch ...", env = { DYLD_LIBRARY_PATH = "/Applications/Webots.app/Contents/lib/controller" } }
+   ```
+   Not yet done: adding this to real task definitions (this was only proven
+   in an isolated throwaway clone, not wired into any launch file/task
+   here). **This is Mac-only** — `LD_LIBRARY_PATH`/Linux doesn't need it;
+   the non-Apple `CMakeLists.txt` branch compiles its own self-contained
+   controller library from the bundled `webots/` source instead of linking
+   against an external Webots.app install, so it's a different code path
+   entirely that shouldn't hit this.
+
+**Not needed at all, contrary to earlier assumption:** `LIBRARY_PATH`
+(the `-latomic`/`yaml-cpp` linker workaround documented below and in
+`ht26-alpha`'s own README) — that was only ever a plain-`colcon-build`
+problem. `pixi-build-ros`'s isolated build already injects correct
+LDFLAGS/rpath, confirmed by the build succeeding without setting it.
+
+**Bottom line:** a fresh `pixi install` on macOS, with these three fixes and
+the `webots_ros2_driver`/`webots_ros2_msgs`/`webots_ros2_importer` family
+added as `path = "..."` dependencies (same pattern as the course's own
+`wasp_as_ass_*` packages), builds the patched driver end-to-end with zero
+manual intervention beyond the one-time `[target.unix.activation.env]`
+addition (for shell users) or per-task `env` (for `pixi run` users).
+Verified by launching the built `driver` binary directly and confirming no
+`dyld` errors, in a clean shell with no prior manual exports. Not yet
+verified: an actual end-to-end Webots launch (world + URDF + full
+`ros2 launch`) using *this* pixi-built package rather than the
+plain-`colcon-build` scratch workspace everything else in this branch was
+tested against — the mechanism is proven, but hasn't replaced the
+day-to-day testing setup.
+
 ## Known unresolved issues
 
 - Embedded Python plugins inside the C++ driver (`PythonPlugin.cpp`) fail
