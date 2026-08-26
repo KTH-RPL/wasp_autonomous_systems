@@ -144,20 +144,30 @@ reset/reload ROS service exists, even now that the node runs cleanly.
 
 **But in-place reset-on-flip doesn't need a ROS service at all — tested and
 confirmed working via Webots' own native GUI:** `File > Reset Simulation`
-(there's also `File > Reload World`, a slower full disk reload, not needed).
-Tested via macOS UI scripting (`osascript`/System Events — the Accessibility
-permission needs to be granted to whichever app owns the actual terminal
-process tree, e.g. iTerm2, not a nested child process). Result, with
-`ros2_supervisor=True` running: Webots' own process PID never changed (a
-genuine in-place reset, not a disguised restart); sim time actually reset
-(GPS header stamp `sec: 202` → `sec: 9`); the driver auto-reconnected within
-under a second (`respawn=True`); `Ros2Supervisor` itself briefly died and
-auto-respawned too, handled automatically; zero orphaned processes after.
+(**⇧⌘T** / Shift+Cmd+T — see `docs/images/webots-file-menu-reset-shortcuts.png`
+for the actual File menu, confirmed from a screenshot; `File > Reload World`
+is **⇧⌘R**, a slower full disk reload, not needed for this). Tested both by
+clicking the menu item and by sending the ⇧⌘T keystroke directly (as a
+student actually would) — both via macOS UI scripting (`osascript`/System
+Events — the Accessibility permission needs to be granted to whichever app
+owns the actual terminal process tree, e.g. iTerm2, not a nested child
+process), both give the identical result. Verified with an actual
+displacement test, not just a clock check: flew the drone to `z≈28-393m`
+via `/thrust` (tried multiple altitudes across the menu-click and keystroke
+tests), triggered reset each way, GPS snapped back to the exact spawn pose
+(`x≈0.005, y≈0, z≈0.086`) every single time regardless of how far away it
+was. Also confirmed, with `ros2_supervisor=True` running: Webots' own
+process PID never changed (a genuine in-place reset, not a disguised
+restart); sim time actually reset (GPS header stamp e.g. `sec: 124` →
+`sec: 8`); the driver auto-reconnected within under a second
+(`respawn=True`); `Ros2Supervisor` itself briefly died and auto-respawned
+too, handled automatically; zero orphaned processes after.
 This is core Webots functionality independent of ROS/the supervisor fix
 above — it would very likely have worked even before today's fixes, it just
 hadn't been tested. **This is now the recommended flip-recovery path** —
-faster than the `pkill`+relaunch fallback and doesn't interrupt the `ros2
-launch` process tree at all. Test scripts:
+faster than the `pkill`+relaunch fallback, doesn't interrupt the `ros2
+launch` process tree at all, and is a single keyboard shortcut a student can
+just be told about directly. Test scripts:
 `testing/supervisor_soak_cycles.sh` + the `osascript` snippet above
 (not scripted into a reusable file yet).
 
