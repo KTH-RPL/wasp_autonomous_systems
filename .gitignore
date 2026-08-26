@@ -16,6 +16,13 @@ eggs/
 .eggs/
 lib/
 lib64/
+# Except: webots_ros2_driver's vendored Python controller bindings. On
+# Linux, CMakeLists.txt's ament_python_install_package() checks for these
+# at configure time (before its own custom build target that compiles the
+# accompanying native libs even runs), so the .py sources have to be
+# committed, not generated - matches upstream's own tracked layout.
+!src/webots_ros2_driver/webots/lib/
+!src/webots_ros2_driver/webots/lib/**
 parts/
 sdist/
 var/
