@@ -134,21 +134,32 @@ confirmed via live instrumentation and a 5-cycle restart soak test
    and `ros2_supervisor=False`, untouched by this fix (never needed it —
    see "What this does and doesn't get you" below).
 
-**What this does and doesn't get you:** with both fixed, `Ros2Supervisor`
-runs stably and `/clock` publishes real simulation time, so `use_sim_time:
-True` is now safe (`course_world_launch.py` sets it). That's a genuine
-correctness improvement over the previous wall-clock-timestamp workaround.
-**It does NOT give you an in-place "reset simulation on flip" — that
-capability doesn't exist.** `ros2_supervisor.py`'s ROS node only exposes
-`spawn_urdf_robot`/`spawn_node_from_string`/`animation_start_recording`/
-`animation_stop_recording` services; there's no reset/reload service to
-call, even now that the node runs. A flipped drone still needs either
-Webots' own native GUI "Revert" (untested here, but it's core Webots
-functionality independent of ROS/the supervisor, so it should already work
-regardless of any of this) or a new small custom ROS service wrapping
-`wb_supervisor_simulation_reset_physics()`/`wb_supervisor_world_reload()` —
-neither built here. Test scripts: `/tmp/supervisor_soak_cycles.sh` +
-instrumentation notes (ephemeral, under `/tmp`).
+**What this gets you:** with both fixed, `Ros2Supervisor` runs stably and
+`/clock` publishes real simulation time, so `use_sim_time: True` is now safe
+(`course_world_launch.py` sets it) — a genuine correctness improvement over
+the previous wall-clock-timestamp workaround. `ros2_supervisor.py`'s ROS
+node itself only exposes `spawn_urdf_robot`/`spawn_node_from_string`/
+`animation_start_recording`/`animation_stop_recording` services — no
+reset/reload ROS service exists, even now that the node runs cleanly.
+
+**But in-place reset-on-flip doesn't need a ROS service at all — tested and
+confirmed working via Webots' own native GUI:** `File > Reset Simulation`
+(there's also `File > Reload World`, a slower full disk reload, not needed).
+Tested via macOS UI scripting (`osascript`/System Events — the Accessibility
+permission needs to be granted to whichever app owns the actual terminal
+process tree, e.g. iTerm2, not a nested child process). Result, with
+`ros2_supervisor=True` running: Webots' own process PID never changed (a
+genuine in-place reset, not a disguised restart); sim time actually reset
+(GPS header stamp `sec: 202` → `sec: 9`); the driver auto-reconnected within
+under a second (`respawn=True`); `Ros2Supervisor` itself briefly died and
+auto-respawned too, handled automatically; zero orphaned processes after.
+This is core Webots functionality independent of ROS/the supervisor fix
+above — it would very likely have worked even before today's fixes, it just
+hadn't been tested. **This is now the recommended flip-recovery path** —
+faster than the `pkill`+relaunch fallback and doesn't interrupt the `ros2
+launch` process tree at all. Test scripts:
+`testing/supervisor_soak_cycles.sh` + the `osascript` snippet above
+(not scripted into a reusable file yet).
 
 ## Known unresolved issues
 
