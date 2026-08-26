@@ -91,7 +91,7 @@ def rrtstar(gm: GridMap, x1: float, y1: float, x2: float, y2: float, iterations:
                 new_cost = cost + \
                     math.hypot(neighbor[0] - new[0], neighbor[1] - new[1])
 
-                if new_cost < distance[neighbor]:
+                if new_cost < distance[neighbor] and gm.collision_free(*new, *neighbor):
                     edges.remove((came_from[neighbor], neighbor))
                     distance[neighbor] = new_cost
                     came_from[neighbor] = new
