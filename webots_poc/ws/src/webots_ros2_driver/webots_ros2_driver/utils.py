@@ -200,7 +200,8 @@ def get_webots_home(show_warning=False):
         ]
     elif sys.platform == 'darwin':
         paths = [
-            '/Applications/Webots.app'                              # macOS default install
+            '/Applications/Webots.app',                             # macOS default install (needs admin rights)
+            os.path.join(str(Path.home()), 'Applications', 'Webots.app'),  # per-user install, no admin rights needed
         ]
     elif sys.platform == 'win32':
         paths = [

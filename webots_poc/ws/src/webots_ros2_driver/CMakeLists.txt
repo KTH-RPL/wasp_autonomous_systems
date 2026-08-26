@@ -49,7 +49,19 @@ if(APPLE)
   # inside an installed Webots.app instead of compiling from this checkout's
   # bare "webots" source subset (which lacks the macOS .app bundle layout
   # the upstream Makefile expects for the fat-binary/lipo step).
-  set(WEBOTS_APP_HOME "/Applications/Webots.app" CACHE PATH "Path to installed Webots.app")
+  # Respect a WEBOTS_HOME override first (matches the runtime Python-side
+  # convention in utils.py's get_webots_home()) - not everyone can install
+  # to /Applications (needs admin rights); a non-admin install commonly
+  # lands in ~/Applications instead, which is checked next.
+  if(DEFINED ENV{WEBOTS_HOME} AND EXISTS "$ENV{WEBOTS_HOME}")
+    set(WEBOTS_APP_HOME "$ENV{WEBOTS_HOME}" CACHE PATH "Path to installed Webots.app")
+  elseif(EXISTS "/Applications/Webots.app")
+    set(WEBOTS_APP_HOME "/Applications/Webots.app" CACHE PATH "Path to installed Webots.app")
+  elseif(EXISTS "$ENV{HOME}/Applications/Webots.app")
+    set(WEBOTS_APP_HOME "$ENV{HOME}/Applications/Webots.app" CACHE PATH "Path to installed Webots.app")
+  else()
+    set(WEBOTS_APP_HOME "/Applications/Webots.app" CACHE PATH "Path to installed Webots.app")
+  endif()
   set(WEBOTS_LIB_BASE ${WEBOTS_APP_HOME}/Contents/lib/controller)
   set(WEBOTS_INCLUDE_BASE ${WEBOTS_APP_HOME}/Contents/include/controller)
 else()

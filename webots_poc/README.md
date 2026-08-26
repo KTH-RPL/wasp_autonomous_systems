@@ -210,33 +210,65 @@ three fixes, all applied in this branch's `ws/src/`:**
 3. **`DYLD_LIBRARY_PATH` still can't be eliminated at the linking level.**
    The driver embeds `@rpath/Contents/lib/controller/libController.dylib`
    (baked in by Cyberbotics' own Webots.app build), and `CMakeLists.txt`
-   already tries to add `/Applications/Webots.app` as a matching absolute
-   rpath entry — but conda/pixi-build's binary-relocation step strips any
-   rpath pointing outside the build prefix, so that never survives into the
+   already tries to add the Webots.app path as a matching absolute rpath
+   entry — but conda/pixi-build's binary-relocation step strips any rpath
+   pointing outside the build prefix, so that never survives into the
    installed binary (confirmed via `otool -l`: only `@loader_path/..` made
    it through). Practical fix: automate the *export* instead of trying to
-   eliminate it, via the root `pixi.toml`:
-   ```toml
-   [target.unix.activation.env]
-   DYLD_LIBRARY_PATH = "/Applications/Webots.app/Contents/lib/controller"
-   ```
-   **This works for `pixi shell`/`pixi shell-hook`, but NOT for `pixi run
-   <task>`** — confirmed via direct testing (`pixi run bash -c 'echo
-   $DYLD_LIBRARY_PATH'` comes back empty even with `--force-activate`; this
-   looks like a genuine `pixi` limitation, not something specific to this
-   package). Since `ht26-alpha`'s actual usage pattern is `pixi run
-   ass_4_manual`-style tasks, that gap matters. Workaround, confirmed
-   working: declare the env var directly on each relevant task instead:
-   ```toml
-   ass_4_manual = { cmd = "ros2 launch ...", env = { DYLD_LIBRARY_PATH = "/Applications/Webots.app/Contents/lib/controller" } }
-   ```
-   Not yet done: adding this to real task definitions (this was only proven
-   in an isolated throwaway clone, not wired into any launch file/task
-   here). **This is Mac-only** — `LD_LIBRARY_PATH`/Linux doesn't need it;
-   the non-Apple `CMakeLists.txt` branch compiles its own self-contained
-   controller library from the bundled `webots/` source instead of linking
-   against an external Webots.app install, so it's a different code path
-   entirely that shouldn't hit this.
+   eliminate it. `packaging/webots_env_activation.sh` in this branch does
+   this - detects `WEBOTS_HOME` (respecting an existing override, matching
+   `utils.py`'s runtime convention - see fix 4 below), falls back to
+   checking `/Applications/Webots.app` then `~/Applications/Webots.app`,
+   and exports `DYLD_LIBRARY_PATH` accordingly (no-ops harmlessly on
+   Linux/if Webots isn't found anywhere).
+   - For `pixi shell`/`pixi shell-hook` users: reference it from
+     `[target.unix.activation] scripts = [..., "packaging/webots_env_activation.sh"]`
+     in the root `pixi.toml`.
+   - **For `pixi run <task>` users (the course's actual pattern,
+     `ass_4_manual`-style) - confirmed neither `[activation] scripts` NOR
+     `[activation.env]` apply to `pixi run` at all** (tested directly:
+     `pixi run bash -c 'echo $DYLD_LIBRARY_PATH'` comes back empty even
+     with `--force-activate`, and even the `install/setup.sh` activation
+     script silently isn't sourced either - a real `pixi` limitation, not
+     specific to this package). **Confirmed working workaround:** source
+     the same script inline within the task's own `cmd`:
+     ```toml
+     ass_4_webots_test = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch webots_ros2_mavic course_world_launch.py'" }
+     ```
+     This needs the `. script && exec real-command` wrapper on every task
+     that launches Webots - not solvable once globally for `pixi run`, but
+     centralizing the detection logic in one script (rather than repeating
+     it as a static per-task `env = {...}` value, the first approach tried)
+     keeps it a one-line addition per task.
+4. **Made both the build-time and runtime Webots-location lookups robust to
+   a non-admin install**, prompted by a good question about students on a
+   managed Mac without admin rights - `/Applications/` is typically
+   `root:admin`-owned with group-only write access, so a genuinely
+   non-admin user can't drag-install there; they'd land in
+   `~/Applications/Webots.app` instead (a real per-user location macOS
+   itself recognizes), and a hardcoded `/Applications`-only assumption
+   would silently break for them. Fixed in three places, all respecting a
+   `WEBOTS_HOME` override first, matching upstream's own existing
+   convention for this:
+   - `CMakeLists.txt`'s `WEBOTS_APP_HOME` (build-time): now checks
+     `$ENV{WEBOTS_HOME}`, then `/Applications/Webots.app`, then
+     `$ENV{HOME}/Applications/Webots.app`, in that order.
+   - `utils.py`'s `get_webots_home()` (runtime, upstream's own function):
+     added `~/Applications/Webots.app` as a second macOS fallback path
+     (previously only checked `/Applications/Webots.app` - every other
+     platform's list in this same function already has multiple
+     fallbacks, so this was arguably an upstream gap, not just an
+     artifact of our packaging).
+   - `packaging/webots_env_activation.sh` (this fix): same
+     `WEBOTS_HOME` → `/Applications` → `~/Applications` order.
+   Deliberately did **not** go with an alternative that was considered and
+   rejected: mandating Webots be installed in some fixed location relative
+   to the cloned repo. Auto-detection matches what students already get
+   for free just by following the wiki's own install instructions (drag
+   the `.dmg` to Applications, or wherever they have write access), with
+   `WEBOTS_HOME` as a single well-documented escape hatch for the
+   genuinely unusual case - versus a new positional convention that's easy
+   to violate silently and get a confusing failure from later.
 
 **Not needed at all, contrary to earlier assumption:** `LIBRARY_PATH`
 (the `-latomic`/`yaml-cpp` linker workaround documented below and in
@@ -244,19 +276,19 @@ three fixes, all applied in this branch's `ws/src/`:**
 problem. `pixi-build-ros`'s isolated build already injects correct
 LDFLAGS/rpath, confirmed by the build succeeding without setting it.
 
-**Bottom line:** a fresh `pixi install` on macOS, with these three fixes and
-the `webots_ros2_driver`/`webots_ros2_msgs`/`webots_ros2_importer` family
-added as `path = "..."` dependencies (same pattern as the course's own
-`wasp_as_ass_*` packages), builds the patched driver end-to-end with zero
-manual intervention beyond the one-time `[target.unix.activation.env]`
-addition (for shell users) or per-task `env` (for `pixi run` users).
-Verified by launching the built `driver` binary directly and confirming no
-`dyld` errors, in a clean shell with no prior manual exports. Not yet
-verified: an actual end-to-end Webots launch (world + URDF + full
-`ros2 launch`) using *this* pixi-built package rather than the
-plain-`colcon-build` scratch workspace everything else in this branch was
-tested against — the mechanism is proven, but hasn't replaced the
-day-to-day testing setup.
+**Bottom line: fully verified end-to-end, live.** `pixi run
+ass_4_webots_test` (the exact task pattern above, in an isolated throwaway
+clone with a stripped-down `env -i` shell so no manual export could be
+leaking in from outside) launched Webots with GUI rendering, and the
+compiled `Ros2MavicController`-powered driver **and** `Ros2Supervisor` both
+connected live - `/clock` confirmed publishing, zero `dyld` errors anywhere
+in the log. This replaces the earlier, weaker claim (only checked the
+`driver` binary's `--help` output) - the whole pixi-built package now has a
+genuine, tested, working live simulation session behind it, with zero
+manual exports of any kind. Not yet done: applying this to the *real*
+`ht26-alpha` `pixi.toml` (only proven in an isolated throwaway clone that's
+already been deleted - the `pixi.toml` fragments above and the
+`packaging/webots_env_activation.sh` file are what's preserved here).
 
 ## Known unresolved issues
 
