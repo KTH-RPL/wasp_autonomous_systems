@@ -70,6 +70,10 @@ build = "colcon build --symlink-install --cmake-args -DPython_EXECUTABLE=$CONDA_
 # Assignment 1 tasks
 
 ass_1_1 = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_1 turtlebot_apartment_launch.py'" }
+# Run in a second terminal alongside ass_1_1 to manually drive the robot
+# around the apartment (i/j/k/l etc. - the tool prints its own key list).
+# No Webots-specific setup needed here, so no activation wrapper.
+ass_1_1_teleop = { cmd = "ros2 run teleop_twist_keyboard teleop_twist_keyboard" }
 ass_1_2 = { cmd = "ros2 launch wasp_as_ass_1 real_robot_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
 ass_1_3 = { cmd = "ros2 launch wasp_as_ass_1 kitti_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
 
