@@ -9,13 +9,7 @@ RGB-D device (webots_ros2_driver's Ros2RGBD plugin) instead, streaming
 /camera/color/image_raw, /camera/depth/image_raw, and /camera/color/points.
 
 ros2_supervisor=True + use_sim_time=True give accurate simulation-time
-timestamps, matching the Gazebo version's use_sim_time=true convention.
-
-NOTE for student-facing instructions: the apartment world's doors (and
-possibly other thin geometry) have no collision boundary - driving the
-robot manually confirmed it can pass straight through a closed door.
-Worth a heads-up to students so they don't mistake it for a bug in their
-own code if they drive through one while exploring the apartment."""
+timestamps, matching the Gazebo version's use_sim_time=true convention."""
 
 import os
 import launch
