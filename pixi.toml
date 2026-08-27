@@ -84,16 +84,22 @@ ass_1_1 = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 
 # No Webots-specific setup needed here, so no activation wrapper.
 # stamped:=true matches Jazzy's diff_drive_controller, which only accepts
 # TwistStamped on ~/cmd_vel (use_stamped_vel was removed - see
-# ros2control.yaml).
-ass_1_1_teleop = { cmd = "ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -p stamped:=true" }
+# ros2control.yaml). key_timeout/repeat_rate:=0.0 disable timeout-based
+# repeat-publishing for predictable manual control; use_sim_time:=true
+# matches ass_1_1's Webots clock, matching the assignment description.
+ass_1_1_teleop = { cmd = "ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -p stamped:=true -p key_timeout:=0.0 -p repeat_rate:=0.0 -p use_sim_time:=true" }
 ass_1_2 = { cmd = "ros2 launch wasp_as_ass_1 real_robot_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
 ass_1_3 = { cmd = "ros2 launch wasp_as_ass_1 kitti_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
 
 # Assignment 2 tasks
 
-ass_2_1 = { cmd = "ros2 launch wasp_as_ass_2 odometry_launch.xml" }
+ass_2_1 = { cmd = "ros2 launch wasp_as_ass_2 odometry_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
 ass_2_2 = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_2 collision_detection_webots_launch.py'" }
-ass_2_3 = { cmd = "ros2 launch wasp_as_ass_2 kitti_segmentation_launch.xml" }
+ass_2_3 = { cmd = "ros2 launch wasp_as_ass_2 kitti_segmentation_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
+# camera_segmentation_launch.xml is genuinely empty (0 bytes) as of the
+# course maintainer's own commit 6bb15ea - not migration fallout, no
+# working version found anywhere in git history or the other local clone.
+# This task will not do anything useful until that launch file is authored.
 ass_2_4 = { cmd = "ros2 launch wasp_as_ass_2 camera_segmentation_launch.xml" }
 
 # Assignment 3 tasks
