@@ -1,6 +1,20 @@
 cmake_minimum_required(VERSION 3.5)
 project(webots_ros2_control)
 
+if(APPLE)
+  # Upstream missing-include bugs (not ours) exposed by this build's
+  # stricter libc++ (23.x), which older/looser versions transitively
+  # papered over - see webots_ros2_driver/CMakeLists.txt for the full
+  # writeup of the <locale>/wstring_convert one (rosidl_runtime_cpp/
+  # traits.hpp). realtime_tools/async_function_handler.hpp has the same
+  # problem with std::exception_ptr, needing <exception>. Both go through
+  # one shim header (rather than two separate -include flags) because
+  # CMake's generator collapses repeated -include tokens, silently
+  # merging "-include locale" + "-include exception" into the broken
+  # "-include locale exception".
+  add_compile_options(-include ${CMAKE_CURRENT_SOURCE_DIR}/include/webots_ros2_control/macos_stdlib_workarounds.hpp)
+endif()
+
 # Check which ROS distribution is used, ros2control depends of that
 if($ENV{ROS_DISTRO} MATCHES "humble")
   add_compile_definitions(HUMBLE)

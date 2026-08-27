@@ -19,5 +19,7 @@ diffdrive_controller:
     # The real separation between wheels is not resulting in a perfect odometry
     wheel_separation_multiplier: 1.112
 
-    use_stamped_vel: false
+    # Jazzy's diff_drive_controller removed use_stamped_vel entirely - it
+    # always publishes/subscribes ~/cmd_vel as geometry_msgs/TwistStamped
+    # now, no more unstamped cmd_vel_unstamped variant.
     base_frame_id: "base_link"

@@ -5,3 +5,20 @@ channels = [
 ]
 name = "pixi-build-ros"
 version = "*"
+
+# Pins all packages built in this workspace to the same compiler/ABI epoch -
+# without it, pixi-build-ros can resolve a different toolchain snapshot per
+# package, which risks ABI-incompatible builds across the workspace. Matches
+# the pattern documented for DD2419's own Pixi+ROS2+Jazzy course workspace.
+# (Not what fixed the std::wstring_convert build error hit during the
+# Humble->Jazzy migration - that was a genuine missing #include in
+# rosidl_runtime_cpp/traits.hpp, fixed separately below via -include locale.
+# This mutex pin is still worth keeping as a best practice.)
+[package.host-dependencies]
+ros2-distro-mutex = ">=0.13,<0.14"
+
+[package.build-dependencies]
+ros2-distro-mutex = ">=0.13,<0.14"
+
+[package.run-dependencies]
+ros2-distro-mutex = ">=0.13,<0.14"

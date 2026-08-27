@@ -73,7 +73,9 @@ def generate_launch_description():
     ros_control_spawners = [diffdrive_controller_spawner, joint_state_broadcaster_spawner]
 
     ros2_control_params = os.path.join(webots_pkg_dir, 'resource', 'ros2control.yaml')
-    mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel'),
+    # Jazzy's diff_drive_controller always publishes/subscribes ~/cmd_vel as
+    # TwistStamped (use_stamped_vel was removed) - no more unstamped variant.
+    mappings = [('/diffdrive_controller/cmd_vel', '/cmd_vel'),
                 ('/diffdrive_controller/odom', '/odom')]
     turtlebot_driver = WebotsController(
         robot_name='TurtleBot3Burger',

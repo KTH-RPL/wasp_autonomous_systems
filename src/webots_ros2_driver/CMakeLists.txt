@@ -5,6 +5,21 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
 
+if(APPLE)
+  # Genuine upstream bug in ROS2's own rosidl_runtime_cpp/traits.hpp (not
+  # ours): it uses std::wstring_convert (declared in <locale>) but only
+  # includes <codecvt>, which on conda-forge's libc++ pulls in the internal
+  # <__locale> umbrella, not the public <locale> header - so
+  # wstring_convert never actually gets declared. Never surfaced before
+  # because older/looser libc++ versions transitively included <locale>
+  # anyway; this build's libc++ (23.x) is stricter about it. Force-including
+  # <locale> first is a minimal, targeted fix - confirmed via isolated
+  # repro that this alone resolves it, no macro workarounds needed. Root
+  # cause is a missing #include in an upstream ROS2 header, so this is
+  # relevant to any C++ ROS2 package that hits it, not just ours.
+  add_compile_options(-include locale)
+endif()
+
 # Check which ROS distribution is used, vision_msgs depends of that
 if($ENV{ROS_DISTRO} MATCHES "humble")
   add_compile_definitions(HUMBLE)

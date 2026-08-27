@@ -15,6 +15,15 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+if(APPLE)
+  # See src/wasp_as_interfaces/CMakeLists.txt for why: upstream
+  # rosidl_typesupport_introspection_c-generated code trips
+  # -Wint-conversion/-Wincompatible-function-pointer-types, which Xcode's
+  # Clang 17 defaults to errors in C mode. This package also generates
+  # interfaces via rosidl_generate_interfaces, so it hits the same issue.
+  add_compile_options(-Wno-error=int-conversion -Wno-error=incompatible-function-pointer-types)
+endif()
+
 find_package(ament_cmake REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
