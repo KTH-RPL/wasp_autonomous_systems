@@ -26,3 +26,14 @@ Please see the [Wiki](https://github.com/KTH-RPL/wasp_autonomous_systems/wiki).
   in the pixi environment. **Already handled**: the `build` task exports
   `LIBRARY_PATH` for this on macOS (see `[target.osx-arm64.tasks]` in
   `pixi.toml`) - just run `pixi run build`, no manual steps needed.
+- Closing RViz reliably triggers macOS's crash reporter:
+
+  ![rviz2 quit unexpectedly](docs/images/rviz2-quit-unexpectedly.png)
+
+  This is a known upstream ROS2 issue, not caused by anything in this
+  repo: `pluginlib`'s `class_loader` crashes (`abort()` via
+  `class_loader::ClassLoader::~ClassLoader()`) during shared-library
+  teardown at process exit, a shutdown-ordering bug that's worse on
+  macOS than Linux. It happens *after* RViz has already done everything
+  it was asked to do - purely cosmetic, nothing is lost. Click **Ignore**
+  (or **Reopen** if you want RViz back) and move on.
