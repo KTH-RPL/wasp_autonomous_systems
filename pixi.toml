@@ -128,12 +128,16 @@ ass_4_pid = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros
 # Elective tasks
 
 # Elective task A: Dynamic Object Detection, camera and LiDAR fusion.
-# yolo_model options per the assignment description: "openvino_int8"
-# (default), "openvino_half", "torch" - switch to compare performance.
-# downsample_voxel_size/num_clouds_accum are meant to be tuned live via the
-# bundled rqt_reconfigure panel instead, matching the assignment's own
-# "change this at runtime" note.
+# yolo_model options per the assignment description: "openvino_int8",
+# "openvino_half", "torch" (default) - switch to compare performance.
+# torch, not openvino_int8 (the PDF's own example), is the default here -
+# see kitti_segmentation_extra_launch.xml for why (OpenVINO targets Intel
+# CPU instruction sets and falls back to a very slow generic path on Apple
+# Silicon; torch runs the same everywhere). downsample_voxel_size/
+# num_clouds_accum are meant to be tuned live via the bundled
+# rqt_reconfigure panel instead, matching the assignment's own "change
+# this at runtime" note.
 ass_elective_a = { cmd = "ros2 launch wasp_as_ass_2 kitti_segmentation_extra_launch.xml rate:={{ rate }} yolo_model:={{ yolo_model }}", args = [
 	{ arg = "rate", default = "1.0" },
-	{ arg = "yolo_model", default = "openvino_int8" },
+	{ arg = "yolo_model", default = "torch" },
 ] }

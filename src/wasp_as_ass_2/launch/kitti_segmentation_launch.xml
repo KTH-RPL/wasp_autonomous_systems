@@ -24,7 +24,16 @@
 		<param name="robot_description" value="$(command 'xacro $(find-pkg-share wasp_as)/models/car.xacro')" />
 	</node>
 	
-	<!-- Play the rosbag -->
+	<!-- Play the rosbag.
 
-	<executable cmd="ros2 bag play --read-ahead-queue-size 100 -l -r $(var rate) --clock 100 rosbags/kitti" output="screen" />
+	     -d 2.0: a fixed 2s startup delay so static TFs and subscriptions
+	     settle before playback begins (same reason the assignment PDF's
+	     own instructions use -p/start-paused, but -p needs a SPACE
+	     keypress to resume - when this executable runs under `ros2
+	     launch` its stdin usually isn't a real terminal ("stdin is not a
+	     terminal device. Keyboard handling disabled." - confirmed via
+	     live testing), so -p would just hang forever with no way to
+	     unpause. -d is non-interactive and gives the same guarantee. -->
+
+	<executable cmd="ros2 bag play --read-ahead-queue-size 100 -l -r $(var rate) --clock 100 -d 2.0 rosbags/kitti" output="screen" />
 </launch>

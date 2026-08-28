@@ -4,8 +4,18 @@
 	<!-- YOLO model to use, per the assignment description: "openvino_int8",
 	     "openvino_half", or "torch" - exposed as a launch arg since comparing
 	     these means relaunching, unlike downsample_voxel_size/num_clouds_accum
-	     below which are meant to be tuned live via rqt_reconfigure. -->
-	<arg name="yolo_model" default="openvino_int8" />
+	     below which are meant to be tuned live via rqt_reconfigure.
+
+	     Default is "torch", not "openvino_int8" like the PDF's own example -
+	     OpenVINO's optimizations target Intel CPU instruction sets
+	     (AVX/VNNI), and on Apple Silicon it falls back to a slow, generic
+	     compile path: confirmed live at 3+ minutes to produce a single
+	     result, vs. ~0.7s (model load + inference) for torch in the same
+	     environment. torch runs identically everywhere (Mac/Linux/Windows,
+	     CPU or GPU), so it's the safer cross-platform default; students on
+	     genuine Intel hardware can still pass yolo_model:=openvino_int8 if
+	     they want the faster, Intel-specific path. -->
+	<arg name="yolo_model" default="torch" />
 
 	<let name="rviz_config_file" value="$(find-pkg-share wasp_as_ass_2)/rviz/kitti_segmentation_extra.rviz" />
 
@@ -35,7 +45,27 @@
 		<param name="robot_description" value="$(command 'xacro $(find-pkg-share wasp_as)/models/car.xacro')" />
 	</node>
 
-	<!-- Play the rosbag -->
+	<!-- Play the rosbag.
 
-	<executable cmd="ros2 bag play --read-ahead-queue-size 100 -l -r $(var rate) --clock 100 rosbags/kitti" output="screen" />
+	     -d 2.0: a fixed 2s startup delay so static TFs and subscriptions
+	     settle before playback begins (same reason the assignment PDF's
+	     own instructions use -p/start-paused, but -p needs a SPACE
+	     keypress to resume - when this executable runs under `ros2
+	     launch` its stdin usually isn't a real terminal ("stdin is not a
+	     terminal device. Keyboard handling disabled." - confirmed via
+	     live testing), so -p would just hang forever with no way to
+	     unpause. -d is non-interactive and gives the same guarantee.
+
+	     Known residual risk: -l loops the bag forever, and if processing
+	     ever falls far enough behind real-time (slow model, slow
+	     hardware), the message-sync queue can back up across a loop
+	     restart - confirmed live that this makes every subsequent TF
+	     lookup permanently fail (~30s+ stale) rather than just delayed,
+	     since the TF buffer resets on each restart while the backlog
+	     doesn't. The torch default above should keep processing well
+	     within real-time and avoid this in practice, but if map data
+	     stops updating during a long run, this loop/backlog interaction
+	     is the first thing to suspect. -->
+
+	<executable cmd="ros2 bag play --read-ahead-queue-size 100 -l -r $(var rate) --clock 100 -d 2.0 rosbags/kitti" output="screen" />
 </launch>

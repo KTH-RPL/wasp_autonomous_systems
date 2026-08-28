@@ -27,7 +27,16 @@
 	</node>
 
 	<!-- Play the rosbag - remap the two legacy-typed topics so the bridge
-	     above (not odometry.py) is the only thing that sees them. -->
+	     above (not odometry.py) is the only thing that sees them.
 
-	<executable cmd="ros2 bag play rosbags/real_robot --read-ahead-queue-size 100 -l -r $(var rate) --clock 100 --remap /motor/encoders:=/motor/encoders_legacy /motor/duty_cyles:=/motor/duty_cyles_legacy" output="screen" />
+	     -d 2.0: a fixed 2s startup delay so static TFs and subscriptions
+	     settle before playback begins (same reason the assignment PDF's
+	     own instructions use -p/start-paused, but -p needs a SPACE
+	     keypress to resume - when this executable runs under `ros2
+	     launch` its stdin usually isn't a real terminal ("stdin is not a
+	     terminal device. Keyboard handling disabled." - confirmed via
+	     live testing), so -p would just hang forever with no way to
+	     unpause. -d is non-interactive and gives the same guarantee. -->
+
+	<executable cmd="ros2 bag play rosbags/real_robot --read-ahead-queue-size 100 -l -r $(var rate) --clock 100 -d 2.0 --remap /motor/encoders:=/motor/encoders_legacy /motor/duty_cyles:=/motor/duty_cyles_legacy" output="screen" />
 </launch>
