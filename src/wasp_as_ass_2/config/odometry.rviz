@@ -74,7 +74,7 @@ Visualization Manager:
         Depth: 5
         Durability Policy: System Default
         History Policy: System Default
-        Reliability Policy: System Default
+        Reliability Policy: Reliable
         Value: /camera/depth/color/points
       Use Fixed Frame: true
       Use rainbow: true
@@ -91,7 +91,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /camera/color/image_raw
+        Value: /camera/color/image/compressed
       Value: true
     - Alpha: 0.5
       Buffer Length: 1

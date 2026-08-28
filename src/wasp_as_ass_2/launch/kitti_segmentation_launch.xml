@@ -2,7 +2,7 @@
 <launch>
 	<arg name="rate" default="1.0" />
 
-	<let name="rviz_config_file" value="$(find-pkg-share wasp_as_ass_2)/rviz/kitti.rviz" />
+	<let name="rviz_config_file" value="$(find-pkg-share wasp_as_ass_2)/rviz/kitti_segmentation.rviz" />
 
 	<!-- Rviz for visualization -->
 

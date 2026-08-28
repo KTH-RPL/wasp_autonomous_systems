@@ -23,6 +23,13 @@ preview = ["pixi-build"]
 # ROS
 # ros-jazzy-ros2run = ">=0.32.6,<0.33"
 ros-jazzy-desktop = "*"
+# Not pulled in by ros-jazzy-desktop on this channel - without it, RViz's
+# Image display can't load the "compressed" image_transport plugin at all
+# (silently: no terminal error, just a red status icon in RViz's own
+# Displays panel and zero subscription in the ROS graph). Needed by every
+# rosbag-driven Image display in this repo, since all recorded camera
+# topics are CompressedImage-only (no raw Image topic recorded alongside).
+ros-jazzy-compressed-image-transport = "*"
 # colcon's ament_python build extension still invokes the old-style
 # `setup.py develop --editable` command, which setuptools removed (a
 # common ROS2-ecosystem pain point) - needed for `colcon build`/

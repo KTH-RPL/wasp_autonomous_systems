@@ -546,6 +546,7 @@ environments:
       - conda: https://prefix.dev/robostack-jazzy/linux-64/ros-jazzy-common-interfaces-5.3.6-np2py312h2ed9cc7_14.conda
       - conda: https://prefix.dev/robostack-jazzy/linux-64/ros-jazzy-composition-0.33.9-np2py312h2ed9cc7_14.conda
       - conda: https://prefix.dev/robostack-jazzy/linux-64/ros-jazzy-composition-interfaces-2.0.3-np2py312h2ed9cc7_14.conda
+      - conda: https://prefix.dev/robostack-jazzy/linux-64/ros-jazzy-compressed-image-transport-4.0.6-np2py312h2ed9cc7_14.conda
       - conda: https://prefix.dev/robostack-jazzy/linux-64/ros-jazzy-console-bridge-vendor-1.7.1-np2py312h2ed9cc7_14.conda
       - conda: https://prefix.dev/robostack-jazzy/linux-64/ros-jazzy-control-msgs-5.7.0-np2py312h2ed9cc7_14.conda
       - conda: https://prefix.dev/robostack-jazzy/linux-64/ros-jazzy-control-toolbox-4.9.0-np2py312h2c89a96_14.conda
@@ -1275,6 +1276,7 @@ environments:
       - conda: https://prefix.dev/robostack-jazzy/osx-arm64/ros-jazzy-common-interfaces-5.3.6-np2py312h50b1e4c_14.conda
       - conda: https://prefix.dev/robostack-jazzy/osx-arm64/ros-jazzy-composition-0.33.9-np2py312h50b1e4c_14.conda
       - conda: https://prefix.dev/robostack-jazzy/osx-arm64/ros-jazzy-composition-interfaces-2.0.3-np2py312h50b1e4c_14.conda
+      - conda: https://prefix.dev/robostack-jazzy/osx-arm64/ros-jazzy-compressed-image-transport-4.0.6-np2py312h50b1e4c_14.conda
       - conda: https://prefix.dev/robostack-jazzy/osx-arm64/ros-jazzy-console-bridge-vendor-1.7.1-np2py312h50b1e4c_14.conda
       - conda: https://prefix.dev/robostack-jazzy/osx-arm64/ros-jazzy-control-msgs-5.7.0-np2py312h50b1e4c_14.conda
       - conda: https://prefix.dev/robostack-jazzy/osx-arm64/ros-jazzy-control-toolbox-4.9.0-np2py312h7760150_14.conda
@@ -15101,6 +15103,25 @@ packages:
   run_exports: {}
   size: 224475
   timestamp: 1768976648065
+- conda: https://prefix.dev/robostack-jazzy/linux-64/ros-jazzy-compressed-image-transport-4.0.6-np2py312h2ed9cc7_14.conda
+  sha256: ef69dc269677d2612f5424ba38ef70c1b2467ff228d2c21ce2a7f2bcc4cff565
+  md5: 9191e266c48881775d3d10bcdc0ffae0
+  depends:
+  - python
+  - ros-jazzy-cv-bridge
+  - ros-jazzy-image-transport
+  - ros-jazzy-ros-workspace
+  - ros2-distro-mutex 0.13.* jazzy_*
+  - __glibc >=2.17,<3.0.a0
+  - libstdcxx >=14
+  - libgcc >=14
+  - numpy >=1.23,<3
+  - python_abi 3.12.* *_cp312
+  - ros2-distro-mutex >=0.13.0,<0.14.0a0
+  license: BSD-3-Clause
+  run_exports: {}
+  size: 318592
+  timestamp: 1768979350562
 - conda: https://prefix.dev/robostack-jazzy/linux-64/ros-jazzy-console-bridge-vendor-1.7.1-np2py312h2ed9cc7_14.conda
   sha256: 59b7544f6a9fb313972ce6997012393adfdcbfa7a9b76c3f37cc600c699ec6a8
   md5: e1f8e37aed54c54de40a3e86fcf9ec3b
@@ -22529,6 +22550,24 @@ packages:
   run_exports: {}
   size: 193625
   timestamp: 1769000741280
+- conda: https://prefix.dev/robostack-jazzy/osx-arm64/ros-jazzy-compressed-image-transport-4.0.6-np2py312h50b1e4c_14.conda
+  sha256: 58968943b58eca60c8b72721dc384a620b26c58b0750ecbdfcef5fa4f76fef69
+  md5: a27506962c66de3c5ba00afaebc62831
+  depends:
+  - python
+  - ros-jazzy-cv-bridge
+  - ros-jazzy-image-transport
+  - ros-jazzy-ros-workspace
+  - ros2-distro-mutex 0.13.* jazzy_*
+  - __osx >=11.0
+  - libcxx >=18
+  - numpy >=1.23,<3
+  - ros2-distro-mutex >=0.13.0,<0.14.0a0
+  - python_abi 3.12.* *_cp312
+  license: BSD-3-Clause
+  run_exports: {}
+  size: 239863
+  timestamp: 1769009471357
 - conda: https://prefix.dev/robostack-jazzy/osx-arm64/ros-jazzy-console-bridge-vendor-1.7.1-np2py312h50b1e4c_14.conda
   sha256: 44626e12c8281ce1f310e971fe82d635c8c55785aabc497bb2dea9131102ed91
   md5: 82013795304e0cca0fec5ebe9f284d1d

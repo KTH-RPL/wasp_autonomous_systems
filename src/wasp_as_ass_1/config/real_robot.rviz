@@ -56,7 +56,7 @@ Visualization Manager:
         Depth: 5
         Durability Policy: System Default
         History Policy: System Default
-        Reliability Policy: System Default
+        Reliability Policy: Reliable
         Value: /camera/depth/color/points
       Use Fixed Frame: true
       Use rainbow: true
@@ -72,8 +72,8 @@ Visualization Manager:
         Depth: 5
         Durability Policy: System Default
         History Policy: System Default
-        Reliability Policy: System Default
-        Value: /camera/color/image_raw
+        Reliability Policy: Reliable
+        Value: /camera/color/image/compressed
       Value: true
   Enabled: true
   Global Options:
