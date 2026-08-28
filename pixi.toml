@@ -87,6 +87,13 @@ download_rosbags = { cmd = 'curl -fSL "https://canvas.kth.se/files/9471655/downl
 
 build = "colcon build --symlink-install --cmake-args -DPython_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python -DPYTHON_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_FIND_STRATEGY=LOCATION -DPython_FIND_STRATEGY=LOCATION"
 
+[target.osx-arm64.tasks]
+# macOS's linker can't find libatomic/libyaml-cpp (needed by
+# webots_ros2_driver's C++ plugins) without an explicit LIBRARY_PATH
+# pointing at the conda env's lib dir - confirmed live, colcon build
+# otherwise fails with "ld: library 'atomic' not found".
+build = "bash -c 'export LIBRARY_PATH=\"$CONDA_PREFIX/lib:$LIBRARY_PATH\" && colcon build --symlink-install --cmake-args -DPython_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python -DPYTHON_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_FIND_STRATEGY=LOCATION -DPython_FIND_STRATEGY=LOCATION'"
+
 # Assignment 1 tasks
 
 ass_1_1 = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_1 turtlebot_apartment_launch.py'" }
