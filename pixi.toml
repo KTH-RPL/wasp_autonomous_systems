@@ -76,7 +76,9 @@ build = "colcon build --merge-install --cmake-args -DCMAKE_EXPORT_COMPILE_COMMAN
 build = "colcon build --symlink-install --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DPython_FIND_VIRTUALENV=ONLY -DPython3_FIND_VIRTUALENV=ONLY"
 
 [tasks]
-download_rosbags = { cmd = 'curl -fSL "https://canvas.kth.se/files/9471655/download?download_frd=1&verifier=4wOMCwu3QHS0duQGTKpn6HyhO9jCPGZSL3RM9kmu" | tar --use-compress-program=unzstd -x', outputs = [
+download_rosbags = { cmd = 'curl -fSL "https://canvas.kth.se/files/9471655/download?download_frd=1&verifier=4wOMCwu3QHS0duQGTKpn6HyhO9jCPGZSL3RM9kmu" | tar --use-compress-program=unzstd -x', depends-on = [
+	"postinstall_notice",
+], outputs = [
 	"rosbags/kitti/kitti_*.mcap",
 	"rosbags/kitti/metadata.yaml",
 	"rosbags/real_robot/real_robot_*.mcap",
@@ -85,14 +87,18 @@ download_rosbags = { cmd = 'curl -fSL "https://canvas.kth.se/files/9471655/downl
 
 # Dev tasks
 
-build = "colcon build --symlink-install --cmake-args -DPython_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python -DPYTHON_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_FIND_STRATEGY=LOCATION -DPython_FIND_STRATEGY=LOCATION"
+build = { cmd = "colcon build --symlink-install --cmake-args -DPython_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python -DPYTHON_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_FIND_STRATEGY=LOCATION -DPython_FIND_STRATEGY=LOCATION", depends-on = [
+	"postinstall_notice",
+] }
 
 [target.osx-arm64.tasks]
 # macOS's linker can't find libatomic/libyaml-cpp (needed by
 # webots_ros2_driver's C++ plugins) without an explicit LIBRARY_PATH
 # pointing at the conda env's lib dir - confirmed live, colcon build
 # otherwise fails with "ld: library 'atomic' not found".
-build = "bash -c 'export LIBRARY_PATH=\"$CONDA_PREFIX/lib:$LIBRARY_PATH\" && colcon build --symlink-install --cmake-args -DPython_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python -DPYTHON_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_FIND_STRATEGY=LOCATION -DPython_FIND_STRATEGY=LOCATION'"
+build = { cmd = "bash -c 'export LIBRARY_PATH=\"$CONDA_PREFIX/lib:$LIBRARY_PATH\" && colcon build --symlink-install --cmake-args -DPython_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python -DPYTHON_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_FIND_STRATEGY=LOCATION -DPython_FIND_STRATEGY=LOCATION'", depends-on = [
+	"postinstall_notice",
+] }
 
 # Assignment 1 tasks
 
@@ -148,3 +154,13 @@ ass_elective_a = { cmd = "ros2 launch wasp_as_ass_2 kitti_segmentation_extra_lau
 	{ arg = "rate", default = "1.0" },
 	{ arg = "yolo_model", default = "torch" },
 ] }
+
+# One-time notice, shown the first time `download_rosbags` or `build` (the
+# two natural first commands after `pixi install`) runs after a fresh
+# install - guarded by a marker file under .pixi/ (untracked, recreated by
+# every `pixi install`), see packaging/postinstall_notice.sh. Pixi has no
+# post-install-only hook, and activation scripts' own output is swallowed
+# (confirmed live - only their side effects, like env vars, come through),
+# so a task dependency is the only place this is actually visible to users.
+[tasks.postinstall_notice]
+cmd = "bash packaging/postinstall_notice.sh"
