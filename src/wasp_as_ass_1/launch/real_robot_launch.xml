@@ -7,8 +7,10 @@
 	<!-- Rviz for visualization -->
 
 	<node pkg="rviz2" exec="rviz2" name="rviz2" args="-d $(var rviz_config_file)" ros_args="-p use_sim_time:=true" output="screen" on_exit="shutdown" />
-	
-	<!-- Play the rosbag -->
 
-	<executable cmd="ros2 bag play --read-ahead-queue-size 100 -l -r $(var rate) --clock 100 rosbags/real_robot" output="screen" />
+	<!-- The rosbag is NOT played here - ros2 launch never gives a child
+	     process a real terminal for stdin, so `ros2 bag play`'s keyboard
+	     controls (space to pause/resume, etc.) are always disabled when
+	     run this way, with no launch-XML option to change that. Play it
+	     separately instead, in its own terminal - see ass_1_2_bag. -->
 </launch>

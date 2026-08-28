@@ -113,6 +113,13 @@ ass_1_1 = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 
 # matches ass_1_1's Webots clock, matching the assignment description.
 ass_1_1_teleop = { cmd = "ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -p stamped:=true -p key_timeout:=0.0 -p repeat_rate:=0.0 -p use_sim_time:=true" }
 ass_1_2 = { cmd = "ros2 launch wasp_as_ass_1 real_robot_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
+# Run in a second terminal alongside ass_1_2 - not launched from
+# real_robot_launch.xml itself, since ros2 launch never gives a child
+# process a real terminal for stdin, permanently disabling ros2 bag
+# play's own keyboard controls (space to pause/resume, etc.) with no
+# launch-XML way to change that. Run directly like this instead, it gets
+# a real TTY and keyboard control works.
+ass_1_2_bag = { cmd = "ros2 bag play --read-ahead-queue-size 100 -l -r {{ rate }} --clock 100 rosbags/real_robot", args = [{ arg = "rate", default = "1.0" }] }
 ass_1_3 = { cmd = "ros2 launch wasp_as_ass_1 kitti_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
 
 # Assignment 2 tasks
