@@ -19,9 +19,26 @@ Please see the [Wiki](https://github.com/KTH-RPL/wasp_autonomous_systems/wiki).
   the `pixi-build-ros` packaging of this driver hasn't actually been
   exercised on Linux/Windows.
 - `rcutils` unconditionally links `-latomic` in its exported CMake config,
-  which doesn't exist on macOS (atomics are compiler builtins there). This
-  breaks `pixi run build` for any package that transitively depends on
-  `rcutils` (e.g. `wasp_as_interfaces`) with `ld: library 'atomic' not found`.
-  Workaround used during setup: create a stub `libatomic.dylib` in the pixi
-  environment's `lib/` and export `LIBRARY_PATH` to include it before
-  building. This is not yet automated in `pixi.toml`.
+  which doesn't exist as a standalone library on macOS (atomics are
+  compiler builtins there) - and separately, `webots_ros2_driver`'s C++
+  plugins need `yaml-cpp`. Both break `pixi run build` with
+  `ld: library 'X' not found` unless the linker is told where to find them
+  in the pixi environment. **Already handled**: the `build` task exports
+  `LIBRARY_PATH` for this on macOS (see `[target.osx-arm64.tasks]` in
+  `pixi.toml`) - just run `pixi run build`, no manual steps needed.
+- `pixi install` prints a warning like:
+  ```
+  WARN Skipped running the post-link scripts because `run-post-link-scripts` = `false`
+      - bin/.librsvg-pre-unlink.sh
+
+  To enable them, run:
+      pixi config set --local run-post-link-scripts insecure
+  ```
+  This is expected and safe to ignore - pixi disables post-link/pre-unlink
+  scripts by default because they run arbitrary code during install (a
+  known conda supply-chain risk). The flagged script belongs to `librsvg`
+  (SVG icon rendering for GTK-based tooling), pulled in transitively; every
+  GUI tool in this repo (RViz, rqt) works fine without it. **Do not** run
+  the suggested `pixi config set --local run-post-link-scripts insecure` -
+  it re-enables arbitrary script execution for every future install and
+  isn't needed here.
