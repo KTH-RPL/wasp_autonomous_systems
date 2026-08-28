@@ -26,19 +26,3 @@ Please see the [Wiki](https://github.com/KTH-RPL/wasp_autonomous_systems/wiki).
   in the pixi environment. **Already handled**: the `build` task exports
   `LIBRARY_PATH` for this on macOS (see `[target.osx-arm64.tasks]` in
   `pixi.toml`) - just run `pixi run build`, no manual steps needed.
-- `pixi install` prints a warning like:
-  ```
-  WARN Skipped running the post-link scripts because `run-post-link-scripts` = `false`
-      - bin/.librsvg-pre-unlink.sh
-
-  To enable them, run:
-      pixi config set --local run-post-link-scripts insecure
-  ```
-  This is expected and safe to ignore - pixi disables post-link/pre-unlink
-  scripts by default because they run arbitrary code during install (a
-  known conda supply-chain risk). The flagged script belongs to `librsvg`
-  (SVG icon rendering for GTK-based tooling), pulled in transitively; every
-  GUI tool in this repo (RViz, rqt) works fine without it. **Do not** run
-  the suggested `pixi config set --local run-post-link-scripts insecure` -
-  it re-enables arbitrary script execution for every future install and
-  isn't needed here.
