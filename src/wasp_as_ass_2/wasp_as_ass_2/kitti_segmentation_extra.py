@@ -16,7 +16,7 @@ from tf2_ros import TransformException
 from tf2_ros.buffer import Buffer
 from tf2_ros.transform_listener import TransformListener
 from tf_transformations import quaternion_matrix
-from assignment_2.tf2_sensor_msgs import transform_points
+from wasp_as_ass_2.tf2_sensor_msgs import transform_points
 
 from ultralytics import YOLO
 from cv_bridge import CvBridge

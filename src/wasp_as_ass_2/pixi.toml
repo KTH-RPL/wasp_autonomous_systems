@@ -8,6 +8,7 @@ version = "*"
 
 [[package.build.config.extra-package-mappings]]
 python3-ultralytics-pip = { conda = ["ultralytics"] }
+python3-torchvision-pip = { conda = ["torchvision"] }
 python3-transforms3d = { conda = ["transforms3d"] }
 python3-pyqtgraph = { conda = ["pyqtgraph"] }
 

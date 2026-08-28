@@ -24,6 +24,11 @@
   <exec_depend>joint_state_broadcaster</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>python3-ultralytics-pip</exec_depend>
+  <!-- ultralytics/YOLO needs torchvision too, but doesn't pull it in as a
+       conda dependency on its own - kitti_segmentation_extra.py's `from
+       ultralytics import YOLO` crashes at import time
+       (importlib.metadata.PackageNotFoundError: torchvision) without this. -->
+  <exec_depend>python3-torchvision-pip</exec_depend>
   <exec_depend>python3-transforms3d</exec_depend>
   <exec_depend>cv_bridge</exec_depend>
   <exec_depend>rclpy</exec_depend>

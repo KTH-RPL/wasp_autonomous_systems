@@ -113,3 +113,16 @@ ass_3_gui = { cmd = "ros2 launch wasp_as_ass_3 gui_launch.xml" }
 ass_4_manual = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_4 manual_launch.xml'" }
 ass_4_hold = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_4 hold_launch.xml'" }
 ass_4_pid = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_4 pid_launch.xml'" }
+
+# Elective tasks
+
+# Elective task A: Dynamic Object Detection, camera and LiDAR fusion.
+# yolo_model options per the assignment description: "openvino_int8"
+# (default), "openvino_half", "torch" - switch to compare performance.
+# downsample_voxel_size/num_clouds_accum are meant to be tuned live via the
+# bundled rqt_reconfigure panel instead, matching the assignment's own
+# "change this at runtime" note.
+ass_elective_a = { cmd = "ros2 launch wasp_as_ass_2 kitti_segmentation_extra_launch.xml rate:={{ rate }} yolo_model:={{ yolo_model }}", args = [
+	{ arg = "rate", default = "1.0" },
+	{ arg = "yolo_model", default = "openvino_int8" },
+] }
