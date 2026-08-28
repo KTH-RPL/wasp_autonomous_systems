@@ -121,12 +121,24 @@ ass_1_2 = { cmd = "ros2 launch wasp_as_ass_1 real_robot_launch.xml rate:={{ rate
 # a real TTY and keyboard control works.
 ass_1_2_bag = { cmd = "ros2 bag play --read-ahead-queue-size 100 -l -r {{ rate }} --clock 100 rosbags/real_robot", args = [{ arg = "rate", default = "1.0" }] }
 ass_1_3 = { cmd = "ros2 launch wasp_as_ass_1 kitti_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
+# Run in a second terminal alongside ass_1_3 - see ass_1_2_bag's comment
+# for why this isn't launched from kitti_launch.xml itself.
+ass_1_3_bag = { cmd = "ros2 bag play --read-ahead-queue-size 100 -l -r {{ rate }} --clock 100 rosbags/kitti", args = [{ arg = "rate", default = "1.0" }] }
 
 # Assignment 2 tasks
 
 ass_2_1 = { cmd = "ros2 launch wasp_as_ass_2 odometry_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
+# Run in a second terminal alongside ass_2_1 - see ass_1_2_bag's comment
+# for why this isn't launched from odometry_launch.xml itself. -d 2.0
+# still gives a startup delay before playback begins, and the remap
+# keeps the legacy-typed topics going only to legacy_encoders_bridge,
+# not odometry.py directly - see odometry_launch.xml.
+ass_2_1_bag = { cmd = "ros2 bag play rosbags/real_robot --read-ahead-queue-size 100 -l -r {{ rate }} --clock 100 -d 2.0 --remap /motor/encoders:=/motor/encoders_legacy /motor/duty_cyles:=/motor/duty_cyles_legacy", args = [{ arg = "rate", default = "1.0" }] }
 ass_2_2 = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_2 collision_detection_webots_launch.py'" }
 ass_2_3 = { cmd = "ros2 launch wasp_as_ass_2 kitti_segmentation_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
+# Run in a second terminal alongside ass_2_3 - see ass_1_2_bag's comment
+# for why this isn't launched from kitti_segmentation_launch.xml itself.
+ass_2_3_bag = { cmd = "ros2 bag play --read-ahead-queue-size 100 -l -r {{ rate }} --clock 100 -d 2.0 rosbags/kitti", args = [{ arg = "rate", default = "1.0" }] }
 # camera_segmentation_launch.xml is genuinely empty (0 bytes) as of the
 # course maintainer's own commit 6bb15ea - not migration fallout, no
 # working version found anywhere in git history or the other local clone.
