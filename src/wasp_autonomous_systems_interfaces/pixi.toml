@@ -1,0 +1,17 @@
+[package.build.backend]
+channels = [
+  "https://prefix.dev/pixi-build-backends",
+  "https://prefix.dev/conda-forge",
+]
+name = "pixi-build-ros"
+version = "*"
+
+# See src/webots_ros2_driver/pixi.toml for why this mutex pin exists.
+[package.host-dependencies]
+ros2-distro-mutex = ">=0.13,<0.14"
+
+[package.build-dependencies]
+ros2-distro-mutex = ">=0.13,<0.14"
+
+[package.run-dependencies]
+ros2-distro-mutex = ">=0.13,<0.14"

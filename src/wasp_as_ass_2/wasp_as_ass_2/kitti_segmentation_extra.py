@@ -234,12 +234,10 @@ class KittiSegmentation(Node):
         u = 0  # TODO: Fill in
         v = 0  # TODO: Fill in
 
-        # TODO: Fill in
-
         # We add this check in case the frustum culling left some points outside or at the border of the frustum.
-        if info.width <= u < 0:
+        if u < 0 or info.width <= u:
             u = 0
-        if info.height <= v < 0:
+        if v < 0 or info.height <= v:
             v = 0
 
         return (int(u), int(v))

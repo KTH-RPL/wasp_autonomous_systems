@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>wasp_autonomous_systems_interfaces</name>
+  <version>1.0.0</version>
+  <description>Compatibility shim providing the pre-rename message package name so that
+  older recorded rosbags (e.g. rosbags/real_robot) - whose /motor/encoders and
+  /motor/duty_cyles topics were recorded under this package name before the
+  wasp_autonomous_systems -&gt; wasp_as rename - can still be deserialized and
+  replayed by ros2 bag play. Field layouts mirror wasp_as_interfaces exactly;
+  see that package for the canonical, actively-used definitions.</description>
+  <author email="dduberg@kth.se">Daniel Duberg</author>
+  <maintainer email="dduberg@kth.se">Daniel Duberg</maintainer>
+  <license>TODO: License declaration</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>std_msgs</depend>
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
+  <exec_depend>rosidl_default_runtime</exec_depend>
+  <member_of_group>rosidl_interface_packages</member_of_group>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

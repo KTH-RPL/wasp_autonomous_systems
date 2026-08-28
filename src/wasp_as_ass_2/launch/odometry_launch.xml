@@ -10,13 +10,24 @@
 		<param name="use_sim_time" value="true" />
 	</node>
 
+	<!-- rosbags/real_robot recorded /motor/encoders and /motor/duty_cyles
+	     under the pre-rename wasp_autonomous_systems_interfaces message
+	     types - bridge them to the current wasp_as_interfaces types (which
+	     odometry.py subscribes to) so the rename is invisible here. See
+	     src/wasp_autonomous_systems_interfaces/package.xml. -->
+
+	<node pkg="wasp_as" exec="legacy_encoders_bridge" name="legacy_encoders_bridge" output="screen">
+		<param name="use_sim_time" value="true" />
+	</node>
+
 	<!-- Rviz for visualization -->
 
 	<node pkg="rviz2" exec="rviz2" name="rviz2" args="-d $(var rviz_config_file)" output="screen" on_exit="shutdown">
 		<param name="use_sim_time" value="true" />
 	</node>
-	
-	<!-- Play the rosbag -->
 
-	<executable cmd="ros2 bag play --read-ahead-queue-size 100 -l -r $(var rate) --clock 100 rosbags/real_robot" output="screen" />
+	<!-- Play the rosbag - remap the two legacy-typed topics so the bridge
+	     above (not odometry.py) is the only thing that sees them. -->
+
+	<executable cmd="ros2 bag play rosbags/real_robot --read-ahead-queue-size 100 -l -r $(var rate) --clock 100 --remap /motor/encoders:=/motor/encoders_legacy /motor/duty_cyles:=/motor/duty_cyles_legacy" output="screen" />
 </launch>

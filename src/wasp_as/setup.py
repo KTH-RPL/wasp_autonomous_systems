@@ -38,6 +38,7 @@ setup(
         'console_scripts': [
             f'autonomous_controller = {package_name}.autonomous_controller:main',
             f'encoders = {package_name}.encoders:main',
+            f'legacy_encoders_bridge = {package_name}.legacy_encoders_bridge:main',
             f'path = {package_name}.path:main',
         ],
     },

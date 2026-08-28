@@ -47,6 +47,10 @@ ros-jazzy-wasp-as-ass-3 = { path = "src/wasp_as_ass_3" }
 ros-jazzy-wasp-as-ass-4 = { path = "src/wasp_as_ass_4" }
 ros-jazzy-wasp-as = { path = "src/wasp_as" }
 ros-jazzy-wasp-as-interfaces = { path = "src/wasp_as_interfaces" }
+# Compatibility shim (pre-rename package name) so ros2 bag play can still
+# deserialize rosbags/real_robot's /motor/encoders and /motor/duty_cyles
+# topics - see src/wasp_autonomous_systems_interfaces/package.xml.
+ros-jazzy-wasp-autonomous-systems-interfaces = { path = "src/wasp_autonomous_systems_interfaces" }
 # Webots simulator (replaces Gazebo, which segfaults on macOS for any
 # camera/lidar-equipped robot - see README's "Known issues on macOS")
 ros-jazzy-webots-ros2-driver = { path = "src/webots_ros2_driver" }
