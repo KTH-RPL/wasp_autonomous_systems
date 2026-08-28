@@ -70,6 +70,20 @@ def generate_launch_description():
     )
     ros_control_spawners = [diffdrive_controller_spawner, joint_state_broadcaster_spawner]
 
+    rqt_plot = Node(
+        package='rqt_plot',
+        executable='rqt_plot',
+        name='rqt_plot',
+        # No topics passed on the command line: confirmed live (including
+        # against a topic that had already been publishing for minutes,
+        # standalone, outside this launch file entirely) that rqt_plot's
+        # CLI topic arguments never subscribe in this environment - opens
+        # empty instead. Add /imu/linear_acceleration/x (or y/z) via the
+        # topic field once the window is up.
+        parameters=[{'use_sim_time': True}],
+        output='screen',
+    )
+
     ros2_control_params = os.path.join(webots_pkg_dir, 'resource', 'ros2control.yaml')
     # Jazzy's diff_drive_controller always publishes/subscribes ~/cmd_vel as
     # TwistStamped (use_stamped_vel was removed) - no more unstamped variant.
@@ -102,15 +116,6 @@ def generate_launch_description():
         output='screen',
     )
 
-    rqt_plot = Node(
-        package='rqt_plot',
-        executable='rqt_plot',
-        name='rqt_plot',
-        arguments=['/imu/linear_acceleration'],
-        parameters=[{'use_sim_time': True}],
-        output='screen',
-    )
-
     collision_detection = Node(
         package='wasp_as_ass_2',
         executable='collision_detection',
@@ -131,12 +136,12 @@ def generate_launch_description():
         DeclareLaunchArgument('gui', default_value='true'),
         webots,
         webots._supervisor,
+        rqt_plot,
         robot_state_publisher,
         footprint_publisher,
         turtlebot_driver,
         waiting_nodes,
         rviz,
-        rqt_plot,
         collision_detection,
         autonomous_controller,
         launch.actions.RegisterEventHandler(
