@@ -6,7 +6,13 @@
 
 	<!-- PID altitude controller -->
 
-	<node pkg="wasp_as_ass_4" exec="altitude_pid" name="altitude_pid" output="screen" respawn="true" />
+	<!-- Set to a file path (e.g. `ros2 launch wasp_as_ass_4 pid_launch.xml log_file:=step_response.csv`)
+	     to log time/target/height/thrust there for plotting a step response. Command-line only,
+	     not an rqt_reconfigure control. Default "none" (a real value - `ros2 launch` itself rejects
+	     a truly empty log_file:= argument) means disabled; altitude_pid.py treats "none" the same way. -->
+	<arg name="log_file" default="none" />
+	<node pkg="wasp_as_ass_4" exec="altitude_pid" name="altitude_pid" output="screen" respawn="true"
+	      args="--log-file=$(var log_file)" />
 
 	<!-- Rqt reconfigure to adjust the reference and PID gains live -->
 

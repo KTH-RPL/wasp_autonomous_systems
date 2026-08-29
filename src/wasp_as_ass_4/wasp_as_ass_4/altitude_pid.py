@@ -1,9 +1,12 @@
 #!/usr/bin/env python
+import argparse
 import signal
+import sys
 
 import rclpy
 from rclpy.node import Node
 from rclpy.time import Time
+from rclpy.utilities import remove_ros_args
 
 from std_msgs.msg import Float64MultiArray
 from geometry_msgs.msg import PointStamped
@@ -11,7 +14,7 @@ from geometry_msgs.msg import PointStamped
 
 class AltitudePID(Node):
 
-    def __init__(self):
+    def __init__(self, log_file=''):
         super().__init__('altitude_pid')
 
         self.declare_parameter('r', 0.0)
@@ -19,6 +22,16 @@ class AltitudePID(Node):
         self.declare_parameter('ki', 0.0)
         self.declare_parameter('kd', 0.0)
         self.declare_parameter('u_feedforward', 0.0)
+
+        # Logging (for plotting a step response afterwards) is controlled
+        # purely by the --log-file command-line flag, not a ROS parameter -
+        # that keeps it out of rqt_reconfigure entirely, fixed for the whole
+        # run instead of something to be toggled live in that panel.
+        self._log_fh = None
+        self._log_start_time = None
+        if log_file:
+            self._log_fh = open(log_file, 'w')
+            self._log_fh.write('time,target,height,thrust\n')
 
         self._thrust_pub = self.create_publisher(Float64MultiArray, 'thrust', 10)
 
@@ -96,6 +109,17 @@ class AltitudePID(Node):
         u.data = [thrust]
         self._thrust_pub.publish(u)
 
+        self._log_row(time, r, msg.point.z, thrust)
+
+    def _log_row(self, time, r, z, thrust):
+        if not self._log_fh:
+            return
+        if self._log_start_time is None:
+            self._log_start_time = time
+        t = (time - self._log_start_time).nanoseconds / 10**9
+        self._log_fh.write(f'{t:.4f},{r:.4f},{z:.4f},{thrust:.4f}\n')
+        self._log_fh.flush()
+
     def land(self):
         # Called from the SIGINT handler below, while rclpy's context is
         # still valid. Brake first: counter whatever vertical velocity was
@@ -105,6 +129,9 @@ class AltitudePID(Node):
         # from a fast climb/descent could otherwise land hard enough to tip
         # the drone over.
         self.shutting_down = True
+        if self._log_fh:
+            self._log_fh.close()
+            self._log_fh = None
         K_BRAKE = 15.0
         u = Float64MultiArray()
         u.data = [self._last_thrust - K_BRAKE * self._last_velocity]
@@ -119,7 +146,16 @@ class AltitudePID(Node):
 
 def main():
     rclpy.init()
-    node = AltitudePID()
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--log-file', default='none',
+        help='CSV path to log time/target/height/thrust to, for plotting a '
+             'step response afterwards. Omit (or "none") to disable logging.')
+    args = parser.parse_args(remove_ros_args(sys.argv)[1:])
+    log_file = '' if args.log_file == 'none' else args.log_file
+
+    node = AltitudePID(log_file=log_file)
 
     # NOTE: rclpy.init() installs its own SIGINT handler that calls
     # rclpy.shutdown() as soon as Ctrl+C is pressed - by the time a plain

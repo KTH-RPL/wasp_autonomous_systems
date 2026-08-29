@@ -155,7 +155,9 @@ ass_3_gui = { cmd = "ros2 launch wasp_as_ass_3 gui_launch.xml" }
 
 ass_4_manual = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_4 manual_launch.xml'" }
 ass_4_hold = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_4 hold_launch.xml'" }
-ass_4_pid = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_4 pid_launch.xml'" }
+ass_4_pid = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_4 pid_launch.xml log_file:={{ log_file }}'", args = [
+  { arg = "log_file", default = "none" },
+] }
 
 # Elective tasks
 
