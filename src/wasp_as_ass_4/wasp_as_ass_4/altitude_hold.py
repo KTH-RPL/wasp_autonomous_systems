@@ -65,9 +65,11 @@ class AltitudeHold(Node):
         target_height = self.get_parameter(
             'target_height').get_parameter_value().double_value
 
-        # TODO: Fill in
+        # TODO START: Fill in this section #########
 
-        thrust = 0.0  # TODO: Fill in
+        thrust = 0.0  
+        
+        # TODO END #################################
 
         self._last_thrust = thrust
 
