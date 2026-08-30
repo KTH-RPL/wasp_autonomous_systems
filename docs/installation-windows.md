@@ -4,6 +4,7 @@ or run:
 ```
 powershell -ExecutionPolicy Bypass -c "irm -useb https://pixi.sh/install.ps1 | iex"
 ```
+**Note:** Restart the terminal 
 
 ## Install Webots R2025a 
 Run the commands in a terminal:
