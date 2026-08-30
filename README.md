@@ -26,6 +26,9 @@ Run the following to download the course code
 git clone -b ht26 https://github.com/KTH-RPL/wasp_autonomous_systems.git
 ```
 Build the software (this will take some time) and download two files with data to use.
+
+**NOTE:** Make sure to **restart the terminal** before you run the Pixi commands below (so that Pixi is in the PATH).
+
 ```
 cd wasp_autonomous_systems
 pixi run build
