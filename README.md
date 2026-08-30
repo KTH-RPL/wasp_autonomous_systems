@@ -23,7 +23,7 @@ Open a terminal and move to where you want to work.
 
 Run the following to download the course code
 ```
-git clone https://github.com/KTH-RPL/wasp_autonomous_systems.git
+git clone -b ht26 https://github.com/KTH-RPL/wasp_autonomous_systems.git
 ```
 Build the software (this will take some time) and download two files with data to use.
 ```
