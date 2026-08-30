@@ -13,7 +13,7 @@
 ## Installing Pixi and Webots
 * Mac: Instructions [here](docs/installation-mac.md)
 * Linux: Instructions [here](docs/installation-linux.md)
-* Windows: Instructions [here](docs/instruction-windows.md)
+* Windows: Instructions [here](docs/installation-windows.md)
 
 
 ## Installing the course specific code
