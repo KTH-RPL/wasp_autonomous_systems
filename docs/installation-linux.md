@@ -6,6 +6,8 @@ curl -fsSL https://pixi.sh/install.sh | sh
 ```
 You might want to set up [autocomplete](https://pixi.prefix.dev/latest/installation/#autocompletion) smoother operation of Pixi.
 
+**Note:** Restart the terminal 
+
 ## Install Webots R2025a 
 ```
 curl -L -O https://github.com/cyberbotics/webots/releases/download/R2025a/webots_2025a_amd64.deb
