@@ -10,6 +10,6 @@ powershell -ExecutionPolicy Bypass -c "irm -useb https://pixi.sh/install.ps1 | i
 Run the commands in a terminal:
 ```
 curl.exe -L -O https://github.com/cyberbotics/webots/releases/download/R2025a/webots-R2025a_setup.exe
-start webots-R2025a_setup.exe
+.\webots-R2025a_setup.exe
 ```
 and follow the guided procedure.
