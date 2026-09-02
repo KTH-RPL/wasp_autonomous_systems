@@ -1,6 +1,6 @@
 [workspace]
 name = "wasp_autonomous_systems"
-authors = ["Daniel Duberg <danielduberg@gmail.com>"]
+authors = ["Daniel Duberg <danielduberg@gmail.com>", "Patric Jensfelt <patric@kth.se"]
 channels = [
 	"https://prefix.dev/pixi-build-backends",
 	"https://prefix.dev/conda-forge",
@@ -10,7 +10,8 @@ version = "0.1.0"
 platforms = [
 	"osx-arm64",
 	"linux-64",
-	# "win-64", # TODO: disabled pending Windows verification. The original reason
+	"win-64" 
+	# TODO: disabled pending Windows verification. The original reason
 	# here (needing Jazzy for Gazebo support) is now moot - Gazebo isn't used by
 	# any assignment anymore (see the Webots migration, commit a969193) - but that
 	# doesn't mean Humble+Webots works on Windows: the patched webots_ros2_driver
