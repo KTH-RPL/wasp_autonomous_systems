@@ -21,7 +21,7 @@ Open a terminal and move to the directory where you want to have the code you wo
 
 **NOTE:** Make sure to not work in a directory managed by Google Drive, iCloud, Dropbox or some other cloud service. There are somewhere between half a million and one million files created by Pixi to setup large parts of a Ubuntu 24.04 systems. Synching these files will be problematic for the network and your computer will spent a lot of efforts trying to keep everything up to date.
 
-Run the following to download the course code (on Windows git would be git.exe, etc)
+Run the following to download the course code 
 ```
 git clone -b ht26 https://github.com/KTH-RPL/wasp_autonomous_systems.git
 ```
