@@ -19,6 +19,10 @@ Afterwards, open the "Ubuntu" app once to finish first-run setup (username/passw
 WSLg (GUI app support, needed for the Webots window) is built in on Windows 11 - no
 extra setup needed.
 
+If `wsl -l -v` still shows no distributions after the reboot, just run the
+`wsl --install -d Ubuntu` command again - on some machines it takes two rounds (one to
+enable the underlying Windows feature, a second to actually install Ubuntu).
+
 No admin rights on your machine? There's no supported no-admin install path for WSL2
 either (enabling it is an OS feature toggle). Check whether your organization's IT
 provides a self-service install, or use a remote/cloud Linux environment instead.
