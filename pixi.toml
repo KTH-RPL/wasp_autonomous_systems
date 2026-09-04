@@ -101,6 +101,20 @@ build = { cmd = "bash -c 'export LIBRARY_PATH=\"$CONDA_PREFIX/lib:$LIBRARY_PATH\
 	"postinstall_notice",
 ] }
 
+[target.linux-64.tasks]
+# Same class of issue as macOS above: on a clean Linux install (e.g. a
+# fresh WSL2 Ubuntu with no system ROS packages), the linker can't find
+# liblttng-ust/libyaml-cpp (needed by webots_ros2_driver's C++ plugins)
+# without an explicit LIBRARY_PATH pointing at the conda env's lib dir -
+# confirmed live, colcon build otherwise fails with "cannot find
+# -llttng-ust". Also needs a system C/C++ toolchain (`sudo apt install
+# build-essential` on Ubuntu) - Webots' vendored controller library
+# Makefile calls `gcc`/`make` directly rather than the conda-provided
+# compiler.
+build = { cmd = "bash -c 'export LIBRARY_PATH=\"$CONDA_PREFIX/lib:$LIBRARY_PATH\" && colcon build --symlink-install --cmake-args -DPython_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python -DPYTHON_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_FIND_STRATEGY=LOCATION -DPython_FIND_STRATEGY=LOCATION'", depends-on = [
+	"postinstall_notice",
+] }
+
 # Assignment 1 tasks
 
 ass_1_1 = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_1 turtlebot_apartment_launch.py'" }

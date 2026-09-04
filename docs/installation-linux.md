@@ -1,3 +1,11 @@
+## Install a C/C++ compiler
+`pixi run build` needs a system C/C++ toolchain - Webots' vendored controller library
+Makefile calls `gcc`/`make` directly rather than the conda-provided compiler. On a
+minimal/fresh install this often isn't there yet:
+```
+sudo apt install build-essential
+```
+
 ## Install Pixi 
 You find full instructions [here](https://pixi.prefix.dev/latest/installation/).
 Run the following in a terminal
@@ -21,4 +29,14 @@ accessed by user '_apt'. - pkgAcquire::Run
 (13: Permission denied)
 ```
 that is expected.
+
+On a minimal install (which doesn't pull in desktop-environment audio packages the way
+a full Ubuntu desktop install does), Webots may fail to start with:
+```
+error while loading shared libraries: libsndio.so.7: cannot open shared object file
+```
+Fix:
+```
+sudo apt install libsndio7.0
+```
 
