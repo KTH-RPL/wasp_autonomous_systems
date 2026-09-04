@@ -30,6 +30,14 @@ simulation, one for teleop), just launch the "Ubuntu" app again, or open a new t
 it if you're using Windows Terminal - both land in the same WSL2 session, so anything
 already running (like a Webots window) is visible/reachable from either.
 
+**Note:** Closing the Ubuntu terminal window doesn't stop WSL2 - it keeps running in
+the background (using whatever CPU/RAM it's currently using) until you either restart
+Windows or explicitly shut it down. To fully stop it, run this in a **Windows**
+PowerShell terminal (not inside Ubuntu):
+```
+wsl --shutdown
+```
+
 ## Install a C/C++ compiler
 `pixi run build` needs a system C/C++ toolchain - Webots' vendored controller library
 Makefile calls `gcc`/`make` directly rather than the conda-provided compiler. A fresh
