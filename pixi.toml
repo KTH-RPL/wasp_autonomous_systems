@@ -1,6 +1,6 @@
 [workspace]
 name = "wasp_autonomous_systems"
-authors = ["Daniel Duberg <danielduberg@gmail.com>", "Patric Jensfelt <patric@kth.se"]
+authors = ["Daniel Duberg <danielduberg@gmail.com>", "Patric Jensfelt <patric@kth.se>"]
 channels = [
 	"https://prefix.dev/pixi-build-backends",
 	"https://prefix.dev/conda-forge",
@@ -10,12 +10,12 @@ version = "0.1.0"
 platforms = [
 	"osx-arm64",
 	"linux-64",
-	"win-64" 
-	# TODO: disabled pending Windows verification. The original reason
-	# here (needing Jazzy for Gazebo support) is now moot - Gazebo isn't used by
-	# any assignment anymore (see the Webots migration, commit a969193) - but that
-	# doesn't mean Humble+Webots works on Windows: the patched webots_ros2_driver
-	# has only been build-tested on macOS/Linux, never Windows.
+	# win-64 deliberately excluded: pixi-build-ros has a genuine upstream bug
+	# on native Windows (embeds the Windows Python path with raw backslashes
+	# into a generated cmake_install.cmake, which CMake's parser then fails
+	# to escape) - not fixable from this repo. Windows students use WSL2
+	# (linux-64) instead - see docs/installation-windows.md and
+	# docs/notes-windows-native-build.md.
 	# "linux-aarch64",
 ]
 preview = ["pixi-build"]
@@ -89,29 +89,6 @@ download_rosbags = { cmd = 'curl -fSL "https://canvas.kth.se/files/9471655/downl
 # Dev tasks
 
 build = { cmd = "colcon build --symlink-install --cmake-args -DPython_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python -DPYTHON_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_FIND_STRATEGY=LOCATION -DPython_FIND_STRATEGY=LOCATION", depends-on = [
-	"postinstall_notice",
-] }
-
-[target.osx-arm64.tasks]
-# macOS's linker can't find libatomic/libyaml-cpp (needed by
-# webots_ros2_driver's C++ plugins) without an explicit LIBRARY_PATH
-# pointing at the conda env's lib dir - confirmed live, colcon build
-# otherwise fails with "ld: library 'atomic' not found".
-build = { cmd = "bash -c 'export LIBRARY_PATH=\"$CONDA_PREFIX/lib:$LIBRARY_PATH\" && colcon build --symlink-install --cmake-args -DPython_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python -DPYTHON_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_FIND_STRATEGY=LOCATION -DPython_FIND_STRATEGY=LOCATION'", depends-on = [
-	"postinstall_notice",
-] }
-
-[target.linux-64.tasks]
-# Same class of issue as macOS above: on a clean Linux install (e.g. a
-# fresh WSL2 Ubuntu with no system ROS packages), the linker can't find
-# liblttng-ust/libyaml-cpp (needed by webots_ros2_driver's C++ plugins)
-# without an explicit LIBRARY_PATH pointing at the conda env's lib dir -
-# confirmed live, colcon build otherwise fails with "cannot find
-# -llttng-ust". Also needs a system C/C++ toolchain (`sudo apt install
-# build-essential` on Ubuntu) - Webots' vendored controller library
-# Makefile calls `gcc`/`make` directly rather than the conda-provided
-# compiler.
-build = { cmd = "bash -c 'export LIBRARY_PATH=\"$CONDA_PREFIX/lib:$LIBRARY_PATH\" && colcon build --symlink-install --cmake-args -DPython_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python -DPYTHON_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_FIND_STRATEGY=LOCATION -DPython_FIND_STRATEGY=LOCATION'", depends-on = [
 	"postinstall_notice",
 ] }
 
@@ -189,6 +166,39 @@ ass_4_pid = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros
 ass_elective_a = { cmd = "ros2 launch wasp_as_ass_2 kitti_segmentation_extra_launch.xml rate:={{ rate }} yolo_model:={{ yolo_model }}", args = [
 	{ arg = "rate", default = "1.0" },
 	{ arg = "yolo_model", default = "torch" },
+] }
+
+# Per-platform build overrides. IMPORTANT: these must stay at the end of the
+# file - a [target.X.tasks] header stays open (per plain TOML table nesting)
+# until the next [header], so if one of these were placed before the shared
+# tasks above (as they briefly were), it silently swallows all of them,
+# making every ass_* task invisible/unrunnable on every platform except the
+# last such override in the file. Confirmed live: this exact bug briefly
+# made every assignment task unavailable on macOS ("the task 'ass_3_planner'
+# is not available on this machine") once a second [target.*.tasks] block
+# was added after [target.osx-arm64.tasks] without moving both to the end.
+
+[target.osx-arm64.tasks]
+# macOS's linker can't find libatomic/libyaml-cpp (needed by
+# webots_ros2_driver's C++ plugins) without an explicit LIBRARY_PATH
+# pointing at the conda env's lib dir - confirmed live, colcon build
+# otherwise fails with "ld: library 'atomic' not found".
+build = { cmd = "bash -c 'export LIBRARY_PATH=\"$CONDA_PREFIX/lib:$LIBRARY_PATH\" && colcon build --symlink-install --cmake-args -DPython_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python -DPYTHON_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_FIND_STRATEGY=LOCATION -DPython_FIND_STRATEGY=LOCATION'", depends-on = [
+	"postinstall_notice",
+] }
+
+[target.linux-64.tasks]
+# Same class of issue as macOS above: on a clean Linux install (e.g. a
+# fresh WSL2 Ubuntu with no system ROS packages), the linker can't find
+# liblttng-ust/libyaml-cpp (needed by webots_ros2_driver's C++ plugins)
+# without an explicit LIBRARY_PATH pointing at the conda env's lib dir -
+# confirmed live, colcon build otherwise fails with "cannot find
+# -llttng-ust". Also needs a system C/C++ toolchain (`sudo apt install
+# build-essential` on Ubuntu) - Webots' vendored controller library
+# Makefile calls `gcc`/`make` directly rather than the conda-provided
+# compiler.
+build = { cmd = "bash -c 'export LIBRARY_PATH=\"$CONDA_PREFIX/lib:$LIBRARY_PATH\" && colcon build --symlink-install --cmake-args -DPython_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python -DPYTHON_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_FIND_STRATEGY=LOCATION -DPython_FIND_STRATEGY=LOCATION'", depends-on = [
+	"postinstall_notice",
 ] }
 
 # One-time notice, shown the first time `download_rosbags` or `build` (the
