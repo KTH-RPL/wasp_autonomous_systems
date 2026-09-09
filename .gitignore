@@ -183,5 +183,6 @@ install/
 build/
 logs/
 rosbags/
+gallery_cache/
 yolo11n-seg.pt
 src/*/files.txt

@@ -130,12 +130,39 @@ ass_2_2 = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 
 ass_2_3 = { cmd = "ros2 launch wasp_as_ass_2 kitti_segmentation_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
 # Run in a second terminal alongside ass_2_3 - see ass_1_2_bag's comment
 # for why this isn't launched from kitti_segmentation_launch.xml itself.
-ass_2_3_bag = { cmd = "ros2 bag play --read-ahead-queue-size 100 -l -r {{ rate }} --clock 100 -d 2.0 rosbags/kitti", args = [{ arg = "rate", default = "1.0" }] }
-# camera_segmentation_launch.xml is genuinely empty (0 bytes) as of the
-# course maintainer's own commit 6bb15ea - not migration fallout, no
-# working version found anywhere in git history or the other local clone.
-# This task will not do anything useful until that launch file is authored.
-ass_2_4 = { cmd = "ros2 launch wasp_as_ass_2 camera_segmentation_launch.xml" }
+# Shared across Assignment 2's KITTI-based tasks (also used by
+# ass_2_4_sample below) - one task instead of a near-duplicate per task.
+ass_2_kitti_rosbag = { cmd = "ros2 bag play --read-ahead-queue-size 100 -l -r {{ rate }} --clock 100 -d 2.0 rosbags/kitti", args = [{ arg = "rate", default = "1.0" }] }
+# Task 2.4: CLIP retrieval, a DINOv2 attention-map, and DINO patch-level
+# correspondence - three separate subtasks, replacing the old "own USB
+# camera" YOLO sub-task of 2.3 (camera_segmentation_launch.xml is genuinely
+# empty, 0 bytes, never implemented; left in place unreferenced). All three
+# read from a small gallery of KITTI frames sampled once by ass_2_4_sample -
+# run that (with ass_2_kitti_rosbag playing alongside it) first. Only the
+# sampling step is a real ROS node (it needs to subscribe to the live bag
+# topic); the other three are plain matplotlib scripts, not ROS nodes -
+# nothing downstream of "16 PNGs on disk" is actually live/distributed, so
+# wrapping them in nodes + launch files + rqt_image_view/rqt_reconfigure
+# was pure overhead for no benefit (and rqt_image_view/rqt_reconfigure
+# both crashed with a Qt mutex error in testing, unrelated to this repo's
+# own code). ros2 run still works fine as a plain process launcher for a
+# non-ROS script, same as ass_3_planner.
+# Tip: sampling only needs the images, not real-time playback - run
+# ass_2_kitti_rosbag at a higher rate (e.g. `pixi run ass_2_kitti_rosbag
+# rate:=5.0`) to fill the gallery in ~20s instead of the full ~110s.
+ass_2_4_sample = { cmd = "ros2 run wasp_as_ass_2 sample_kitti_gallery --ros-args -r /image:=/kitti/camera/color/left/image" }
+# gallery defaults to the KITTI one sampled above - pass a different name
+# to use your own instead, e.g. `pixi run ass_2_4_retrieval gallery:=my_photos`
+# after dropping some images into gallery_cache/my_photos/ yourself.
+ass_2_4_retrieval = { cmd = "ros2 run wasp_as_ass_2 clip_retrieval {{ gallery }}", args = [{ arg = "gallery", default = "kitti" }] }
+ass_2_4_dino_attention = { cmd = "ros2 run wasp_as_ass_2 dino_attention {{ gallery }}", args = [{ arg = "gallery", default = "kitti" }] }
+# The attention map alone undersells DINO - click a point on the left
+# image, and DINO's own per-patch features (not attention - the same kind
+# of representation it's actually valued for as a frozen backbone) light
+# up the most similar-looking points on the right image, same image or a
+# different one. This is DINO's real party trick: matching the same kind
+# of object part across images with zero supervision.
+ass_2_4_correspondence = { cmd = "ros2 run wasp_as_ass_2 dino_correspondence {{ gallery }}", args = [{ arg = "gallery", default = "kitti" }] }
 
 # Assignment 3 tasks
 

@@ -29,6 +29,16 @@
        ultralytics import YOLO` crashes at import time
        (importlib.metadata.PackageNotFoundError: torchvision) without this. -->
   <exec_depend>python3-torchvision-pip</exec_depend>
+  <!-- CLIP/DINOv2 (clip_retrieval.py, dino_attention.py,
+       dino_correspondence.py) - both loaded via transformers, both fully
+       open/ungated checkpoints on HuggingFace. -->
+  <exec_depend>python3-transformers-pip</exec_depend>
+  <!-- Interactive display for the same three scripts - plain matplotlib,
+       not ROS pub/sub/rqt (nothing after the initial gallery sampling
+       step is actually live/distributed, so ROS tooling for it was pure
+       overhead - see git history/memory for the rqt_image_view/
+       rqt_reconfigure Qt crashes this replaced). -->
+  <exec_depend>python3-matplotlib-pip</exec_depend>
   <exec_depend>python3-transforms3d</exec_depend>
   <exec_depend>cv_bridge</exec_depend>
   <exec_depend>rclpy</exec_depend>

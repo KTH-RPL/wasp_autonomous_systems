@@ -28,7 +28,11 @@ setup(
             f'odometry = {package_name}.odometry:main',
             f'collision_detection = {package_name}.collision_detection:main',
             f'kitti_segmentation_extra = {package_name}.kitti_segmentation_extra:main',
-            f'segmentation = {package_name}.segmentation:main'
+            f'segmentation = {package_name}.segmentation:main',
+            f'sample_kitti_gallery = {package_name}.sample_kitti_gallery:main',
+            f'clip_retrieval = {package_name}.clip_retrieval:main',
+            f'dino_attention = {package_name}.dino_attention:main',
+            f'dino_correspondence = {package_name}.dino_correspondence:main'
         ],
     },
 )
