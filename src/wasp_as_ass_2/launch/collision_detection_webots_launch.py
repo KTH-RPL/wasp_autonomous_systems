@@ -7,7 +7,14 @@ needs /imu, so the Webots Turtlebot here has no camera at all.
 
 ros2_supervisor=True + use_sim_time=True give accurate simulation-time
 timestamps to RViz/rqt_plot/the exercise nodes, matching the Gazebo
-version's use_sim_time=true convention."""
+version's use_sim_time=true convention.
+
+Deliberately does NOT include the collision_detection node itself (2026-09-10,
+same pattern noted for ass_4_pid) - that's the one file the student actually
+edits, and Webots is by far the slowest thing here to (re)start. Run it
+standalone instead (see ass_2_collision_detector in pixi.toml) so editing
+collision_detection.py only needs a plain `ros2 run`/Ctrl+C cycle, not a
+full Webots relaunch."""
 
 import os
 import launch
@@ -116,13 +123,6 @@ def generate_launch_description():
         output='screen',
     )
 
-    collision_detection = Node(
-        package='wasp_as_ass_2',
-        executable='collision_detection',
-        parameters=[{'use_sim_time': True}],
-        output='screen',
-    )
-
     autonomous_controller = Node(
         package='wasp_as',
         executable='autonomous_controller',
@@ -142,7 +142,6 @@ def generate_launch_description():
         turtlebot_driver,
         waiting_nodes,
         rviz,
-        collision_detection,
         autonomous_controller,
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(

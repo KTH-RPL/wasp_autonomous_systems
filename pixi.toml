@@ -138,7 +138,14 @@ ass_2_odometry = { cmd = "ros2 launch wasp_as_ass_2 odometry_launch.xml rate:={{
 # legacy_encoders_bridge, not odometry.py directly - see
 # odometry_launch.xml.
 ass_2_odometry_bag = { cmd = "ros2 bag play rosbags/real_robot --read-ahead-queue-size 100 -l -r {{ rate }} --clock 100 -d 2.0 --remap /motor/encoders:=/motor/encoders_legacy /motor/duty_cyles:=/motor/duty_cyles_legacy", args = [{ arg = "rate", default = "1.0" }] }
-ass_2_collision = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_2 collision_detection_webots_launch.py'" }
+# Split in two (2026-09-10, Patric - same pattern flagged for ass_4_pid):
+# ass_2_collision_simulator brings up the simulator (Webots, rviz, rqt_plot,
+# the autonomous controller) - by far the slowest thing to (re)start.
+# ass_2_collision_detector runs only the node the student actually edits,
+# as a plain ros2 run - Ctrl+C/edit/rerun that one without ever touching
+# the simulator.
+ass_2_collision_simulator = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_2 collision_detection_webots_launch.py'" }
+ass_2_collision_detector = { cmd = "ros2 run wasp_as_ass_2 collision_detection --ros-args -p use_sim_time:=true" }
 ass_2_yolo = { cmd = "ros2 launch wasp_as_ass_2 kitti_segmentation_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
 # Run in a second terminal alongside ass_2_yolo - see ass_1_2_bag's comment
 # for why this isn't launched from kitti_segmentation_launch.xml itself.
