@@ -32,7 +32,8 @@ setup(
             f'sample_kitti_gallery = {package_name}.sample_kitti_gallery:main',
             f'clip_retrieval = {package_name}.clip_retrieval:main',
             f'dino_attention = {package_name}.dino_attention:main',
-            f'dino_correspondence = {package_name}.dino_correspondence:main'
+            f'dino_correspondence = {package_name}.dino_correspondence:main',
+            f'grounding_dino_detection = {package_name}.grounding_dino_detection:main'
         ],
     },
 )

@@ -119,13 +119,17 @@ ass_1_3_bag = { cmd = "ros2 bag play --read-ahead-queue-size 100 -l -r {{ rate }
 
 # Assignment 2 tasks
 
-ass_2_1 = { cmd = "ros2 launch wasp_as_ass_2 odometry_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
-# Run in a second terminal alongside ass_2_1 - see ass_1_2_bag's comment
+# Formerly "Task 2.1" - demoted to the assignment's optional Extra task
+# (2026-09-10, Patric: too mechanical, didn't reflect current perception -
+# see [[wasp-as-ht26-todo-plan]] memory) - renamed accordingly, task
+# content/launch files unchanged.
+ass_2_extra = { cmd = "ros2 launch wasp_as_ass_2 odometry_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
+# Run in a second terminal alongside ass_2_extra - see ass_1_2_bag's comment
 # for why this isn't launched from odometry_launch.xml itself. -d 2.0
 # still gives a startup delay before playback begins, and the remap
 # keeps the legacy-typed topics going only to legacy_encoders_bridge,
 # not odometry.py directly - see odometry_launch.xml.
-ass_2_1_bag = { cmd = "ros2 bag play rosbags/real_robot --read-ahead-queue-size 100 -l -r {{ rate }} --clock 100 -d 2.0 --remap /motor/encoders:=/motor/encoders_legacy /motor/duty_cyles:=/motor/duty_cyles_legacy", args = [{ arg = "rate", default = "1.0" }] }
+ass_2_extra_bag = { cmd = "ros2 bag play rosbags/real_robot --read-ahead-queue-size 100 -l -r {{ rate }} --clock 100 -d 2.0 --remap /motor/encoders:=/motor/encoders_legacy /motor/duty_cyles:=/motor/duty_cyles_legacy", args = [{ arg = "rate", default = "1.0" }] }
 ass_2_2 = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_2 collision_detection_webots_launch.py'" }
 ass_2_3 = { cmd = "ros2 launch wasp_as_ass_2 kitti_segmentation_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
 # Run in a second terminal alongside ass_2_3 - see ass_1_2_bag's comment
@@ -163,6 +167,13 @@ ass_2_4_dino_attention = { cmd = "ros2 run wasp_as_ass_2 dino_attention {{ galle
 # different one. This is DINO's real party trick: matching the same kind
 # of object part across images with zero supervision.
 ass_2_4_correspondence = { cmd = "ros2 run wasp_as_ass_2 dino_correspondence {{ gallery }}", args = [{ arg = "gallery", default = "kitti" }] }
+# Prototype for a possible new "open-world object detection" subtask
+# (task numbering/placement not finalized yet - see
+# [[wasp-as-assignment-2-clip-dino-idea]] memory - hence no ass_2_4_/
+# ass_2_5_ prefix committing to a specific slot). Grounding DINO, not to
+# be confused with the self-supervised DINO/DINOv2 used above - a
+# completely different, unrelated open-vocabulary object *detector*.
+ass_2_grounding_dino = { cmd = "ros2 run wasp_as_ass_2 grounding_dino_detection {{ gallery }}", args = [{ arg = "gallery", default = "kitti" }] }
 
 # Assignment 3 tasks
 
