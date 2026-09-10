@@ -15,7 +15,7 @@ data_files = [
     ('share/' + package_name, ['package.xml'])
 ]
 # car.xacro/meshes - used by the RViz "Car" model in the KITTI-based launches
-# (ass_1_3, ass_2_3, elective task A), not Gazebo-specific despite living
+# (ass_1_3, ass_2_yolo, elective task A), not Gazebo-specific despite living
 # alongside the Gazebo assets removed in 259e068 - that commit deleted these
 # too by mistake, only noticed once elective task A's launch failed on the
 # missing car.xacro.

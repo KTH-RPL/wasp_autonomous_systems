@@ -118,59 +118,68 @@ ass_1_3 = { cmd = "ros2 launch wasp_as_ass_1 kitti_launch.xml rate:={{ rate }}",
 ass_1_3_bag = { cmd = "ros2 bag play --read-ahead-queue-size 100 -l -r {{ rate }} --clock 100 rosbags/kitti", args = [{ arg = "rate", default = "1.0" }] }
 
 # Assignment 2 tasks
+#
+# Named by what each task IS, not by its Canvas task number - the
+# description-text task order/numbering has already shuffled once
+# (2026-09-10: odometry demoted to the Extra task, a new open-world
+# detection task added) and Patric asked to stop coupling these names to
+# a specific ordering so future reshuffles don't require renaming
+# anything here again.
 
 # Formerly "Task 2.1" - demoted to the assignment's optional Extra task
 # (2026-09-10, Patric: too mechanical, didn't reflect current perception -
 # see [[wasp-as-ht26-todo-plan]] memory) - renamed accordingly, task
 # content/launch files unchanged.
-ass_2_extra = { cmd = "ros2 launch wasp_as_ass_2 odometry_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
-# Run in a second terminal alongside ass_2_extra - see ass_1_2_bag's comment
-# for why this isn't launched from odometry_launch.xml itself. -d 2.0
-# still gives a startup delay before playback begins, and the remap
-# keeps the legacy-typed topics going only to legacy_encoders_bridge,
-# not odometry.py directly - see odometry_launch.xml.
-ass_2_extra_bag = { cmd = "ros2 bag play rosbags/real_robot --read-ahead-queue-size 100 -l -r {{ rate }} --clock 100 -d 2.0 --remap /motor/encoders:=/motor/encoders_legacy /motor/duty_cyles:=/motor/duty_cyles_legacy", args = [{ arg = "rate", default = "1.0" }] }
-ass_2_2 = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_2 collision_detection_webots_launch.py'" }
-ass_2_3 = { cmd = "ros2 launch wasp_as_ass_2 kitti_segmentation_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
-# Run in a second terminal alongside ass_2_3 - see ass_1_2_bag's comment
+ass_2_odometry = { cmd = "ros2 launch wasp_as_ass_2 odometry_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
+# Run in a second terminal alongside ass_2_odometry - see ass_1_2_bag's
+# comment for why this isn't launched from odometry_launch.xml itself.
+# -d 2.0 still gives a startup delay before playback begins, and the
+# remap keeps the legacy-typed topics going only to
+# legacy_encoders_bridge, not odometry.py directly - see
+# odometry_launch.xml.
+ass_2_odometry_bag = { cmd = "ros2 bag play rosbags/real_robot --read-ahead-queue-size 100 -l -r {{ rate }} --clock 100 -d 2.0 --remap /motor/encoders:=/motor/encoders_legacy /motor/duty_cyles:=/motor/duty_cyles_legacy", args = [{ arg = "rate", default = "1.0" }] }
+ass_2_collision = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_2 collision_detection_webots_launch.py'" }
+ass_2_yolo = { cmd = "ros2 launch wasp_as_ass_2 kitti_segmentation_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
+# Run in a second terminal alongside ass_2_yolo - see ass_1_2_bag's comment
 # for why this isn't launched from kitti_segmentation_launch.xml itself.
 # Shared across Assignment 2's KITTI-based tasks (also used by
-# ass_2_4_sample below) - one task instead of a near-duplicate per task.
+# ass_2_gallery_sample below) - one task instead of a near-duplicate per
+# task.
 ass_2_kitti_rosbag = { cmd = "ros2 bag play --read-ahead-queue-size 100 -l -r {{ rate }} --clock 100 -d 2.0 rosbags/kitti", args = [{ arg = "rate", default = "1.0" }] }
-# Task 2.4: CLIP retrieval, a DINOv2 attention-map, and DINO patch-level
+# CLIP retrieval, a DINOv2 attention-map, and DINO patch-level
 # correspondence - three separate subtasks, replacing the old "own USB
-# camera" YOLO sub-task of 2.3 (camera_segmentation_launch.xml is genuinely
-# empty, 0 bytes, never implemented; left in place unreferenced). All three
-# read from a small gallery of KITTI frames sampled once by ass_2_4_sample -
-# run that (with ass_2_kitti_rosbag playing alongside it) first. Only the
-# sampling step is a real ROS node (it needs to subscribe to the live bag
-# topic); the other three are plain matplotlib scripts, not ROS nodes -
-# nothing downstream of "16 PNGs on disk" is actually live/distributed, so
-# wrapping them in nodes + launch files + rqt_image_view/rqt_reconfigure
-# was pure overhead for no benefit (and rqt_image_view/rqt_reconfigure
-# both crashed with a Qt mutex error in testing, unrelated to this repo's
-# own code). ros2 run still works fine as a plain process launcher for a
-# non-ROS script, same as ass_3_planner.
+# camera" YOLO sub-task (camera_segmentation_launch.xml is genuinely
+# empty, 0 bytes, never implemented; left in place unreferenced). All
+# three read from a small gallery of KITTI frames sampled once by
+# ass_2_gallery_sample - run that (with ass_2_kitti_rosbag playing
+# alongside it) first. Only the sampling step is a real ROS node (it
+# needs to subscribe to the live bag topic); the other three are plain
+# matplotlib scripts, not ROS nodes - nothing downstream of "16 PNGs on
+# disk" is actually live/distributed, so wrapping them in nodes + launch
+# files + rqt_image_view/rqt_reconfigure was pure overhead for no benefit
+# (and rqt_image_view/rqt_reconfigure both crashed with a Qt mutex error
+# in testing, unrelated to this repo's own code). ros2 run still works
+# fine as a plain process launcher for a non-ROS script, same as
+# ass_3_planner.
 # Tip: sampling only needs the images, not real-time playback - run
 # ass_2_kitti_rosbag at a higher rate (e.g. `pixi run ass_2_kitti_rosbag
 # rate:=5.0`) to fill the gallery in ~20s instead of the full ~110s.
-ass_2_4_sample = { cmd = "ros2 run wasp_as_ass_2 sample_kitti_gallery --ros-args -r /image:=/kitti/camera/color/left/image" }
+ass_2_gallery_sample = { cmd = "ros2 run wasp_as_ass_2 sample_kitti_gallery --ros-args -r /image:=/kitti/camera/color/left/image" }
 # gallery defaults to the KITTI one sampled above - pass a different name
-# to use your own instead, e.g. `pixi run ass_2_4_retrieval gallery:=my_photos`
+# to use your own instead, e.g. `pixi run ass_2_clip_retrieval gallery:=my_photos`
 # after dropping some images into gallery_cache/my_photos/ yourself.
-ass_2_4_retrieval = { cmd = "ros2 run wasp_as_ass_2 clip_retrieval {{ gallery }}", args = [{ arg = "gallery", default = "kitti" }] }
-ass_2_4_dino_attention = { cmd = "ros2 run wasp_as_ass_2 dino_attention {{ gallery }}", args = [{ arg = "gallery", default = "kitti" }] }
+ass_2_clip_retrieval = { cmd = "ros2 run wasp_as_ass_2 clip_retrieval {{ gallery }}", args = [{ arg = "gallery", default = "kitti" }] }
+ass_2_dino_attention = { cmd = "ros2 run wasp_as_ass_2 dino_attention {{ gallery }}", args = [{ arg = "gallery", default = "kitti" }] }
 # The attention map alone undersells DINO - click a point on the left
 # image, and DINO's own per-patch features (not attention - the same kind
 # of representation it's actually valued for as a frozen backbone) light
 # up the most similar-looking points on the right image, same image or a
 # different one. This is DINO's real party trick: matching the same kind
 # of object part across images with zero supervision.
-ass_2_4_correspondence = { cmd = "ros2 run wasp_as_ass_2 dino_correspondence {{ gallery }}", args = [{ arg = "gallery", default = "kitti" }] }
+ass_2_dino_correspondence = { cmd = "ros2 run wasp_as_ass_2 dino_correspondence {{ gallery }}", args = [{ arg = "gallery", default = "kitti" }] }
 # Prototype for a possible new "open-world object detection" subtask
-# (task numbering/placement not finalized yet - see
-# [[wasp-as-assignment-2-clip-dino-idea]] memory - hence no ass_2_4_/
-# ass_2_5_ prefix committing to a specific slot). Grounding DINO, not to
+# (task placement in the description not finalized yet - see
+# [[wasp-as-assignment-2-clip-dino-idea]] memory). Grounding DINO, not to
 # be confused with the self-supervised DINO/DINOv2 used above - a
 # completely different, unrelated open-vocabulary object *detector*.
 ass_2_grounding_dino = { cmd = "ros2 run wasp_as_ass_2 grounding_dino_detection {{ gallery }}", args = [{ arg = "gallery", default = "kitti" }] }

@@ -30,7 +30,7 @@ def main():
     if not images:
         raise SystemExit(
             f"No images found in gallery_cache/{gallery_name}/ - for 'kitti', run "
-            "'pixi run ass_2_4_sample' with 'pixi run ass_2_kitti_rosbag' playing "
+            "'pixi run ass_2_gallery_sample' with 'pixi run ass_2_kitti_rosbag' playing "
             "alongside it first. For your own gallery, drop some images into "
             f"gallery_cache/{gallery_name}/ yourself.")
     cache = [dino_utils.cls_attention_map(model, processor, image) for image in images]
