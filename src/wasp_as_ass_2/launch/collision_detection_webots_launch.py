@@ -9,12 +9,18 @@ ros2_supervisor=True + use_sim_time=True give accurate simulation-time
 timestamps to RViz/rqt_plot/the exercise nodes, matching the Gazebo
 version's use_sim_time=true convention.
 
-Deliberately does NOT include the collision_detection node itself (2026-09-10,
-same pattern noted for ass_4_pid) - that's the one file the student actually
-edits, and Webots is by far the slowest thing here to (re)start. Run it
-standalone instead (see ass_2_collision_detector in pixi.toml) so editing
-collision_detection.py only needs a plain `ros2 run`/Ctrl+C cycle, not a
-full Webots relaunch."""
+collision_detection is bundled back into this launch (2026-09-10) after a
+brief attempt at splitting it out standalone (same pattern used for
+ass_4_pid) - here that split doesn't work: the room is tiny and
+autonomous_controller drives forward unconditionally from its very first
+tick, so the TurtleBot reaches a wall and gets permanently stuck within
+about 1.6 seconds of anything starting to move. Bundled together, both
+nodes start in the same instant so the first collision is never missed;
+split apart, restarting just collision_detection while editing it leaves
+the TurtleBot driving blind for however long the edit takes, and once it's
+wedged into a wall there's no future IMU spike left to catch. Editing
+collision_detection.py now costs a full Webots relaunch again, but that's
+the trade-off for a setup that's actually reliable to restart."""
 
 import os
 import launch
@@ -123,6 +129,13 @@ def generate_launch_description():
         output='screen',
     )
 
+    collision_detection = Node(
+        package='wasp_as_ass_2',
+        executable='collision_detection',
+        parameters=[{'use_sim_time': True}],
+        output='screen',
+    )
+
     autonomous_controller = Node(
         package='wasp_as',
         executable='autonomous_controller',
@@ -142,6 +155,7 @@ def generate_launch_description():
         turtlebot_driver,
         waiting_nodes,
         rviz,
+        collision_detection,
         autonomous_controller,
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(

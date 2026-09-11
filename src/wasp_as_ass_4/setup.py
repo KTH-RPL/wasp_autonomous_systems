@@ -23,7 +23,6 @@ setup(
     tests_require=[],
     entry_points={
         'console_scripts': [
-            f'altitude_hold = {package_name}.altitude_hold:main',
             f'altitude_manual = {package_name}.altitude_manual:main',
             f'altitude_pid = {package_name}.altitude_pid:main'
         ],
