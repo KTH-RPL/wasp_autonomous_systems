@@ -57,6 +57,8 @@ Run the following in a WSL2 terminal:
 ```
 curl -fsSL https://pixi.sh/install.sh | sh
 ```
+You might want to set up [autocomplete](https://pixi.prefix.dev/latest/installation/#autocompletion) for smoother operation of Pixi.
+
 **Note:** Restart the terminal (or `source ~/.bashrc`) afterwards.
 
 ## Install Webots R2025a 
