@@ -20,8 +20,8 @@ class SampleKittiGallery(Node):
 
         self.declare_parameter('num_images', 16, ParameterDescriptor(
             description='How many images to sample into the gallery.'))
-        # 66 spreads 16 images across the full rosbag sequence rather than
-        # bunching them into the first few seconds.
+        # 66 spreads 16 images across the full ~1058-message rosbag sequence 
+        # (16 * 66 = 1056), rather than bunching them into the first few seconds.
         self.declare_parameter('every_nth', 66, ParameterDescriptor(
             description='Save every Nth incoming frame, for temporal spread.'))
 
