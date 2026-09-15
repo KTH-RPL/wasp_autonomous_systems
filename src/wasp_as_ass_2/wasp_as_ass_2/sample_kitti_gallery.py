@@ -20,12 +20,8 @@ class SampleKittiGallery(Node):
 
         self.declare_parameter('num_images', 16, ParameterDescriptor(
             description='How many images to sample into the gallery.'))
-        # rosbags/kitti has 1058 camera messages over ~110s (~9.6Hz) -
-        # confirmed via `ros2 bag info`. every_nth=10 (an earlier guess)
-        # only ever sampled the first 160 messages, i.e. the first ~17s -
-        # one block, one direction, all near-duplicates. 66 spreads 16
-        # images across the full ~1058-message sequence instead
-        # (16 * 66 = 1056).
+        # 66 spreads 16 images across the full rosbag sequence rather than
+        # bunching them into the first few seconds.
         self.declare_parameter('every_nth', 66, ParameterDescriptor(
             description='Save every Nth incoming frame, for temporal spread.'))
 
