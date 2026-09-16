@@ -40,3 +40,17 @@ Fix:
 sudo apt install libsndio7.0
 ```
 
+## TLS certificate errors during `pixi install`/`pixi run build`
+On some machines (seen on a managed/institutional Linux install) Pixi fails with an
+error like `invalid peer certificate: UnknownIssuer` when downloading package data.
+This means Pixi could not find your system's CA certificate bundle. Fix, run once
+before retrying the command that failed:
+```
+export SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+```
+This only needs to be set for commands that actually talk to the network (an initial
+`pixi run build`/`pixi install`, or a later `pixi update`) - once packages are
+downloaded, everyday `pixi run <task>` commands just use what's already installed and
+don't need it. If you find yourself needing it repeatedly, add the line to your
+`~/.bashrc` (or equivalent) instead of retyping it each time.
+
