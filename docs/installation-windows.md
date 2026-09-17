@@ -87,7 +87,9 @@ sudo apt install libsndio7.0
 
 **Note:** The `.deb` above installs Webots to `/usr/local/webots`, which this repo's
 pixi environment already auto-detects - you don't need to set anything extra. If you
-installed Webots somewhere else, set `WEBOTS_HOME` to that path yourself before running
+installed Webots somewhere else, set `WEBOTS_HOME` to **that install directory itself**
+(not `/usr/local/bin`, which only holds a `webots` launcher symlink pointing into it -
+setting `WEBOTS_HOME` to that instead will make Webots fail to be found) before running
 `pixi run build`/`pixi run ass_*`, e.g.:
 ```
 export WEBOTS_HOME=/path/to/your/webots

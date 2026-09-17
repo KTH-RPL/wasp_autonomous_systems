@@ -90,6 +90,16 @@ def is_wsl():
     return 'microsoft-standard' in uname().release
 
 
+def is_webots_on_windows():
+    """True only when Webots itself is a native Windows install reached from
+    WSL via the /mnt/<drive> passthrough - not when Webots is installed
+    natively inside WSL2's own Linux filesystem (e.g. /usr/local/webots),
+    which needs none of the Windows-specific path handling (msys64/mingw64
+    executable suffix, wslpath conversions) that is_wsl() alone used to
+    trigger unconditionally."""
+    return is_wsl() and os.environ.get('WEBOTS_HOME', '').startswith('/mnt/')
+
+
 def get_wsl_ip_address():
     try:
         file = open('/etc/resolv.conf', 'r')

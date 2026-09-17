@@ -34,7 +34,7 @@ from rclpy.node import Node
 from rclpy.qos import qos_profile_services_default
 from rosgraph_msgs.msg import Clock
 from std_msgs.msg import String
-from webots_ros2_driver.utils import is_wsl, has_shared_folder, container_shared_folder, host_shared_folder
+from webots_ros2_driver.utils import is_webots_on_windows, has_shared_folder, container_shared_folder, host_shared_folder
 sys.path.insert(1, os.path.join(os.path.dirname(webots_ros2_importer.__file__), 'urdf2webots'))
 from urdf2webots.importer import convertUrdfFile, convertUrdfContent  # noqa
 from webots_ros2_msgs.srv import GetBool, SetString, SpawnUrdfRobot, SpawnNodeFromString  # noqa
@@ -100,7 +100,7 @@ class Ros2Supervisor(Node):
 
         # Choose the conversion according to the input and platform
         if robot.urdf_path:
-            if has_shared_folder() or is_wsl():
+            if has_shared_folder() or is_webots_on_windows():
                 # Check that the file exists and is an URDF
                 if not os.path.isfile(robot.urdf_path):
                     sys.exit('Input file "%s" does not exist.' % robot.urdf_path)
@@ -132,7 +132,7 @@ class Ros2Supervisor(Node):
                     relative_path_prefix = os.path.join(host_shared_folder(), os.path.basename(package_dir),
                                                         os.path.basename(resource_dir))
                 # In WSL, the prefix must be converted to WSL path to work in Webots running on native Windows
-                if is_wsl():
+                if is_webots_on_windows():
                     relative_path_prefix = resource_dir
                     command = ['wslpath', '-w', relative_path_prefix]
                     relative_path_prefix = subprocess.check_output(command).strip().decode('utf-8').replace('\\', '/')
@@ -148,7 +148,7 @@ class Ros2Supervisor(Node):
         elif robot.robot_description:
             relative_path_prefix = robot.relative_path_prefix if robot.relative_path_prefix else None
             # In WSL, the prefix must be converted to WSL path to work in Webots running on native Windows
-            if is_wsl() and relative_path_prefix:
+            if is_webots_on_windows() and relative_path_prefix:
                 command = ['wslpath', '-w', relative_path_prefix]
                 relative_path_prefix = subprocess.check_output(command).strip().decode('utf-8').replace('\\', '/')
             if has_shared_folder() and relative_path_prefix:

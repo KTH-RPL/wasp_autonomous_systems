@@ -32,7 +32,7 @@ from ament_index_python.packages import get_package_share_directory, get_package
 
 from webots_ros2_driver.utils import (get_webots_home,
                                       handle_webots_installation,
-                                      is_wsl,
+                                      is_webots_on_windows,
                                       has_shared_folder,
                                       container_shared_folder,
                                       controller_url_prefix)
@@ -58,7 +58,6 @@ class WebotsLauncher(ExecuteProcess):
                   'WSL (Windows Subsystem for Linux) environment instead.', file=sys.stderr)
             print('WARNING: Check https://github.com/cyberbotics/webots_ros2/wiki/Complete-Installation-Guide for more '
                   'information.', file=sys.stderr)
-        self.__is_wsl = is_wsl()
         self.__has_shared_folder = has_shared_folder()
         self.__is_supervisor = ros2_supervisor
         if self.__is_supervisor:
@@ -70,7 +69,7 @@ class WebotsLauncher(ExecuteProcess):
             if webots_path is None:
                 handle_webots_installation()
                 webots_path = get_webots_home()
-            if self.__is_wsl:
+            if is_webots_on_windows():
                 webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin', 'webots.exe')
             elif sys.platform == 'darwin':
                 # EXPERIMENTAL macOS fix: the real executable lives inside the
@@ -88,7 +87,7 @@ class WebotsLauncher(ExecuteProcess):
         if not isinstance(world, Substitution):
             world = TextSubstitution(text=self.__world_copy.name)
 
-        if self.__is_wsl:
+        if is_webots_on_windows():
             wsl_tmp_path = subprocess.check_output(['wslpath', '-w', self.__world_copy.name]).strip().decode('utf-8')
             world = TextSubstitution(text=wsl_tmp_path)
 
@@ -214,7 +213,7 @@ class WebotsLauncher(ExecuteProcess):
                 # Copy asset to shared folder
                 shutil.copy(new_url_path, os.path.join(container_shared_folder(), os.path.basename(new_url_path)))
                 new_url_path = './' + os.path.basename(new_url_path)
-            if self.__is_wsl:
+            if is_webots_on_windows():
                 command = ['wslpath', '-w', new_url_path]
                 new_url_path = subprocess.check_output(command).strip().decode('utf-8').replace('\\', '/')
             new_url_path = '"' + new_url_path + '"'
