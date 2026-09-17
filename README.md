@@ -55,6 +55,15 @@ pixi run download_rosbags
 ```
 
 
+## Uninstalling everything after the course
+Everything Pixi downloaded and built for this course - the whole Ubuntu 24.04 + ROS2
+Jazzy environment, all compiled packages, all downloaded data - lives inside the
+`wasp_autonomous_systems` folder you cloned, nowhere else on your system. To remove it
+all, just delete that folder:
+```
+rm -rf wasp_autonomous_systems
+```
+
 ## Known issues on macOS
 - Closing RViz reliably triggers macOS's crash reporter:
 
