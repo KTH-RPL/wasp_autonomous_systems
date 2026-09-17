@@ -186,3 +186,8 @@ rosbags/
 gallery_cache/
 yolo11n-seg.pt
 src/*/files.txt
+
+# Xcode SDK extracted locally for build troubleshooting (see
+# docs/installation-mac.md and packaging/extract-xcode-sdk.sh)
+xcode-sdk-extracted/
+*.xip
