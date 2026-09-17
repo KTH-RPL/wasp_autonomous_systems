@@ -42,49 +42,45 @@ on your system:
 SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk CONDA_BUILD_SYSROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk pixi run build
 ```
 If no older SDK is listed, you can get one without touching your current Xcode Command
-Line Tools install at all: download **Xcode 26.1.1** (the version this repo is
-actually tested against) from [Apple's developer downloads page](https://developer.apple.com/download/all/)
-(needs a free Apple ID sign-in) and drop it into `/Applications` under its own name,
-e.g. `Xcode_26.1.1.app`. Full Xcode versions can sit side by side as separate apps
-without changing your system's default Command Line Tools, and each one carries its
-own complete SDK:
-```
-SDKROOT=/Applications/Xcode_26.1.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk CONDA_BUILD_SYSROOT=/Applications/Xcode_26.1.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk pixi run build
-```
-(adjust the `Xcode_26.1.1.app` name/version to whatever you downloaded). This is a large
-download (several GB), but it's the most reliable option since it's a real, complete
-SDK rather than a workaround.
+Line Tools install at all: download a full copy of **Xcode 26.6** (confirmed working -
+any version before 27 avoids this bug, this is just the one we've tested) from
+[Apple's developer downloads page](https://developer.apple.com/download/all/)
+(sign in with a free Apple ID **first, at** [developer.apple.com](https://developer.apple.com) -
+visiting the downloads page directly while signed out can get stuck reloading).
 
-### Lighter-weight alternative: extract just the SDK, not the whole app
-You don't actually need the full Xcode.app installed anywhere - a script in this repo
-can pull just the one SDK directory out of the `.xip` you download from Apple, without
-ever expanding the whole (40+GB) app. Concretely, from inside your cloned repo (the
-path below, `/Users/pelle/wasp_autonomous_systems`, is just an example - replace the
-whole thing with wherever you actually cloned this repo, not just the username):
+You don't need to install it anywhere or touch your system's default Xcode/Command Line
+Tools - download the `.xip` directly into your cloned repo folder (the path below,
+`/Users/pelle/wasp_autonomous_systems`, is just an example - replace the whole thing
+with wherever you actually cloned this repo, not just the username):
 ```
 cd /Users/pelle/wasp_autonomous_systems
 ```
-Download Xcode from [Apple's developer downloads page](https://developer.apple.com/download/all/)
-(needs a free Apple ID sign-in) directly into the repo folder, so it ends up at e.g.
+so it ends up at e.g.
 ```
-/Users/pelle/wasp_autonomous_systems/Xcode_26.1.1.xip
+/Users/pelle/wasp_autonomous_systems/Xcode_26.6.xip
 ```
-Then run:
+Then expand it in place with macOS's own `xip` tool (the same thing Finder does if you
+double-click a `.xip`, just from the terminal so it stays in this folder instead of
+wherever Finder happens to be pointed):
 ```
-./packaging/extract-xcode-sdk.sh Xcode_26.1.1.xip xcode-sdk-extracted
+xip --expand Xcode_26.6.xip
 ```
-This gives you just the SDK, about 800MB instead of 40+GB, at:
+This creates `Xcode.app` alongside it; rename it so it doesn't collide with anything and
+it's clear which version it is:
 ```
-/Users/pelle/wasp_autonomous_systems/xcode-sdk-extracted/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+mv Xcode.app Xcode_26.6.app
 ```
-You can now delete the `.xip` itself (it's no longer needed once extracted):
+You can now delete the `.xip` itself (it's no longer needed once expanded):
 ```
-rm Xcode_26.1.1.xip
+rm Xcode_26.6.xip
 ```
-And point your build at the extracted SDK:
+And point your build at this Xcode's SDK:
 ```
-SDKROOT=/Users/pelle/wasp_autonomous_systems/xcode-sdk-extracted/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk CONDA_BUILD_SYSROOT=/Users/pelle/wasp_autonomous_systems/xcode-sdk-extracted/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk pixi run build
+SDKROOT=/Users/pelle/wasp_autonomous_systems/Xcode_26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk CONDA_BUILD_SYSROOT=/Users/pelle/wasp_autonomous_systems/Xcode_26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk pixi run build
 ```
-Keeping `xcode-sdk-extracted/` inside the repo (it's already in `.gitignore`) means it's
-never committed, and it's automatically cleaned up along with everything else if you
-delete the whole `wasp_autonomous_systems` folder at the end of the course.
+This is a large download (several GB) and `Xcode_26.6.app` itself is much bigger once
+expanded, but keeping it inside the repo folder (it's already in `.gitignore`) means
+it's never committed and gets cleaned up automatically along with everything else if you
+delete the whole `wasp_autonomous_systems` folder at the end of the course - and unlike
+a partial/reconstructed SDK, this is guaranteed correct since it's just Apple's own
+Xcode, expanded by Apple's own tool.

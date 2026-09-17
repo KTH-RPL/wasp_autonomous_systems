@@ -187,7 +187,9 @@ gallery_cache/
 yolo11n-seg.pt
 src/*/files.txt
 
-# Xcode SDK extracted locally for build troubleshooting (see
-# docs/installation-mac.md and packaging/extract-xcode-sdk.sh)
-xcode-sdk-extracted/
+# A full Xcode.app downloaded/expanded locally for the arm64e.x1 build
+# workaround (see docs/installation-mac.md), kept inside the repo instead of
+# /Applications so it's never confused with the system Xcode install and is
+# cleaned up automatically along with the repo at the end of the course.
+Xcode_*.app
 *.xip
