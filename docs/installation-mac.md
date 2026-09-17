@@ -29,17 +29,17 @@ SDK using an `arm64e.x1` architecture variant that Pixi's bundled linker doesn't
 understand ([conda-forge/cctools-and-ld64-feedstock#112](https://github.com/conda-forge/cctools-and-ld64-feedstock/issues/112)),
 not something fixable from this repo.
 
-**Workaround**, if you have an older SDK still installed alongside the new one:
+**Workaround:** check whether an older SDK happens to still be present alongside the
+new one (Xcode Command Line Tools updates sometimes leave previous SDK versions in
+place):
 ```
 ls /Library/Developer/CommandLineTools/SDKs/
 ```
-If that lists an older SDK (e.g. `MacOSX26.5.sdk`, anything before the newest one),
-point the build at it:
+If that lists an older SDK (anything before the newest one, e.g. `MacOSX26.5.sdk`),
+point just this one command at it - this only affects this single build, nothing else
+on your system:
 ```
-export SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk
-export CONDA_BUILD_SYSROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk
-pixi run build
+SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk CONDA_BUILD_SYSROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk pixi run build
 ```
-If only the newest SDK is installed, install an older, stable Xcode Command Line Tools
-release from [Apple's developer site](https://developer.apple.com/download/all/) and
-switch to it with `xcode-select -s`.
+If no older SDK is listed, there isn't a clean workaround yet - this is waiting on a
+fixed linker release upstream. Get in touch if you're stuck here.

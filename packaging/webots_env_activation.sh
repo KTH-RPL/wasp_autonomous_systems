@@ -37,3 +37,18 @@ if [ "$(uname)" = "Darwin" ]; then
     export DYLD_LIBRARY_PATH="$CONDA_PREFIX/lib:${DYLD_LIBRARY_PATH:-}"
   fi
 fi
+
+# Linux (including WSL2): webots_ros2_driver's own Webots auto-detection
+# assumes, once it sees it's running under WSL, that Webots must be
+# installed natively on Windows - it never checks the Linux filesystem in
+# that case. We install Webots inside WSL2 itself (see
+# docs/installation-windows.md), so without this it wrongly offers to
+# auto-install a Windows copy instead of finding the one that's already
+# there. Set WEBOTS_HOME explicitly so that check is skipped entirely -
+# this also covers plain (non-WSL) Linux, where it's a harmless no-op if
+# already set correctly, or a working default if not set at all.
+if [ "$(uname)" = "Linux" ]; then
+  if [ -z "${WEBOTS_HOME:-}" ] && [ -d "/usr/local/webots" ]; then
+    export WEBOTS_HOME="/usr/local/webots"
+  fi
+fi
