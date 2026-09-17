@@ -84,3 +84,14 @@ Fix:
 ```
 sudo apt install libsndio7.0
 ```
+
+**Note:** The `.deb` above installs Webots to `/usr/local/webots`, which this repo's
+pixi environment already auto-detects - you don't need to set anything extra. If you
+installed Webots somewhere else, set `WEBOTS_HOME` to that path yourself before running
+`pixi run build`/`pixi run ass_*`, e.g.:
+```
+export WEBOTS_HOME=/path/to/your/webots
+```
+Without this, WSL2 is wrongly assumed to only ever have Webots installed natively on
+Windows, and you'll be prompted to auto-install a Windows copy instead of using the one
+you already have.
