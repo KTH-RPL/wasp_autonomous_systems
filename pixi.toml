@@ -103,6 +103,8 @@ build = { cmd = "colcon build --symlink-install --cmake-args -DPython_EXECUTABLE
 # Task 1.1
 ass_1_1 = { cmd = "bash -c '. ./packaging/webots_env_activation.sh && exec ros2 launch wasp_as_ass_1 turtlebot_apartment_launch.py'" }
 
+ass_1_1_rviz = { cmd = "bash -c 'rviz2 -d \"$(ros2 pkg prefix wasp_as_ass_1)/share/wasp_as_ass_1/rviz/turtlebot_simulation.rviz\" --ros-args -p use_sim_time:=true'" }
+
 # Run in a second terminal alongside ass_1_1 to manually drive the robot
 # around the apartment (i/j/k/l etc. - the tool prints its own key list).
 # No Webots-specific setup needed here, so no activation wrapper.
