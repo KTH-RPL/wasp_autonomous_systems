@@ -58,7 +58,9 @@ SDK rather than a workaround.
 ### Lighter-weight alternative: extract just the SDK, not the whole app
 You don't actually need the full Xcode.app installed anywhere - a script in this repo
 can pull just the one SDK directory out of the `.xip` you download from Apple, without
-ever expanding the whole (40+GB) app. Concretely, from inside your cloned repo:
+ever expanding the whole (40+GB) app. Concretely, from inside your cloned repo (the
+path below, `/Users/pelle/wasp_autonomous_systems`, is just an example - replace the
+whole thing with wherever you actually cloned this repo, not just the username):
 ```
 cd /Users/pelle/wasp_autonomous_systems
 ```
