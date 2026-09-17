@@ -26,6 +26,7 @@ from webots_ros2_driver.wait_for_controller_connection import WaitForControllerC
 
 def generate_launch_description():
     webots_pkg_dir = get_package_share_directory('wasp_as_webots')
+    ass_1_dir = get_package_share_directory('wasp_as_ass_1')
     gui = LaunchConfiguration('gui', default='true')
     # Must be a bare LaunchConfiguration, not a literal path - see
     # wasp_as_webots's course_world_launch.py for why (Ros2Supervisor's
@@ -93,6 +94,16 @@ def generate_launch_description():
         nodes_to_start=ros_control_spawners
     )
 
+    rviz_config_file = os.path.join(ass_1_dir, 'rviz', 'turtlebot_simulation.rviz')
+    rviz = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        arguments=['-d', rviz_config_file],
+        parameters=[{'use_sim_time': True}],
+        output='screen',
+    )
+
     encoders = Node(
         package='wasp_as',
         executable='encoders',
@@ -109,6 +120,7 @@ def generate_launch_description():
         footprint_publisher,
         turtlebot_driver,
         waiting_nodes,
+        rviz,
         encoders,
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
