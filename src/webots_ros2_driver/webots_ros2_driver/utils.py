@@ -160,7 +160,7 @@ def get_host_ip():
 
 
 def controller_protocol():
-    protocol = 'tcp' if (has_shared_folder() or is_wsl()) else 'ipc'
+    protocol = 'tcp' if (has_shared_folder() or is_webots_on_windows()) else 'ipc'
     return protocol
 
 
@@ -170,7 +170,7 @@ def controller_ip_address():
 
 
 def controller_url_prefix(port='1234'):
-    if has_shared_folder() or is_wsl():
+    if has_shared_folder() or is_webots_on_windows():
         return 'tcp://' + (get_host_ip() if has_shared_folder() else get_wsl_ip_address()) + ':' + port + '/'
     else:
         return ''
