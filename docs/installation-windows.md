@@ -59,6 +59,15 @@ PowerShell terminal (not inside Ubuntu):
 wsl --shutdown
 ```
 
+## Update the package lists
+A freshly installed distribution ships with no package lists, so every `apt install`
+below fails with "Unable to locate package" until you do this once.
+
+Run the following in a WSL2 terminal:
+```
+sudo apt update
+```
+
 ## Install a C/C++ compiler
 `pixi run build` needs a system C/C++ toolchain - Webots' vendored controller library
 Makefile calls `gcc`/`make` directly rather than the conda-provided compiler. A fresh
