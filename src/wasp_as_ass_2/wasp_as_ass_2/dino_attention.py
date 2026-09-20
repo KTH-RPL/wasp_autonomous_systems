@@ -1,5 +1,14 @@
 import sys
 
+# Printed before the heavy imports below, not inside main(): importing torch
+# and transformers takes around 25 seconds, silently. Reported from the
+# course as "seemed to hang, there was no output at all" - this is the
+# first thing that proves otherwise. flush=True because stdout is
+# block-buffered when it is not a terminal, which on its own is enough to
+# hide every print until the process exits.
+print('Starting up - importing PyTorch, which takes about half a minute...',
+      flush=True)
+
 import cv2
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
@@ -21,11 +30,10 @@ def render(images, cache, index):
 
 
 def main():
-    print(f'Loading DINOv2 ({dino_utils.DINO_CHECKPOINT})...')
-    model, processor = dino_utils.load_dino()
-
+    # Gallery first, model second. The other way round (which this was)
+    # makes a missing gallery cost a full model download before saying so.
     gallery_name = sys.argv[1] if len(sys.argv) > 1 else 'kitti'
-    print(f"Loading gallery images from gallery_cache/{gallery_name}/...")
+    print(f"Loading gallery images from gallery_cache/{gallery_name}/...", flush=True)
     images = load_gallery(gallery_name)
     if not images:
         raise SystemExit(
@@ -33,8 +41,14 @@ def main():
             "'pixi run ass_2_gallery_sample' with 'pixi run ass_2_kitti_rosbag' playing "
             "alongside it first. For your own gallery, drop some images into "
             f"gallery_cache/{gallery_name}/ yourself.")
+
+    print(f'Loading DINOv2 ({dino_utils.DINO_CHECKPOINT}). The first run '
+          'downloads the model, which can take a few minutes...', flush=True)
+    model, processor = dino_utils.load_dino()
+
+    print(f'Analyzing {len(images)} images...', flush=True)
     cache = [dino_utils.cls_attention_map(model, processor, image) for image in images]
-    print(f'{len(images)} gallery images loaded and analyzed.')
+    print(f'{len(images)} gallery images loaded and analyzed.', flush=True)
 
     fig, ax = plt.subplots(figsize=(10, 6))
     plt.subplots_adjust(bottom=0.2)

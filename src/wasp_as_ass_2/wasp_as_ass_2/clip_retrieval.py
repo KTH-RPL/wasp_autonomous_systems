@@ -1,6 +1,15 @@
 import math
 import sys
 
+# Printed before the heavy imports below, not inside main(): importing torch
+# and transformers takes around 25 seconds, silently. Reported from the
+# course as "seemed to hang, there was no output at all" - this is the
+# first thing that proves otherwise. flush=True because stdout is
+# block-buffered when it is not a terminal, which on its own is enough to
+# hide every print until the process exits.
+print('Starting up - importing PyTorch, which takes about half a minute...',
+      flush=True)
+
 import cv2
 import matplotlib.pyplot as plt
 from matplotlib.widgets import TextBox
@@ -53,10 +62,10 @@ def render(images, embeddings, clip_model, clip_processor, query):
 
 
 def main():
-    print('Loading CLIP (openai/clip-vit-base-patch32)...')
-    clip_model, clip_processor = clip_utils.load_clip()
+    # Gallery first, model second. The other way round (which this was)
+    # makes a missing gallery cost a full model download before saying so.
     gallery_name = sys.argv[1] if len(sys.argv) > 1 else 'kitti'
-    print(f"Loading gallery images from gallery_cache/{gallery_name}/...")
+    print(f"Loading gallery images from gallery_cache/{gallery_name}/...", flush=True)
     images = load_gallery(gallery_name)
     if not images:
         raise SystemExit(
@@ -64,10 +73,15 @@ def main():
             "'pixi run ass_2_gallery_sample' with 'pixi run ass_2_kitti_rosbag' playing "
             "alongside it first. For your own gallery, drop some images into "
             f"gallery_cache/{gallery_name}/ yourself.")
+
+    print('Loading CLIP (openai/clip-vit-base-patch32). The first run '
+          'downloads the model, which can take a few minutes...', flush=True)
+    clip_model, clip_processor = clip_utils.load_clip()
+    print(f'Embedding {len(images)} images...', flush=True)
     embeddings = torch.stack([
         clip_utils.image_embedding(clip_model, clip_processor, image) for image in images
     ])
-    print(f'{len(images)} gallery images loaded and embedded.')
+    print(f'{len(images)} gallery images loaded and embedded.', flush=True)
 
     initial_query = 'a car'
     fig, ax = plt.subplots(figsize=(10, 8))
