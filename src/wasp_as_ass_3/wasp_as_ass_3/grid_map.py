@@ -187,7 +187,17 @@ class GridMap(Node):
         og.info.origin.position.x = self.origin[0]
         og.info.origin.position.y = self.origin[1]
 
-        og.data = self.__data.flatten().tolist()
+        # order='F' (column-major), not the default 'C'. __data is indexed
+        # [x, y] with shape (width, height), so a C-order flatten walks y
+        # fastest and produces index x*height + y. OccupancyGrid requires the
+        # opposite, y*width + x, so a plain flatten publishes the transpose of
+        # the map: everything mirrored about the line x = y. It went unnoticed
+        # because the map is square (40x40 m) with symmetric borders, and the
+        # built-in wall is a straight segment that merely looked rotated -
+        # only an asymmetric wall added from RViz makes it obvious. The
+        # planners are unaffected: they read __data through [x, y] directly,
+        # so only what RViz displayed was ever wrong.
+        og.data = self.__data.flatten(order='F').tolist()
 
         return og
 
