@@ -34,18 +34,8 @@ sudo apt install mesa-utils
 glxinfo -B | grep "OpenGL renderer"
 ```
 
-If that reports `llvmpipe`, you are rendering on the CPU.
-
-Updating your GPU driver on the Windows side sometimes enables hardware
-rendering, but do not count on it. One laptop tested for this course had a
-current NVIDIA driver, the GPU visible to `nvidia-smi` inside WSL2, `/dev/dxg`
-present, Mesa's `d3d12` driver installed and WSL itself updated - and still had
-no hardware OpenGL, because WSLg's X server reported no DRI3 support, leaving
-Mesa no route to the GPU. Forcing the driver with
-`MESA_LOADER_DRIVER_OVERRIDE=d3d12` changed nothing.
-
-So treat turning rendering off as the fix, not as a workaround while you hunt
-for a driver problem. It may well not be one.
+If that reports `llvmpipe`, you are rendering on the CPU. Turn rendering off as
+described above.
 
 Tasks that only play rosbags, such as Assignments 1.2 and 1.3, involve no
 simulator and are unaffected.
