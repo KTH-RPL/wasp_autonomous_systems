@@ -13,24 +13,41 @@ Requires administrator rights and a reboot.
 
 Run the following in a Windows PowerShell terminal (WSL2 doesn't exist yet at this point):
 ```
-wsl --install -d Ubuntu
+wsl --install -d Ubuntu-24.04
 ```
-Afterwards, open the "Ubuntu" app once to finish first-run setup (username/password).
+Afterwards, open the "Ubuntu 24.04" app once to finish first-run setup (username/password).
 WSLg (GUI app support, needed for the Webots window) is built in on Windows 11 - no
 extra setup needed.
 
+**Install 24.04 specifically, not plain `Ubuntu`.** `wsl --install -d Ubuntu` gives you
+whatever Microsoft currently ships as the default, which is no longer 24.04. The course
+is built and tested against 24.04, and the parts that come from the distro rather than
+from Pixi - the C/C++ compiler used to build Webots' controller library, and the Webots
+`.deb`'s own dependencies - are where a newer release causes trouble. Check what you
+have with:
+```
+lsb_release -a
+```
+If it says anything other than 24.04, install the right one alongside it - WSL2 runs
+several distributions side by side, so nothing you already have is disturbed:
+```
+wsl --install -d Ubuntu-24.04
+```
+and use the "Ubuntu 24.04" app from then on. `wsl -l -v` lists what is installed, and
+`wsl -l -o` lists what is available.
+
 If `wsl -l -v` still shows no distributions after the reboot, just run the
-`wsl --install -d Ubuntu` command again - on some machines it takes two rounds (one to
-enable the underlying Windows feature, a second to actually install Ubuntu).
+`wsl --install -d Ubuntu-24.04` command again - on some machines it takes two rounds
+(one to enable the underlying Windows feature, a second to actually install Ubuntu).
 
 No admin rights on your machine? There's no supported no-admin install path for WSL2
 either (enabling it is an OS feature toggle). Check whether your organization's IT
 provides a self-service install, or use a remote/cloud Linux environment instead.
 
-From here on, open the "Ubuntu" app and run everything below from inside it.
+From here on, open the "Ubuntu 24.04" app and run everything below from inside it.
 
 **Note:** To open more terminals into the same running WSL2 instance (e.g. one for the
-simulation, one for teleop), just launch the "Ubuntu" app again, or open a new tab for
+simulation, one for teleop), just launch the "Ubuntu 24.04" app again, or open a new tab for
 it if you're using Windows Terminal - both land in the same WSL2 session, so anything
 already running (like a Webots window) is visible/reachable from either.
 
