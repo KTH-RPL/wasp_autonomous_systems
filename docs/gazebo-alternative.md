@@ -49,12 +49,12 @@ already downloaded it - this setup reads the same copy.
 
 ## Things worth knowing
 
-**Task 1.1 may not work on macOS.** It is the only task that needs a
-simulated camera, and that is the part of Gazebo with a history of trouble
-there. It starts anyway and prints a warning, and it has been seen working,
-so try it. If the camera views in RViz stay empty or Gazebo closes by
-itself, tell the course staff rather than assuming you did something wrong.
-Everything else is unaffected.
+**Task 1.1 uses a simulated camera**, the only task here that does. It
+works, macOS included, and prints a short note there because that is the
+one part of Gazebo that has given trouble on macOS in the past. If the
+camera views in RViz stay empty, or Gazebo closes by itself, that is not
+something you did wrong - tell the course staff. Everything else is
+unaffected.
 
 **Every terminal needs to be in the `gazebo` folder.** A few tasks are meant
 to be run alongside each other, and the assignment text will tell you to open

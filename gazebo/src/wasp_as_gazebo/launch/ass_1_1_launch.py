@@ -158,21 +158,21 @@ def generate_launch_description():
         output='screen',
     )
 
-    # Said up front rather than left to be discovered: on macOS this is the
-    # one task that may not come up, and the failure mode (camera displays
-    # that stay empty, or Gazebo exiting on its own) is not obviously
-    # distinguishable from having done something wrong.
+    # This task has run correctly on macOS, camera image, depth and point
+    # cloud included. It is still the only task here that depends on
+    # Gazebo's rendering-backed sensors, which have a poor history on that
+    # platform, so the note stays - but as "tell us if it misbehaves"
+    # rather than "expect this to fail".
     warning = []
     if sys.platform == 'darwin':
         warning = [LogInfo(msg=(
             '\n'
-            '  NOTE: Task 1.1 is the one task here that may not work on macOS.\n'
-            '  It needs a simulated camera, which is the part of Gazebo that has\n'
-            '  historically been unreliable there. If the camera displays in RViz\n'
-            '  stay empty, or Gazebo exits on its own, that is this known\n'
-            '  limitation and not something you did wrong - run this task under\n'
-            '  Webots instead, or talk to the course staff. Everything else in\n'
-            '  this setup is unaffected.\n'))]
+            '  NOTE: this is the only task here that uses a simulated camera.\n'
+            '  It is expected to work on macOS, but it is the one task where\n'
+            '  Gazebo has given trouble on this platform in the past. If the\n'
+            '  camera views in RViz stay empty, or Gazebo closes by itself,\n'
+            '  that is not something you did wrong - please tell the course\n'
+            '  staff. Everything else in this setup is unaffected.\n'))]
 
     return LaunchDescription(warning + resource_paths + [
         DeclareLaunchArgument(
