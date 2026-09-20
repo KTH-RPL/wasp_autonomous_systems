@@ -1,0 +1,29 @@
+# ROS <-> Gazebo topic bridge for Assignment 4 (altitude control).
+#
+# Only what the assignment actually consumes. mavic_controller.py turns
+# /thrust into the Actuators message below, and gps_bridge.py turns the
+# odometry below into the PointStamped the exercise files subscribe to.
+
+- ros_topic_name: "clock"
+  gz_topic_name: "clock"
+  ros_type_name: "rosgraph_msgs/msg/Clock"
+  gz_type_name: "gz.msgs.Clock"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/imu"
+  gz_topic_name: "/imu"
+  ros_type_name: "sensor_msgs/msg/Imu"
+  gz_type_name: "gz.msgs.IMU"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/quadrotor/command/motor_speed"
+  gz_topic_name: "/quadrotor/command/motor_speed"
+  ros_type_name: "actuator_msgs/msg/Actuators"
+  gz_type_name: "gz.msgs.Actuators"
+  direction: ROS_TO_GZ
+
+- ros_topic_name: "/model/quadrotor/odometry"
+  gz_topic_name: "/model/quadrotor/odometry"
+  ros_type_name: "nav_msgs/msg/Odometry"
+  gz_type_name: "gz.msgs.Odometry"
+  direction: GZ_TO_ROS

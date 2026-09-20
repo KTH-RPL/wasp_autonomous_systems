@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<!--
+  Assignment 1.1 (RGB-D camera in an apartment) - Gazebo alternative to
+  wasp_as_webots/worlds/turtlebot_apartment.wbt.
+
+  LINUX/WSL2 ONLY. Unlike this repo's other two Gazebo worlds, this one
+  loads gz-sim-sensors-system, the rendering-backed sensor system needed by
+  any camera or GPU lidar. That is precisely what segfaults on macOS
+  (Ogre2 initialized off the main thread, which Cocoa forbids -
+  gazebosim/gz-sim#960, #2877), which is why the ass_1_1 task is
+  declared only for linux-64 in gazebo/pixi.toml.
+
+  The furnished house and the robot's meshes both come from the
+  ros-jazzy-turtlebot3-gazebo conda package, found via GZ_SIM_RESOURCE_PATH
+  (set in ass_1_1_launch.py). Nothing large is vendored into this repo for
+  them. This is a different building from the Webots apartment, but it
+  serves the same purpose: rooms, furniture and doorways to drive an RGB-D
+  camera through.
+
+  Ground plane and sun are inlined rather than <include>d from Fuel, the
+  way turtlebot3_gazebo's own turtlebot3_house.world does it. Fuel needs
+  working outbound HTTPS on first load, and a locked-down machine - the one
+  kind of machine this whole alternative exists for - is exactly where that
+  cannot be relied on.
+-->
+<sdf version="1.9">
+  <world name="turtlebot_apartment">
+
+    <plugin filename="gz-sim-physics-system"
+            name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system"
+            name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-scene-broadcaster-system"
+            name="gz::sim::systems::SceneBroadcaster"/>
+    <plugin filename="gz-sim-sensors-system"
+            name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-imu-system"
+            name="gz::sim::systems::Imu"/>
+
+    <physics name="default_physics" type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <ode>
+        <solver>
+          <type>quick</type>
+          <iters>150</iters>
+          <sor>1.4</sor>
+        </solver>
+        <constraints>
+          <cfm>0.00001</cfm>
+          <erp>0.2</erp>
+          <contact_max_correcting_vel>2000.0</contact_max_correcting_vel>
+          <contact_surface_layer>0.01</contact_surface_layer>
+        </constraints>
+      </ode>
+    </physics>
+
+    <scene>
+      <ambient>0.7 0.7 0.7 1</ambient>
+      <background>0.7 0.8 0.9 1</background>
+      <shadows>false</shadows>
+    </scene>
+
+    <!-- Indoors, so the light is deliberately flat and fairly bright: the
+         point of the assignment is looking at camera images, and a single
+         hard directional light leaves half the rooms unreadably dark. -->
+    <light type="directional" name="sun">
+      <cast_shadows>false</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.9 0.9 0.9 1</diffuse>
+      <specular>0.1 0.1 0.1 1</specular>
+      <direction>-0.3 0.2 -0.9</direction>
+    </light>
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.75 0.75 0.75 1</ambient>
+            <diffuse>0.75 0.75 0.75 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="apartment">
+      <static>true</static>
+      <pose>-3.0 1.0 0 0 0 0</pose>
+      <include>
+        <uri>model://turtlebot3_house</uri>
+      </include>
+    </model>
+
+  </world>
+</sdf>

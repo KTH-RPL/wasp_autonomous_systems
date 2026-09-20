@@ -32,6 +32,16 @@ nothing changed.
 * Linux: Instructions [here](docs/installation-linux.md)
 * Windows: Instructions [here](docs/installation-windows.md)
 
+### Cannot install Webots on your computer?
+Some employer-managed computers only allow software from the App Store or a
+company software centre, and Webots is not distributed that way. If that is your
+situation, there is an alternative setup that uses the Gazebo simulator instead,
+which Pixi installs for you along with everything else. See
+[docs/gazebo-alternative.md](docs/gazebo-alternative.md). You work from the
+`gazebo` folder in this repository, and everything after that is exactly as the
+assignment text describes - same commands, same files to edit. Only use it if
+you genuinely cannot install Webots; it is not the recommended path.
+
 
 ## Installing the course specific code
 Open a terminal and move to the directory where you want to have the code you work with.
@@ -56,13 +66,50 @@ pixi run download_rosbags
 
 
 ## Uninstalling everything after the course
-Everything Pixi downloaded and built for this course - the whole Ubuntu 24.04 + ROS2
-Jazzy environment, all compiled packages, all downloaded data - lives inside the
-`wasp_autonomous_systems` folder you cloned, nowhere else on your system. To remove it
-all, just delete that folder:
+Most of what this course installs lives inside the `wasp_autonomous_systems` folder
+you cloned, so deleting that folder is the main step:
 ```
 rm -rf wasp_autonomous_systems
 ```
+
+That is not quite everything, though. Pixi keeps its downloaded packages in a cache
+outside the folder, shared across all your Pixi projects, and a few tools cache data
+in your home directory too. Together these can be tens of GB, so if you want the space
+back you need to clear them as well.
+
+**Pixi's package cache.** Run this from anywhere:
+```
+pixi clean cache --conda
+```
+This cache is shared by all your Pixi projects, so if you have started using Pixi for
+something else of your own, that will re-download its packages the next time you run
+it. To look at the cache first, or remove it by hand, it is at
+`~/Library/Caches/rattler` on macOS and `~/.cache/rattler` on Linux and WSL2, and
+`pixi info` prints the exact path as "Cache dir".
+
+**Model files downloaded by Assignment 2.** The CLIP, DINOv2 and Grounding DINO models
+are fetched from Hugging Face on first use and cached in your home directory:
+```
+rm -rf ~/.cache/huggingface
+```
+
+**ROS logs**, written every time you launch something:
+```
+rm -rf ~/.ros/log
+```
+
+**Gazebo's own cache**, only if you used the [Gazebo
+alternative](docs/gazebo-alternative.md):
+```
+rm -rf ~/.gz
+```
+
+**Pixi itself**, if you do not want to keep it. On Linux, macOS and WSL2:
+```
+rm -rf ~/.pixi
+```
+and remove the line the installer added to your shell startup file (`~/.bashrc`,
+`~/.zshrc` or similar) that puts `~/.pixi/bin` on your `PATH`.
 
 ## Known issues on macOS
 - Closing RViz reliably triggers macOS's crash reporter:

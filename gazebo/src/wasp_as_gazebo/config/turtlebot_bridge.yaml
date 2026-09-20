@@ -1,0 +1,32 @@
+# ROS <-> Gazebo topic bridge for Assignment 2's collision detection task.
+#
+# /cmd_vel is bridged as TwistStamped, not Twist: autonomous_controller.py
+# publishes TwistStamped (Jazzy's diff_drive_controller dropped the
+# unstamped variant, so the Webots path needs it), and this side has to
+# accept the same message for that file to stay simulator-agnostic.
+# gz.msgs.Twist carries no stamp, which is fine - the Gazebo DiffDrive
+# system does not read one.
+
+- ros_topic_name: "clock"
+  gz_topic_name: "clock"
+  ros_type_name: "rosgraph_msgs/msg/Clock"
+  gz_type_name: "gz.msgs.Clock"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/imu"
+  gz_topic_name: "/imu"
+  ros_type_name: "sensor_msgs/msg/Imu"
+  gz_type_name: "gz.msgs.IMU"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/cmd_vel"
+  gz_topic_name: "/cmd_vel"
+  ros_type_name: "geometry_msgs/msg/TwistStamped"
+  gz_type_name: "gz.msgs.Twist"
+  direction: ROS_TO_GZ
+
+- ros_topic_name: "/model/TurtleBot3Burger/ground_truth_odometry"
+  gz_topic_name: "/model/TurtleBot3Burger/ground_truth_odometry"
+  ros_type_name: "nav_msgs/msg/Odometry"
+  gz_type_name: "gz.msgs.Odometry"
+  direction: GZ_TO_ROS
