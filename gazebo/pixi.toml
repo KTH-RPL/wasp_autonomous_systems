@@ -13,45 +13,13 @@ platforms = [
 ]
 preview = ["pixi-build"]
 
-# ===========================================================================
-# Gazebo alternative to the Webots setup in ../pixi.toml
-# See ../docs/gazebo-alternative.md
-#
-# For students whose employer-managed machine cannot install Webots (no
-# admin rights / App Store-only software policies). On macOS that blocks
-# them completely rather than just at runtime: webots_ros2_driver links
-# against an installed Webots.app at build time
-# (../src/webots_ros2_driver/CMakeLists.txt), so even `pixi install` of the
-# normal setup fails. Nothing here refers to Webots at all.
-#
-# This is a workspace of its own rather than a second environment inside
-# ../pixi.toml, and that is the whole point: two pixi environments cannot
-# share a task name. `pixi run ass_1_1` with the task defined in both would
-# be ambiguous, and pixi stops to ask which environment to use - which both
-# breaks the plain commands the Webots setup has always used and would force
-# every task here to be renamed to something like `gazebo_ass_3`, including
-# the many that involve no simulator at all. A separate manifest gives every
-# task its normal name back. Students `cd gazebo` once and then follow the
-# assignment text verbatim.
-#
-# The assignment packages are shared with the parent workspace, referenced as
-# ../src/<pkg>/package.xml - a directory path is not enough for ROS source
-# packages outside the manifest's own tree. Only wasp_as_gazebo, which is
-# specific to this setup, lives here in src/. Keeping it out of ../src means
-# the normal `pixi run build` never sees it.
-# ===========================================================================
+# See ../docs/notes-gazebo-design.md
 
 [dependencies]
 ros-jazzy-desktop = "*"
 
-# Not pulled in by ros-jazzy-desktop on this channel - without it, RViz's
-# Image display can't load the "compressed" image_transport plugin at all
-# (see the same note in ../pixi.toml).
 ros-jazzy-compressed-image-transport = "*"
 
-# Gazebo itself, the ROS<->Gazebo bridge, the message type the quadrotor's
-# motors are commanded with, and the TurtleBot3 house/meshes used by Task
-# 1.1 (which is why no large model assets are vendored into this repo).
 ros-jazzy-ros-gz-sim = "*"
 ros-jazzy-ros-gz-bridge = "*"
 ros-jazzy-actuator-msgs = "*"
@@ -60,27 +28,13 @@ ros-jazzy-turtlebot3-gazebo = "*"
 ros-jazzy-teleop-twist-keyboard = "*"
 ros-jazzy-tf-transformations = "*"
 
-# See ../pixi.toml for why this exact setuptools pin.
 setuptools = "==69.2.0"
 colcon-ros = "*"
 zstd = ">=1.5.7,<2"
 
-# The two message packages, and only those, are built as conda packages here
-# the same way the parent workspace builds all of them. Their generated
-# typesupport libraries are dlopen'd by name at runtime, and on macOS only
-# $CONDA_PREFIX/lib is on the search path - a colcon-built copy under
-# install/ is never found, and every node touching a Collision message dies
-# with "Could not load library
-# libwasp_as_interfaces__rosidl_typesupport_fastrtps_c.dylib" (confirmed
-# live). Neither package depends on anything Webots-related, so both build
-# without Webots installed.
 ros-jazzy-wasp-as-interfaces = { path = "../src/wasp_as_interfaces/package.xml" }
 ros-jazzy-wasp-autonomous-systems-interfaces = { path = "../src/wasp_autonomous_systems_interfaces/package.xml" }
 
-# Run-dependencies of the assignment packages themselves. In the parent
-# workspace these arrive via pixi-build-ros from each package.xml; here those
-# packages are built by colcon rather than being conda packages, so their
-# non-ROS dependencies are listed directly.
 ultralytics = "*"
 torchvision = "*"
 transformers = "*"
@@ -96,31 +50,15 @@ scripts = ["install/setup.sh"]
 
 [tasks]
 
-# The assignment packages are listed explicitly rather than crawled, so that
-# ../src/webots_ros2_* and ../src/wasp_as_webots are left alone: on macOS
-# webots_ros2_driver does not compile at all without an installed Webots.app,
-# which is the whole reason this setup exists. Build and install land in
-# gazebo/build and gazebo/install, separate from the parent workspace's, so
-# the two never hand each other libraries built against the wrong prefix.
 build = { cmd = "bash -c 'export LIBRARY_PATH=\"$CONDA_PREFIX/lib:$LIBRARY_PATH\" && colcon build --symlink-install --paths ../src/wasp_as ../src/wasp_as_ass_1 ../src/wasp_as_ass_2 ../src/wasp_as_ass_3 ../src/wasp_as_ass_4 ../src/wasp_as_interfaces ../src/wasp_autonomous_systems_interfaces src/wasp_as_gazebo --cmake-args -DPython_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python -DPYTHON_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_FIND_STRATEGY=LOCATION -DPython_FIND_STRATEGY=LOCATION'", depends-on = [
 	"postinstall_notice",
 ] }
 
-# Downloaded into the repository root, not into gazebo/, so the rosbags are
-# shared with the normal setup instead of taking a second few GB. The bag
-# tasks below read them back from there.
 download_rosbags = { cmd = 'curl -fSL "https://canvas.kth.se/files/9471655/download?download_frd=1&verifier=4wOMCwu3QHS0duQGTKpn6HyhO9jCPGZSL3RM9kmu" | tar -C .. --use-compress-program=unzstd -x', depends-on = [
 	"postinstall_notice",
 ] }
 
 postinstall_notice = { cmd = "bash ../packaging/postinstall_notice.sh" }
-
-# Assignment 1. Task 1.1 is the one task that may not work everywhere: it
-# needs an RGB-D camera, and Gazebo's rendering-backed sensors have a
-# history of trouble on macOS. It is offered on every platform anyway,
-# with a warning printed at startup on macOS - the whole point of this
-# setup is to unblock people who cannot run Webots, so refusing to even
-# try would defeat it. See ass_1_1_launch.py.
 
 ass_1_1 = { cmd = "ros2 launch wasp_as_gazebo ass_1_1_launch.py gui:={{ gui }}", args = [{ arg = "gui", default = "auto" }] }
 ass_1_1_teleop = { cmd = "ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -p stamped:=true -p key_timeout:=0.0 -p repeat_rate:=0.0 -p use_sim_time:=true" }
@@ -128,10 +66,6 @@ ass_1_2 = { cmd = "ros2 launch wasp_as_ass_1 real_robot_launch.xml rate:={{ rate
 ass_1_2_bag = { cmd = "ros2 bag play --read-ahead-queue-size 100 -l -r {{ rate }} --clock 100 ../rosbags/real_robot", args = [{ arg = "rate", default = "1.0" }] }
 ass_1_3 = { cmd = "ros2 launch wasp_as_ass_1 kitti_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
 ass_1_3_bag = { cmd = "ros2 bag play --read-ahead-queue-size 100 -l -r {{ rate }} --clock 100 ../rosbags/kitti", args = [{ arg = "rate", default = "1.0" }] }
-
-# Assignment 2. The gui argument (positional, like every pixi task argument)
-# turns the Gazebo 3D window off, most usefully under WSL2 where it falls
-# back to software rendering: `pixi run ass_2_collision false`.
 
 ass_2_collision = { cmd = "ros2 launch wasp_as_gazebo ass_2_collision_launch.py gui:={{ gui }}", args = [{ arg = "gui", default = "auto" }] }
 ass_2_yolo = { cmd = "ros2 launch wasp_as_ass_2 kitti_segmentation_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
@@ -142,21 +76,15 @@ ass_2_dino_attention = { cmd = "ros2 run wasp_as_ass_2 dino_attention {{ gallery
 ass_2_dino_correspondence = { cmd = "ros2 run wasp_as_ass_2 dino_correspondence {{ gallery }}", args = [{ arg = "gallery", default = "kitti" }] }
 ass_2_grounding_dino = { cmd = "ros2 run wasp_as_ass_2 grounding_dino_detection {{ gallery }}", args = [{ arg = "gallery", default = "kitti" }] }
 
-# Assignment 3 - no simulator involved, identical to the normal setup.
-
 ass_3 = { cmd = "ros2 launch wasp_as_ass_3 planning_launch.xml" }
 ass_3_planner = { cmd = "ros2 run wasp_as_ass_3 path_planner" }
 ass_3_gui = { cmd = "ros2 launch wasp_as_ass_3 gui_launch.xml" }
-
-# Assignment 4
 
 ass_4_manual = { cmd = "ros2 launch wasp_as_gazebo ass_4_manual_launch.py gui:={{ gui }}", args = [{ arg = "gui", default = "auto" }] }
 ass_4_pid = { cmd = "ros2 launch wasp_as_gazebo ass_4_pid_launch.py log_file:={{ log_file }} gui:={{ gui }}", args = [
 	{ arg = "log_file", default = "none" },
 	{ arg = "gui", default = "auto" },
 ] }
-
-# Extra and elective tasks
 
 ass_2_odometry = { cmd = "ros2 launch wasp_as_ass_2 odometry_launch.xml rate:={{ rate }}", args = [{ arg = "rate", default = "1.0" }] }
 ass_2_odometry_bag = { cmd = "ros2 bag play ../rosbags/real_robot --read-ahead-queue-size 100 -l -r {{ rate }} --clock 100 -d 2.0 --remap /motor/encoders:=/motor/encoders_legacy /motor/duty_cyles:=/motor/duty_cyles_legacy", args = [{ arg = "rate", default = "1.0" }] }
