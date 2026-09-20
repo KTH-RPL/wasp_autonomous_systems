@@ -193,3 +193,6 @@ src/*/files.txt
 # cleaned up automatically along with the repo at the end of the course.
 Xcode_*.app
 *.xip
+
+# macOS Finder metadata, created in any folder the Finder has looked at.
+.DS_Store
