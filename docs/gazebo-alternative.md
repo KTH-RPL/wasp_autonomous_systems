@@ -98,6 +98,35 @@ pixi run ass_4_pid step_response.csv false
 Leave the argument out and the window appears, which is what you want most of
 the time.
 
+### How slow is it under WSL2?
+
+WSL2 usually has no GPU acceleration, so Mesa falls back to its software
+renderer and every rendered frame is computed on the CPU. How slow depends
+on how much has to be drawn. Measured on one 16-core laptop, with the
+Gazebo window open:
+
+| task | what renders | real-time factor |
+| --- | --- | --- |
+| `ass_4_manual` | the Gazebo view and RViz | 0.80 |
+| `ass_2_collision` | and a lidar | 0.70 |
+| `ass_1_1` | and an RGB-D camera | 0.45 |
+
+So simply having the window and RViz open already costs about a fifth of
+real time, the lidar roughly another tenth, and the camera in Task 1.1 the
+rest. Closing the Gazebo window gets Task 1.1 back to about 0.63x.
+
+Nothing desynchronises when this happens. Every node here runs on simulated
+time, so the robot just responds more slowly in wall-clock terms, by the
+factor above. Closing the Gazebo window is the one change worth making, and
+Task 1.1 costs you nothing by it, since the task asks you to work from RViz
+anyway.
+
+Tasks 1.2 and 1.3 play rosbags with no simulator at all and are unaffected.
+To see where you stand, run `glxinfo -B | grep "OpenGL renderer"`
+(`sudo apt install mesa-utils` first). If it reports `llvmpipe` you are
+rendering on the CPU; updating your GPU driver on the Windows side is what
+enables the hardware path, and that is outside this repo.
+
 **It will not behave identically to Webots.** Two physics engines never
 agree exactly. The robots are set up to match as closely as they can, so
 gains and thresholds carry across, but tune to what you actually see rather
