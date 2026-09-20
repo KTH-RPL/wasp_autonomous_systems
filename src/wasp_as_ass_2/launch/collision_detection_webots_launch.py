@@ -114,11 +114,6 @@ def generate_launch_description():
         respawn=True
     )
 
-    waiting_nodes = WaitForControllerConnection(
-        target_driver=turtlebot_driver,
-        nodes_to_start=ros_control_spawners
-    )
-
     rviz_config_file = os.path.join(ass_2_dir, 'rviz', 'collision_detection.rviz')
     rviz = Node(
         package='rviz2',
@@ -144,6 +139,21 @@ def generate_launch_description():
         output='screen',
     )
 
+    # collision_detection and autonomous_controller are started here rather
+    # than directly, so nothing drives until Webots reports the controller
+    # connected - by which point its window is up and the world is drawn.
+    # Started directly they begin at launch time, and since the robot is at a
+    # wall about 1.6 s later, the first collision was already over before
+    # anything was on screen: RViz would come up showing the position marker
+    # already moving, with no simulator window yet. They stay in one list, so
+    # they still start in the same instant as each other, which is what
+    # matters for not missing that first collision (see the note above).
+    waiting_nodes = WaitForControllerConnection(
+        target_driver=turtlebot_driver,
+        nodes_to_start=ros_control_spawners + [collision_detection,
+                                               autonomous_controller]
+    )
+
     return LaunchDescription([
         DeclareLaunchArgument('world', default_value='turtlebot_collision_detection.wbt'),
         DeclareLaunchArgument('gui', default_value='true'),
@@ -155,8 +165,6 @@ def generate_launch_description():
         turtlebot_driver,
         waiting_nodes,
         rviz,
-        collision_detection,
-        autonomous_controller,
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,
