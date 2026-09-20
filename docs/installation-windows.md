@@ -123,3 +123,6 @@ export WEBOTS_HOME=/path/to/your/webots
 Without this, WSL2 is wrongly assumed to only ever have Webots installed natively on
 Windows, and you'll be prompted to auto-install a Windows copy instead of using the one
 you already have.
+
+## If the simulation runs slowly
+See [Simulation speed under WSL2](performance-wsl2.md).
