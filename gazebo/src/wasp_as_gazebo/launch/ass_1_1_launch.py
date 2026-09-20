@@ -76,6 +76,17 @@ def generate_launch_description():
         AppendEnvironmentVariable(
             'GZ_SIM_RESOURCE_PATH',
             os.path.join(package_dir, 'models')),
+        # turtlebot3_house's cafe_table mesh names its two textures by bare
+        # filename, the way Gazebo Classic allowed, and gz-sim only looks
+        # beside the mesh and along this path - not in the model's sibling
+        # materials/textures. Without this, every run logs "Could not
+        # resolve file [Wood_Floor_Dark.jpg]" and the same for Maple.jpg,
+        # once from the server and once from the GUI, and the table renders
+        # untextured. It is the only model in that world affected.
+        AppendEnvironmentVariable(
+            'GZ_SIM_RESOURCE_PATH',
+            os.path.join(turtlebot3_gazebo_dir, 'models', 'turtlebot3_house',
+                         'cafe_table', 'materials', 'textures')),
     ]
 
     # RViz's RobotModel display needs /robot_description, which Gazebo does
