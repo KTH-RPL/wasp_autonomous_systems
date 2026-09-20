@@ -46,6 +46,7 @@ setup(
         'console_scripts': [
             'mavic_controller = wasp_as_gazebo.mavic_controller:main',
             'gps_bridge = wasp_as_gazebo.gps_bridge:main',
+            'joint_state_bridge = wasp_as_gazebo.joint_state_bridge:main',
             'cmd_vel_watchdog = wasp_as_gazebo.cmd_vel_watchdog:main',
         ],
         'launch.frontend.launch_extension': ['launch_ros = launch_ros'],

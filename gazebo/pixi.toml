@@ -23,6 +23,7 @@ ros-jazzy-compressed-image-transport = "*"
 ros-jazzy-ros-gz-sim = "*"
 ros-jazzy-ros-gz-bridge = "*"
 ros-jazzy-actuator-msgs = "*"
+ros-jazzy-control-msgs = "*"
 ros-jazzy-turtlebot3-gazebo = "*"
 
 ros-jazzy-teleop-twist-keyboard = "*"

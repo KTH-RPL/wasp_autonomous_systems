@@ -138,6 +138,18 @@ def generate_launch_description():
         output='screen',
     )
 
+    # encoders reads control_msgs/DynamicJointState, which ros2_control
+    # publishes on the Webots path. Gazebo emits a plain JointState instead,
+    # so this converts between them - see joint_state_bridge.py.
+    joint_state_bridge = Node(
+        package='wasp_as_gazebo',
+        executable='joint_state_bridge',
+        name='joint_state_bridge',
+        parameters=[{'use_sim_time': True}],
+        output='screen',
+        respawn=True,
+    )
+
     encoders = Node(
         package='wasp_as',
         executable='encoders',
@@ -172,6 +184,7 @@ def generate_launch_description():
         spawn,
         bridge,
         cmd_vel_watchdog,
+        joint_state_bridge,
         robot_state_publisher,
         rviz,
         encoders,
