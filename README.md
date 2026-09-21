@@ -64,6 +64,25 @@ pixi run build
 pixi run download_rosbags
 ```
 
+## The first time you start a simulation
+
+Expect it to take much longer than you think it should, and much longer than
+every later start. Webots fetches the 3D models and textures for a world from
+the internet the first time that world is opened - the apartment used in
+Assignment 1.1 pulls down more than eighty separate files. They are cached
+afterwards, so the second start of the same world is far quicker.
+
+While that is happening, RViz often opens long before the simulator is ready.
+An empty RViz with no sensor data is normal during a first start, and does not
+mean anything is wrong. Give it a few minutes.
+
+If it seems to be stuck, or RViz still shows nothing once the simulator window
+has finished loading, stop everything with `Ctrl+C` in each terminal and start
+again. Occasionally one of those downloads stalls part way through; starting
+again picks up from whatever was already cached, so it costs you much less the
+second time. It is worth trying twice before concluding that something is
+broken.
+
 
 ## Uninstalling everything after the course
 Most of what this course installs lives inside the `wasp_autonomous_systems` folder
