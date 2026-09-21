@@ -79,6 +79,14 @@ outside the folder, shared across all your Pixi projects, and a few tools cache 
 in your home directory too. Together these can be tens of GB, so if you want the space
 back you need to clear them as well.
 
+**Check each one before deleting it.** Everything below lives in your home directory
+and belongs to the tool rather than to this course, so it is shared with anything else
+on your computer that uses the same tool - another course, your own research, a project
+you had forgotten about. Nothing is lost permanently, since each tool re-downloads what
+it needs, but that can mean a long wait at an inconvenient moment. Skip any you still
+use, and if you are unsure, leave it alone: none of this is required to finish
+uninstalling the course.
+
 **Pixi's package cache.** Run this from anywhere:
 ```
 pixi clean cache --conda
