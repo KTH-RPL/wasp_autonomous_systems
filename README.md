@@ -5,10 +5,13 @@ Native Windows builds don't work for this repo yet, so build and run everything 
 pixi, ROS2, and Webots - inside WSL2 instead. Run the following in a Windows
 PowerShell terminal (requires administrator rights and a reboot):
 ```
-wsl --install -d Ubuntu
+wsl --install -d Ubuntu-24.04
 ```
-Afterwards, open the "Ubuntu" app once to finish first-run setup (username/password),
-then do everything below inside that Ubuntu terminal instead of a native Windows one.
+Afterwards, open the "Ubuntu 24.04" app once to finish first-run setup
+(username/password), then do everything below inside that Ubuntu terminal instead of a
+native Windows one. Install 24.04 specifically rather than plain `Ubuntu`, which now
+gives you a newer release the course has not been tested on - see
+[docs/installation-windows.md](docs/installation-windows.md).
 
 When you get to cloning the repo further down, **clone into WSL2's own filesystem**
 (e.g. `~/wasp_autonomous_systems`), not into a Windows checkout accessed via
