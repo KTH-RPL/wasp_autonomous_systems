@@ -95,6 +95,16 @@ are fetched from Hugging Face on first use and cached in your home directory:
 rm -rf ~/.cache/huggingface
 ```
 
+**Webots' downloaded world assets.** Each world's models and textures are fetched on
+first use and cached outside the repository. On Linux and WSL2:
+```
+rm -rf ~/.cache/Cyberbotics
+```
+On macOS:
+```
+rm -rf ~/Library/Caches/Cyberbotics
+```
+
 **ROS logs**, written every time you launch something:
 ```
 rm -rf ~/.ros/log
