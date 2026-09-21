@@ -3,11 +3,11 @@
 ## Supported platforms 
 * Linux: Tested on x86-64 with Ubuntu 24.04.
 * Mac: Tested on AArch64 system with macOS 26.6.2 (chip Apple M4 Pro).
-* Windows: Net yet tested
+* Windows: Tested on x86-64 via WSL2 with Ubuntu 24.04. Native Windows builds are not supported.
 
 ## Core components used 
 * [Pixi](https://pixi.prefix.dev/latest/): A cross-platform package management system that allows us to run ROS2 Jazzy in a Ubuntu 24.04 in the same way on Mac, Linux and Windows.
-* [Webots](https://cyberbotics.com): A simulator with a physics engine. If it was not for our Mac users we could have done it all with Pixi using the Gazebo simulator but there is a bug that makes it impossible to simulate camera like sensors which we need.
+* [Webots](https://cyberbotics.com): A simulator with a physics engine, and the one the assignments are written for. Gazebo would have been simpler, since Pixi installs it directly, but it has a history of trouble with camera-type sensors on macOS. There is now a [Gazebo-based alternative](docs/gazebo-alternative.md) for students who cannot install Webots at all - the Assignment 1.1 camera does work there, but it is the least proven part of that setup.
 * Matlab: Used in one task in a mandatory assignment and two conditionally elective assignments. Available from your university.
   
 ## Installing Pixi and Webots
