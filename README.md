@@ -1,25 +1,5 @@
 # WASP Autonomous Systems Course
 
-## Using Windows?
-Native Windows builds don't work for this repo yet, so build and run everything -
-pixi, ROS2, and Webots - inside WSL2 instead. Run the following in a Windows
-PowerShell terminal (requires administrator rights and a reboot):
-```
-wsl --install -d Ubuntu-24.04
-```
-Afterwards, open the "Ubuntu 24.04" app once to finish first-run setup
-(username/password), then do everything below inside that Ubuntu terminal instead of a
-native Windows one. Install 24.04 specifically rather than plain `Ubuntu`, which now
-gives you a newer release the course has not been tested on - see
-[docs/installation-windows.md](docs/installation-windows.md).
-
-When you get to cloning the repo further down, **clone into WSL2's own filesystem**
-(e.g. `~/wasp_autonomous_systems`), not into a Windows checkout accessed via
-`/mnt/c/...`. Two reasons: building through the `/mnt/c` passthrough is much slower
-(lots of small file I/O), and `git` inside WSL2 sees permission/line-ending
-differences on NTFS-mounted files that make every file look "modified" even though
-nothing changed.
-
 ## Supported platforms 
 * Linux: Tested on x86-64 with Ubuntu 24.04.
 * Mac: Tested on AArch64 system with macOS 26.6.2 (chip Apple M4 Pro).
@@ -33,7 +13,7 @@ nothing changed.
 ## Installing Pixi and Webots
 * Mac: Instructions [here](docs/installation-mac.md)
 * Linux: Instructions [here](docs/installation-linux.md)
-* Windows: Instructions [here](docs/installation-windows.md)
+* Windows: everything runs inside WSL2 - instructions [here](docs/installation-windows.md)
 
 ### Cannot install Webots on your computer?
 Some employer-managed computers only allow software from the App Store or a

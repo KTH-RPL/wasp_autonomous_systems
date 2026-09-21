@@ -124,5 +124,12 @@ Without this, WSL2 is wrongly assumed to only ever have Webots installed nativel
 Windows, and you'll be prompted to auto-install a Windows copy instead of using the one
 you already have.
 
+## Where to clone the repository
+**Clone into WSL2's own filesystem** (e.g. `~/wasp_autonomous_systems`), not into a
+Windows folder reached through `/mnt/c/...`. Two reasons: building through the `/mnt/c`
+passthrough is much slower, because the build is thousands of small file operations;
+and `git` inside WSL2 sees permission and line-ending differences on NTFS-mounted
+files, which makes every file look modified even though nothing changed.
+
 ## If the simulation runs slowly
 See [Simulation speed under WSL2](performance-wsl2.md).
