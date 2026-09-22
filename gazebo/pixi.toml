@@ -15,6 +15,9 @@ preview = ["pixi-build"]
 
 # See ../docs/notes-gazebo-design.md
 
+[activation.env]
+GZ_IP = "127.0.0.1"
+
 [dependencies]
 ros-jazzy-desktop = "*"
 

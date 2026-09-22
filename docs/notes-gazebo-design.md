@@ -97,3 +97,26 @@ rendering-backed sensors have a history of trouble on macOS. It is offered on ev
 platform anyway and prints a warning at startup on macOS - the whole point of this setup
 is to unblock people who cannot run Webots, so refusing to even try would defeat it. See
 `gazebo/src/wasp_as_gazebo/launch/ass_1_1_launch.py`.
+
+## GZ_IP is pinned to loopback
+
+`gazebo/pixi.toml` sets `GZ_IP = "127.0.0.1"` for the whole environment.
+
+The `gz sim -s` server and the `gz sim -g` window are separate processes that
+find each other through gz-transport, which discovers peers over UDP multicast
+across whatever network interfaces are up. A student on macOS hit the case
+where that fails: the server started and stayed completely silent, `ros_gz_sim`'s
+`create` asked for world names every five seconds and timed out after all of
+them, no robot was ever spawned, and the GUI appeared in the Dock with no
+usable window. Running the same task with `GZ_IP=127.0.0.1` fixed it outright.
+A VPN or an active macOS firewall are the usual reasons discovery breaks.
+
+Everything in this course runs on one machine, so restricting gz-transport to
+loopback costs nothing and removes a failure that is very hard to diagnose from
+the symptoms: none of the log output points at the network. Setting it at the
+environment level rather than inside the launch files matters, because a manual
+`gz topic -l` has to agree with the simulator about which interface to use or it
+reports nothing and looks like a second fault.
+
+Verified on macOS before and after: robot spawns, no timeouts, 25 gz topics,
+camera point cloud flowing, with and without the variable set by hand.
