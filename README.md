@@ -3,7 +3,7 @@
 ## Supported platforms 
 * Linux: Tested on x86-64 with Ubuntu 24.04.
 * Mac: Tested on AArch64 system with macOS 26.6.2 (chip Apple M4 Pro).
-* Windows: Tested on x86-64 via WSL2 with Ubuntu 24.04. Native Windows builds are not supported.
+* Windows: Tested on x86-64 via WSL2 with Ubuntu 24.04. Native Windows builds are not supported. WSL2 only uses half your RAM by default, which is not enough to build on a 16 GB machine - raise it before you start, see [docs/installation-windows.md](docs/installation-windows.md).
 
 ## Core components used 
 * [Pixi](https://pixi.prefix.dev/latest/): A cross-platform package management system that allows us to run ROS2 Jazzy in a Ubuntu 24.04 in the same way on Mac, Linux and Windows.
