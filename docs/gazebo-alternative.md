@@ -58,6 +58,12 @@ lost permanently: `pixi run build` from the `gazebo` folder puts it back.
 
 ## Things worth knowing
 
+**No Gazebo window, and the log repeating "Requesting list of world names"
+before timing out.** That is Gazebo's simulator and its window failing to find
+each other over the network, which a VPN or a firewall will block. It is fixed
+in the repository, so `git pull` in your `wasp_autonomous_systems` folder and
+run the task again. You do not need to rebuild: the fix is a setting, not code.
+
 **Task 1.1 uses a simulated camera**, the only task here that does. It
 works, macOS included, and prints a short note there because that is the
 one part of Gazebo that has given trouble on macOS in the past. If the
