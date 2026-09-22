@@ -245,7 +245,7 @@ build = { cmd = "bash -c 'export LIBRARY_PATH=\"$CONDA_PREFIX/lib:$LIBRARY_PATH\
 # build-essential` on Ubuntu) - Webots' vendored controller library
 # Makefile calls `gcc`/`make` directly rather than the conda-provided
 # compiler.
-build = { cmd = "bash -c 'export LIBRARY_PATH=\"$CONDA_PREFIX/lib:$LIBRARY_PATH\" && colcon build --symlink-install --cmake-args -DPython_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python -DPYTHON_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_FIND_STRATEGY=LOCATION -DPython_FIND_STRATEGY=LOCATION'", depends-on = [
+build = { cmd = "bash -c 'export LIBRARY_PATH=\"$CONDA_PREFIX/lib:$LIBRARY_PATH\"; mem=$(grep MemAvailable /proc/meminfo | tr -dc 0-9); w=$((mem / 1800000)); if [ \"$w\" -lt 1 ]; then w=1; fi; n=$(nproc); if [ \"$w\" -gt \"$n\" ]; then w=\"$n\"; fi; echo \"Building with $w parallel workers (one per 1.8 GB of available memory, at most one per core).\"; colcon build --symlink-install --parallel-workers \"$w\" --cmake-args -DPython_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python -DPYTHON_EXECUTABLE=$CONDA_PREFIX/bin/python -DPython3_FIND_STRATEGY=LOCATION -DPython_FIND_STRATEGY=LOCATION'", depends-on = [
 	"postinstall_notice",
 ] }
 
