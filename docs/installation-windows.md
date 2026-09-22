@@ -59,6 +59,61 @@ PowerShell terminal (not inside Ubuntu):
 wsl --shutdown
 ```
 
+## Give WSL2 enough memory
+Do this before building, not after it fails.
+
+WSL2 does not use all the memory in your machine. By default it takes half, so a
+16 GB laptop gives Linux about 7.6 GB. Building this course's software peaks at
+around 9.4 GB, which means the default is not enough on a 16 GB machine and the
+build cannot finish. Nothing is wrong with your computer, and the same 16 GB is
+plenty once WSL2 is allowed to use more of it.
+
+You will know you have hit this. The build either stops with `Terminated` and
+then closes the terminal window by itself a little later, or it appears to hang
+with the fan running. There is no error message that points at memory.
+
+Check what you have, inside a WSL2 terminal:
+```
+free -h
+```
+
+To change it, run this in a Windows PowerShell terminal. It creates
+`C:\Users\<you>\.wslconfig`, which does not exist until you make it:
+```
+@"
+[wsl2]
+memory=12GB
+swap=8GB
+"@ | Set-Content -Path "$env:USERPROFILE\.wslconfig" -Encoding ASCII
+
+wsl --shutdown
+```
+
+Then open the "Ubuntu 24.04" app again and check that it took effect:
+```
+free -h
+```
+`Mem:` should now be about 12 GB and `Swap:` about 8 GB.
+
+Use 12 GB if your machine has 16 GB, and more if you have more. Leave Windows a
+few GB to work with. The swap line matters as much as the memory line: with swap
+available a heavy moment in the build becomes slow instead of fatal.
+
+This is a one-time setting. It also helps later, since the simulators are the
+other memory-hungry part of the course.
+
+**Note:** if your machine has only 8 GB in total, you cannot give WSL2 enough to
+build comfortably. Try giving it as much as you can spare plus generous swap,
+and build with fewer parallel compilers:
+```
+CPU_COUNT=4 pixi run build
+```
+This is much slower and has not been tested here. If it does not work, use a lab
+machine or a remote Linux environment instead.
+
+**Note:** only WSL2 caps memory like this. macOS and native Linux use what the
+machine has, so this section does not apply to them.
+
 ## Update the package lists
 A freshly installed distribution ships with no package lists, so every `apt install`
 below fails with "Unable to locate package" until you do this once.
