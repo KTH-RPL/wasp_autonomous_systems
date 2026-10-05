@@ -124,6 +124,14 @@ def generate_launch_description():
         output='screen',
     )
 
+    # Turns /TurtleBot3Burger/gps into the /path shown by RViz's Path display.
+    path = Node(
+        package='wasp_as',
+        executable='path',
+        parameters=[{'use_sim_time': True}],
+        output='screen',
+    )
+
     collision_detection = Node(
         package='wasp_as_ass_2',
         executable='collision_detection',
@@ -164,6 +172,7 @@ def generate_launch_description():
         footprint_publisher,
         turtlebot_driver,
         waiting_nodes,
+        path,
         rviz,
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(

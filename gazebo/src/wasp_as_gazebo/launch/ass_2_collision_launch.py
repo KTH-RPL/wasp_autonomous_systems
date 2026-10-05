@@ -132,6 +132,15 @@ def generate_launch_description():
         output='screen',
     )
 
+    # Turns /TurtleBot3Burger/gps into the /path shown by RViz's Path display.
+    path = Node(
+        package='wasp_as',
+        executable='path',
+        name='path',
+        parameters=[{'use_sim_time': True}],
+        output='screen',
+    )
+
     collision_detection = Node(
         package='wasp_as_ass_2',
         executable='collision_detection',
@@ -158,6 +167,7 @@ def generate_launch_description():
         OpaqueFunction(function=launch_setup),
         bridge,
         gps_bridge,
+        path,
         cmd_vel_watchdog,
         rqt_plot,
         rviz,
