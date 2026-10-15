@@ -118,7 +118,7 @@ class KittiSegmentation(Node):
 
         # Publisher
         self._seg_pub = self.create_publisher(
-            CompressedImage, '/kitti/camera/color/left/image/compressed/segmentation', 10)
+            Image, '/kitti/camera/color/left/image_segmentation', 10)
         self._map_pub = self.create_publisher(Marker, 'map', 10)
         self._frustum_pub = self.create_publisher(Marker, 'frustum', 10)
 
@@ -347,8 +347,8 @@ class KittiSegmentation(Node):
         # Plot a BGR numpy array of predictions
         im_array = image.plot()
         # Convert from OpenCV to ROS
-        ret = self._cv_bridge.cv2_to_compressed_imgmsg(
-            im_array[..., ::-1])
+        ret = self._cv_bridge.cv2_to_imgmsg(
+            im_array[..., ::-1], encoding='rgb8')
         ret.header = info.header
         self._seg_pub.publish(ret)
 
