@@ -236,11 +236,9 @@ class KittiSegmentation(Node):
 
         # TODO: Fill in
 
-        # We add this check in case the frustum culling left some points outside or at the border of the frustum.
-        if info.width <= u < 0:
-            u = 0
-        if info.height <= v < 0:
-            v = 0
+        # This check handles rounding at the image border. Frustum culling should already have removed points outside the image, so only points that round to the edge (e.g., u == width) should reach here. Clamp them to the nearest valid pixel.
+        u = min(max(int(u), 0), info.width - 1)
+        v = min(max(int(v), 0), info.height - 1)
 
         return (int(u), int(v))
 
@@ -276,10 +274,11 @@ class KittiSegmentation(Node):
         return instances
 
     def separate_static_dynamic(self, xyz, pixel, dynamic_image):
+        # A point is static only if all three channels are zero, and dynamic if any channel is non-zero.
         static_indices = np.where(
-            dynamic_image[pixel[:, 1], pixel[:, 0]] == [0, 0, 0])
+            np.all(dynamic_image[pixel[:, 1], pixel[:, 0]] == 0, axis=1))[0]
         dynamic_indices = np.where(
-            dynamic_image[pixel[:, 1], pixel[:, 0]] != [0, 0, 0])
+            np.any(dynamic_image[pixel[:, 1], pixel[:, 0]] != 0, axis=1))[0]
         static_xyz = np.copy(xyz[static_indices, :]).reshape((-1, 3))
         static_pixel = np.copy(pixel[static_indices, :]).reshape((-1, 2))
         dynamic_xyz = np.copy(xyz[dynamic_indices, :]).reshape((-1, 3))
@@ -287,7 +286,7 @@ class KittiSegmentation(Node):
         return static_xyz, static_pixel, dynamic_xyz, dynamic_pixel
 
     def cloud_to_pixel(self, cloud, info):
-        return np.array([self.coord_to_pixel(info, *p) for p in cloud], dtype=int)
+        return np.array([self.coord_to_pixel(info, *p) for p in cloud], dtype=int).reshape((-1, 2))
 
     def lookup_transforms(self, cloud_header, camera_header):
         cam_to_pc = self._tf_buffer.lookup_transform(
